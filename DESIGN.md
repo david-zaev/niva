@@ -279,6 +279,17 @@ New endpoints: `GET /prices` and `GET /buyers?crop=pepper&region=strumica`. New 
 
 **Check before use:** the markets file was AI-generated. Company names, coordinates and the data.gov.mk link in it are unverified; only show buyers that appear in the official Ministry register, with its date.
 
+### Additions from Main_Prompt.md (2026-11-14)
+
+Added, nothing removed. Every number still names its dataset and dates; anything without a real source stays empty and flagged.
+
+- **Field switcher and map:** several fields per phone, a switcher in the top bar, `/fields` map with the selected field highlighted, "Show all my fields", tap to switch, NASA GIBS layers (SMAP L4 soil moisture, MODIS NDVI, MODIS land temperature, GPM IMERG rain), field outline drawing, OpenStreetMap farmland outlines (Overpass), village search (Nominatim). The AKN cadastre has no open map service, so the app links to its portal for parcel numbers.
+- **Summary banner (My field):** soil and planting readiness from NASA POWER GWETTOP/GWETROOT (or the sensor), crop harvest alerts from growing degree days since planting (POWER at the field point, then the Open-Meteo forecast, then the 10-year average), "Enter harvest amount" with the farmer's own yield history against the MakStat municipality average, and the next 7 days in plain words. Tables `plantings`, `harvests`, `pest_reports`, `cache`.
+- **Simple / Advanced on every page:** My field (soil wetness, water balance ETa = ET₀ × FAO-56 Kc, MODIS NDVI via ORNL DAAC, SoilGrids 0–60 cm profile, 7-day table), Rotations (score table, What-if, MakStat regional trend), Pests (sensor and weather inputs), Market (production by year), Climate (charts).
+- **Pests tab:** `data/pests.json` (15 pests and diseases for the Niva crops, IPM steps in en/mk) × NASA POWER weather × the 5 sensors (incl. pressure drop) × forecast; "I see a pest"; spray windows from wind and rain.
+- **Market tab:** ZPIS prices, where to sell, and MakStat area and production 2014–2025 for 7 regions (`data/scripts/download_production.py` → `data/production.json`).
+- **Not possible with real data, left empty:** tonnes actually sold or bought out per region (not published by MakStat or ZPIS), so there is no demand score in the rotation scores; the regional production trend is shown next to them instead. MASIS has no public service (SoilGrids is used). SMAP L3/L4 values, HLS, ECOSTRESS and IMERG numbers need an Earthdata login; they are shown only as GIBS map layers for now.
+
 ## Build order and definition of done
 
 Build the thinnest working path first, then thicken it. Each milestone ends with something that works end to end.

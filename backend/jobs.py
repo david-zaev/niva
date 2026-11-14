@@ -13,6 +13,7 @@ import httpx
 from sqlmodel import Session, delete, select
 
 import forecast
+import insights
 import nasa
 import climate_data
 from models import ClimateDaily, FieldRow, Forecast, engine
@@ -21,7 +22,8 @@ log = logging.getLogger("niva.jobs")
 DAYS_BACK = 50  # the inputs reach 30 days back, plus the 3-6 days both sources run late
 POWER = "https://power.larc.nasa.gov/api/temporal/daily/point"
 PARAMS = {"T2M_MAX": "t_max", "T2M_MIN": "t_min", "PRECTOTCORR": "rain_mm", "RH2M": "humidity",
-          "ALLSKY_SFC_SW_DWN": "solar", "WS2M": "wind", "TOA_SW_DWN": "ra"}
+          "ALLSKY_SFC_SW_DWN": "solar", "WS2M": "wind", "TOA_SW_DWN": "ra",
+          "T2M": "t_mean", "GWETTOP": "gwettop", "GWETROOT": "gwetroot"}
 SOIL = "https://archive-api.open-meteo.com/v1/archive"
 
 
@@ -77,7 +79,7 @@ def refresh_climate(loc: dict, today: date) -> None:
         row.update({k: v for k, v in values.items() if v is not None})
     temporary = path.with_suffix('.csv.tmp')
     with temporary.open('w', encoding='utf-8', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=columns)
+        writer = csv.DictWriter(stream, fieldnames=columns, extrasaction='ignore')  # power.csv keeps its own columns
         writer.writeheader()
         writer.writerows(saved[key] for key in sorted(saved))
     temporary.replace(path)
@@ -101,7 +103,7 @@ def run_field(s: Session, f: FieldRow, today: date) -> int:
 
     rows = s.exec(select(ClimateDaily).where(ClimateDaily.field_id == f.id, ClimateDaily.date >= start)
                   .order_by(ClimateDaily.date)).all()
-    df = pd.DataFrame([r.model_dump() for r in rows]).drop(columns="field_id")
+    df = pd.DataFrame([r.model_dump() for r in rows]).drop(columns=["field_id", "t_mean", "gwettop", "gwetroot"])
     df.index = pd.to_datetime(df.pop("date"))
     loc, _, _ = nasa.location_for(f.lat, f.lon, f.region)
     out = forecast.predict(loc["id"], forecast.build_frame(df))
@@ -130,6 +132,8 @@ def run_all() -> None:
             try:
                 n = run_field(s, f, today)
                 log.info("field %s: forecast %s days", f.id, n)
+                insights.soil(s, f)  # warm the slow caches (each fetches in its own thread)
+                insights.ndvi(s, f)
             except Exception:
                 s.rollback()
                 log.exception("field %s: daily job failed", f.id)
@@ -142,6 +146,8 @@ def run_one(field_id: int) -> None:
         if f:
             try:
                 run_field(s, f, date.today())
+                insights.soil(s, f)
+                insights.ndvi(s, f)
             except Exception:
                 log.exception("field %s: first forecast failed", field_id)
 

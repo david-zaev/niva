@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, NavLink, Route, Routes, useLocation } from 'react-router-dom'
-import { fieldId, getClimate, getField, getForecast, getRotations } from './api.js'
+import { fieldId, getClimate, getField, getForecast, getMarket, getPests, getRotations, getSummary, onFieldChange } from './api.js'
 import { load, save, useI18n } from './i18n/index.jsx'
 import MyField from './screens/MyField.jsx'
 import Climate from './screens/Climate.jsx'
@@ -9,8 +9,13 @@ import RotationDetails from './screens/RotationDetails.jsx'
 // the map (Leaflet) is only needed here: load these screens when opened
 const loadMore = () => import('./screens/More.jsx')
 const loadSetup = () => import('./screens/Setup.jsx')
+const loadFields = () => import('./screens/Fields.jsx')
 const More = lazy(loadMore)
 const Setup = lazy(loadSetup)
+const Fields = lazy(loadFields)
+import Pests from './screens/Pests.jsx'
+import Market from './screens/Market.jsx'
+import FieldSwitcher from './components/FieldSwitcher.jsx'
 import Pair from './screens/Pair.jsx'
 import { OfflineBanner, UpdateButton } from './components/StatusBars.jsx'
 import FarmGrid from './components/FarmGrid.jsx'
@@ -24,12 +29,17 @@ const icons = {
   climate: 'M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z',
   rotations: 'M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4',
   more: 'M4 6h16M4 12h16M4 18h16',
+  pests: 'M12 7a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0v-5a3 3 0 0 1 3-3Zm0-4v4M5 9l4 2m10-2-4 2M5 17l4-2m10 2-4-2',
+  market: 'M4 10h16l-1.5 9h-13L4 10Zm4 0 2-6m6 6-2-6M9 14v2m6-2v2',
 }
 
+// The four pillars (field & soil, rotations, pests, market) first, then climate and settings
 const tabs = [
   { key: 'field', path: '/' },
-  { key: 'climate', path: '/climate' },
   { key: 'rotations', path: '/rotations' },
+  { key: 'pests', path: '/pests' },
+  { key: 'market', path: '/market' },
+  { key: 'climate', path: '/climate' },
   { key: 'more', path: '/more' },
 ]
 
@@ -54,14 +64,15 @@ function useTheme() {
 }
 
 // After the first screen shows, quietly fetch the other tabs and their code, so switching is instant
-function usePreload() {
+function usePreload(current) {
   useEffect(() => {
     const idle = window.requestIdleCallback ?? ((fn) => setTimeout(fn, 1200))
     const id = fieldId()
     idle(() => { // at the latest after 2 s, even if the phone never goes idle
-      Promise.allSettled([getField(id), getForecast(id), getClimate(id), getRotations(id), loadMore(), loadSetup()])
+      Promise.allSettled([getField(id), getSummary(id), getForecast(id), getRotations(id), getPests(id), getMarket(id),
+        getClimate(id), loadMore(), loadSetup(), loadFields()])
     }, { timeout: 2000 })
-  }, [])
+  }, [current])
 }
 
 const activeIndex = (pathname) => {
@@ -107,12 +118,16 @@ export default function App() {
   const { t } = useI18n()
   const [theme, setTheme] = useTheme()
   const { pathname } = useLocation()
-  // a new page fades in; moving within Rotations (sliders, details) keeps its place
-  const pageKey = pathname.startsWith('/rotations') ? '/rotations' : pathname
+  const [current, setCurrent] = useState(fieldId)
+  useEffect(() => onFieldChange(setCurrent), [])
+  // a new page fades in; moving within Rotations (sliders, details) keeps its place. Switching field reloads every
+  // page except the map, which switches in place.
+  const base = pathname.startsWith('/rotations') ? '/rotations' : pathname
+  const pageKey = base === '/fields' ? base : `${base}#${current}`
   useEffect(() => {
     window.scrollTo({ top: 0 })
-  }, [pageKey])
-  usePreload()
+  }, [base])
+  usePreload(current)
 
   return (
     <div className="app">
@@ -120,6 +135,7 @@ export default function App() {
       <header className="topbar">
         <Link to="/" className="brand" aria-label="Niva"><Logo /></Link>
         <div className="top-right">
+          <FieldSwitcher current={current} />
           <UpdateButton />
           <LanguagePicker />
         </div>
@@ -136,6 +152,9 @@ export default function App() {
             <Route path="/climate" element={<Climate />} />
             <Route path="/rotations" element={<Rotations />} />
             <Route path="/rotations/:id" element={<RotationDetails />} />
+            <Route path="/pests" element={<Pests />} />
+            <Route path="/market" element={<Market />} />
+            <Route path="/fields" element={<Fields />} />
             <Route path="/setup" element={<Setup />} />
             <Route path="/pair" element={<Pair />} />
             <Route path="/more" element={<More theme={theme} setTheme={setTheme} />} />

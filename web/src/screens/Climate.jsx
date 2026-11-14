@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getClimate, paths, peek } from '../api.js'
 import { FrostChart, HeatDaysChart, WaterBalanceChart } from '../components/ClimateCharts.jsx'
+import { ModeToggle, useMode } from '../components/Mode.jsx'
 import Screen from '../components/Screen.jsx'
 import TermHelp from '../components/TermHelp.jsx'
 import { load, useI18n } from '../i18n/index.jsx'
@@ -41,6 +42,8 @@ export default function Climate() {
   const [d, setD] = useState(() => peek(paths.climate(fieldId)))
   const [error, setError] = useState(false)
   const [historical, setHistorical] = useState(false)
+  const [mode, setMode] = useMode('climate')
+  const toggle = <ModeToggle mode={mode} setMode={setMode} />
 
   useEffect(() => {
     const refresh = () => getClimate(fieldId).then((data) => { setD(data); setError(false) }).catch(() => setError(true))
@@ -50,8 +53,8 @@ export default function Climate() {
     return () => { clearInterval(timer); window.removeEventListener('focus', refresh) }
   }, [fieldId])
 
-  if (error && !d) return <Screen section="climate"><p className="card">{t('server.down')}</p></Screen>
-  if (!d) return <Screen section="climate"><p className="card muted">{t('field.loading')}</p></Screen>
+  if (error && !d) return <Screen section="climate" actions={toggle}><p className="card">{t('server.down')}</p></Screen>
+  if (!d) return <Screen section="climate" actions={toggle}><p className="card muted">{t('field.loading')}</p></Screen>
 
   const src = d.sources[0]
   const base = d.periods.baseline
@@ -66,7 +69,7 @@ export default function Climate() {
   const deficitTotal = Math.round(deficit.reduce((s, m) => s + m.balance_mm, 0))
 
   return (
-    <Screen section="climate">
+    <Screen section="climate" actions={toggle}>
       {current && <div className="climate-freshness">
         <strong>{t('climate.latestData')} · {date(current.end_date)}</strong>
         <span>{t('climate.availableNote')}</span>
@@ -95,7 +98,8 @@ export default function Climate() {
       </div>
       </details>
 
-      <div className="chart-grid">
+      {mode === 'simple' && <p className="note">{t('mode.climateSimple')}</p>}
+      {mode === 'advanced' && <div className="chart-grid">
         <ChartCard title={t('climate.waterTitle')} term="et0"
           help={showCurrent ? `${t('climate.partialHelp')} ${t('climate.rain')}: ${date(current.dates.rain_mm)} · ET₀: ${date(current.dates.et0)}` : t('climate.waterHelp').replace('{n}', Math.abs(deficitTotal))}
           source={source(showCurrent ? `${current.start_date}–${current.end_date}` : recent)}>
@@ -114,7 +118,7 @@ export default function Climate() {
           <FrostChart yearly={yearly} />
         </ChartCard>
 
-      </div>
+      </div>}
     </Screen>
   )
 }

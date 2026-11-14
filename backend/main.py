@@ -2,7 +2,7 @@
 import os
 import secrets
 from contextlib import asynccontextmanager
-from datetime import datetime, timedelta, timezone
+from datetime import date as Date, datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, Query
@@ -11,10 +11,14 @@ from pydantic import BaseModel, Field as PField
 from sqlmodel import Session, select
 
 import forecast
+import insights
 import jobs
+import market
 import nasa
+import pests
 import scoring
-from models import Device, FieldRow, Forecast, Reading, engine, hash_key, init_db, utcnow
+from models import (Device, FieldRow, Forecast, Harvest, PestReport, Planting, Reading, engine, hash_key,
+                    init_db, utcnow)
 
 
 @asynccontextmanager
@@ -71,6 +75,32 @@ class FieldPatch(BaseModel):
     name: Optional[str] = PField(None, min_length=1, max_length=80)
     current_rotation: Optional[list[str]] = None
     priorities: Optional[dict[str, float]] = None
+    polygon: Optional[list[list[float]]] = PField(None, max_length=200)  # [[lat, lon], ...]; [] removes it
+
+
+class PlantingIn(BaseModel):
+    crop: str
+    planted_on: Date
+    harvested_on: Optional[Date] = None
+
+
+class HarvestIn(BaseModel):
+    crop: str
+    harvested_on: Date
+    amount_kg: float = PField(ge=0, le=10_000_000)
+    sold_kg: Optional[float] = PField(None, ge=0, le=10_000_000)
+    price_mkd_kg: Optional[float] = PField(None, ge=0, le=100_000)
+    area_ha: Optional[float] = PField(None, gt=0, le=10_000)
+    quality: Optional[str] = PField(None, max_length=20)
+    notes: Optional[str] = PField(None, max_length=500)
+    planting_id: Optional[int] = None
+
+
+class PestReportIn(BaseModel):
+    pest: str = PField(min_length=1, max_length=60)
+    seen_on: Date
+    severity: Optional[str] = PField(None, max_length=10)
+    note: Optional[str] = PField(None, max_length=300)
 
 
 class PairIn(BaseModel):
@@ -143,6 +173,19 @@ def create_field(body: FieldIn, bg: BackgroundTasks, s: Session = Depends(db)):
     s.refresh(f)
     bg.add_task(jobs.run_one, f.id)  # its first soil forecast, without waiting for 06:00
     return {**field_out(f), "owner_token": f.owner_token}
+
+
+@app.get("/fields")
+def list_fields(ids: str = Query(..., description="comma-separated field ids"), s: Session = Depends(db)):
+    """The fields this app knows (its own plus the demo), for the field switcher and the all-fields map."""
+    wanted = [int(x) for x in ids.split(",") if x.strip().isdigit()][:30]
+    rows = s.exec(select(FieldRow).where(FieldRow.id.in_(wanted))).all() if wanted else []
+    out = []
+    for f in rows:
+        active = s.exec(select(Planting).where(Planting.field_id == f.id, Planting.harvested_on == None)  # noqa: E711
+                        .order_by(Planting.planted_on.desc())).first()
+        out.append({**field_out(f), "active_crop": active.crop if active else None})
+    return {"fields": out}
 
 
 @app.get("/fields/{field_id}")
@@ -242,15 +285,20 @@ def rotations(field_id: int,
         current = {"id": "current", "name": " → ".join(crops[c]["name"] for c in valid),
                    "plantings": [{"crop": c, "year": i + 1} for i, c in enumerate(valid)]}
     else:  # no rotation entered yet: use what is common in the region
-        current = next(r for r in library if r.get("kind") == "common" and loc["id"] in r.get("regions", []))
+        current = next((r for r in library if r.get("kind") == "common" and loc["id"] in r.get("regions", [])),
+                       next(r for r in library if r.get("kind") == "common"))
     out = scoring.rank(library, crops, {**ind, "_distance_km": km}, yields, prices, current,
                        priorities=f.priorities, what_if={"rain": rain, "temp": temp})
+    region = market.region_for(f.lat, f.lon)[0]
     yield_years = sorted({value['years'] for value in yields.get('locations', {}).get(loc['id'], {}).get('crops', {}).values() if value})
     return {
         "field_id": field_id, "location": ind["location"], "distance_km": km,
         "what_if": {"rain_pct": rain, "temp_c": temp},
         "current_is_default": not valid,
         **out,
+        # MakStat production trend per crop in the field's market region. It informs, it does not change the
+        # score: sold volumes are not published, so it is not a demand measure.
+        "regional_trend": {"region": region, "crops": market.regional_trends(region)},
         "sources": [
             {"dataset": "NASA POWER daily", "dates": ind["sources"][0]["dates"]},
             {"dataset": "MakStat crop yields by municipality", "dates": ', '.join(yield_years) or 'not available'},
@@ -310,6 +358,197 @@ def soil_forecast(field_id: int, s: Session = Depends(db)):
             {"dataset": "Model trained on 2015-2022, tested on 2023-2024", "dates": f"trained {rep['trained']}"},
         ],
     }
+
+
+# ---------- field insights (summary banner, metrics, pests, market) ----------
+
+def owned(field_id: int, token: Optional[str], s: Session) -> FieldRow:
+    f = get_field(s, field_id)
+    check_owner(f, token)
+    return f
+
+
+@app.get("/fields/{field_id}/summary")
+def summary(field_id: int, s: Session = Depends(db)):
+    """Smart field summary: soil and planting readiness, crop harvest alerts, the next 7 days, top pest risks."""
+    f = get_field(s, field_id)
+    crops = insights.crops_by_id()
+    wx = insights.weather(s, f)
+    progress = [insights.planting_progress(s, f, p, crops, wx) for p in insights.active_plantings(s, f.id)
+                if not p.harvested_on]
+    rows = insights.daily(s, f)
+    ready = insights.readiness(s, f, rows, crops, [p["crop"] for p in progress])
+    try:
+        fc = soil_forecast(field_id, s)
+        soil_next = {"advice": fc["advice"], "days": fc["days"]}
+    except HTTPException:
+        soil_next = None
+    risk = pests.evaluate(s, f)
+    top = [r for r in risk["risks"] if r["level"] in ("seen", "high", "medium")][:3]
+    return {
+        "field_id": field_id, "name": f.name, "readiness": ready, "crops": progress,
+        "next": insights.next_days(wx), "soil_next": soil_next,
+        "pests": [{"id": r["id"], "name": r["name"], "name_mk": r["name_mk"], "level": r["level"]} for r in top],
+        "harvests": len(s.exec(select(Harvest.id).where(Harvest.field_id == field_id)).all()),
+        "sources": [ready["source"], (wx or {}).get("source") or {"dataset": "Open-Meteo forecast", "dates": "not available"}]
+                   + [p["source"] for p in progress if p.get("source")][:1],
+    }
+
+
+@app.get("/fields/{field_id}/weather")
+def field_weather(field_id: int, s: Session = Depends(db)):
+    wx = insights.weather(s, get_field(s, field_id))
+    if not wx:
+        raise HTTPException(503, "forecast service not reachable")
+    return wx
+
+
+@app.get("/fields/{field_id}/metrics")
+def metrics(field_id: int, s: Session = Depends(db)):
+    """Field & soil metrics: daily NASA POWER + soil moisture rows and the water balance with FAO-56 Kc."""
+    f = get_field(s, field_id)
+    crops = insights.crops_by_id()
+    wx = insights.weather(s, f)
+    active = [insights.planting_progress(s, f, p, crops, wx) for p in insights.active_plantings(s, f.id)
+              if not p.harvested_on]
+    main_crop = active[0] if active else None
+    rows = insights.daily(s, f, main_crop["crop"] if main_crop else None, main_crop["progress"] if main_crop else None)
+    last30 = [r for r in rows if r["rain_mm"] is not None][-30:]
+    bal = None
+    if last30:
+        rain = sum(r["rain_mm"] for r in last30)
+        et0 = sum(r["et0"] or 0 for r in last30)
+        has_kc = main_crop is not None and main_crop.get("kc") is not None
+        eta = sum(r["eta"] or 0 for r in last30) if has_kc else None
+        bal = {"days": len(last30), "from": last30[0]["day"], "to": last30[-1]["day"], "rain_mm": round(rain),
+               "et0_mm": round(et0), "eta_mm": round(eta) if eta is not None else None,
+               "balance_mm": round(rain - (eta if eta is not None else et0)),
+               "kc": main_crop.get("kc") if main_crop else None, "crop": main_crop["crop"] if main_crop else None,
+               "kc_source": insights.KC_SOURCE}
+    return {"field_id": field_id, "daily": rows, "water_balance": bal, "crops": active,
+            "sources": [{"dataset": "NASA POWER daily at the field point (T2M, PRECTOTCORR, RH2M, WS2M, GWETTOP, "
+                                    "GWETROOT; ET0 = FAO-56 Hargreaves)",
+                         "dates": f"{rows[0]['day']} to {rows[-1]['day']}" if rows else "not fetched yet"},
+                        {"dataset": "ERA5-Land soil moisture 0-7 cm (Open-Meteo), backup for NASA SMAP",
+                         "dates": "same days"}]}
+
+
+@app.get("/fields/{field_id}/soil")
+def field_soil(field_id: int, s: Session = Depends(db)):
+    out = insights.soil(s, get_field(s, field_id))
+    if not out:
+        raise HTTPException(503, "SoilGrids not reachable or no soil data at this point")
+    return out
+
+
+@app.get("/fields/{field_id}/ndvi")
+def field_ndvi(field_id: int, s: Session = Depends(db)):
+    out = insights.ndvi(s, get_field(s, field_id))
+    if not out:
+        raise HTTPException(503, "MODIS NDVI not reachable")
+    return out
+
+
+@app.get("/fields/{field_id}/pests")
+def field_pests(field_id: int, s: Session = Depends(db)):
+    return pests.evaluate(s, get_field(s, field_id))
+
+
+@app.post("/fields/{field_id}/pest-reports", status_code=201)
+def add_pest_report(field_id: int, body: PestReportIn, x_owner_token: Optional[str] = Header(None),
+                    s: Session = Depends(db)):
+    owned(field_id, x_owner_token, s)
+    r = PestReport(field_id=field_id, **body.model_dump())
+    s.add(r)
+    s.commit()
+    return {"id": r.id}
+
+
+@app.delete("/fields/{field_id}/pest-reports/{report_id}")
+def delete_pest_report(field_id: int, report_id: int, x_owner_token: Optional[str] = Header(None),
+                       s: Session = Depends(db)):
+    owned(field_id, x_owner_token, s)
+    r = s.get(PestReport, report_id)
+    if r and r.field_id == field_id:
+        s.delete(r)
+        s.commit()
+    return {"ok": True}
+
+
+@app.get("/fields/{field_id}/plantings")
+def list_plantings(field_id: int, s: Session = Depends(db)):
+    f = get_field(s, field_id)
+    crops = insights.crops_by_id()
+    wx = insights.weather(s, f)
+    return {"plantings": [insights.planting_progress(s, f, p, crops, wx) for p in insights.active_plantings(s, f.id)]}
+
+
+@app.post("/fields/{field_id}/plantings", status_code=201)
+def add_planting(field_id: int, body: PlantingIn, x_owner_token: Optional[str] = Header(None),
+                 s: Session = Depends(db)):
+    owned(field_id, x_owner_token, s)
+    if body.crop not in insights.crops_by_id():
+        raise HTTPException(422, "unknown crop")
+    p = Planting(field_id=field_id, **body.model_dump())
+    s.add(p)
+    s.commit()
+    return {"id": p.id}
+
+
+@app.delete("/fields/{field_id}/plantings/{planting_id}")
+def delete_planting(field_id: int, planting_id: int, x_owner_token: Optional[str] = Header(None),
+                    s: Session = Depends(db)):
+    owned(field_id, x_owner_token, s)
+    p = s.get(Planting, planting_id)
+    if p and p.field_id == field_id:
+        s.delete(p)
+        s.commit()
+    return {"ok": True}
+
+
+@app.get("/fields/{field_id}/harvests")
+def list_harvests(field_id: int, s: Session = Depends(db)):
+    f = get_field(s, field_id)
+    rows = s.exec(select(Harvest).where(Harvest.field_id == field_id).order_by(Harvest.harvested_on)).all()
+    yields = nasa.read_data_file("yields.json") or {"locations": {}}
+    loc, _, _ = nasa.location_for(f.lat, f.lon, f.region)
+    official = {c: v for c, v in yields.get("locations", {}).get(loc["id"], {}).get("crops", {}).items() if v}
+    return {"harvests": [h.model_dump(mode="json") for h in rows],
+            "official_yield_kg_ha": official, "official_source": yields.get("source")}
+
+
+@app.post("/fields/{field_id}/harvests", status_code=201)
+def add_harvest(field_id: int, body: HarvestIn, x_owner_token: Optional[str] = Header(None),
+                s: Session = Depends(db)):
+    owned(field_id, x_owner_token, s)
+    if body.crop not in insights.crops_by_id():
+        raise HTTPException(422, "unknown crop")
+    h = Harvest(field_id=field_id, **body.model_dump(exclude={"planting_id"}))
+    s.add(h)
+    if body.planting_id:  # logging the harvest closes that planting's harvest alert
+        p = s.get(Planting, body.planting_id)
+        if p and p.field_id == field_id:
+            p.harvested_on = body.harvested_on
+            s.add(p)
+    s.commit()
+    return {"id": h.id}
+
+
+@app.delete("/fields/{field_id}/harvests/{harvest_id}")
+def delete_harvest(field_id: int, harvest_id: int, x_owner_token: Optional[str] = Header(None),
+                   s: Session = Depends(db)):
+    owned(field_id, x_owner_token, s)
+    h = s.get(Harvest, harvest_id)
+    if h and h.field_id == field_id:
+        s.delete(h)
+        s.commit()
+    return {"ok": True}
+
+
+@app.get("/fields/{field_id}/market")
+def field_market(field_id: int, s: Session = Depends(db)):
+    f = get_field(s, field_id)
+    return {"field_id": field_id, **market.view(f.lat, f.lon)}
 
 
 def data_file_or_empty(name: str, key: str):

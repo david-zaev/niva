@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { getRotations, paths, peek } from '../api.js'
-import RotationCard, { StripLegend } from '../components/RotationCard.jsx'
+import { ModeToggle, useMode } from '../components/Mode.jsx'
+import RotationCard, { SCORE_KEYS, StripLegend } from '../components/RotationCard.jsx'
 import Screen from '../components/Screen.jsx'
 import { load, useI18n } from '../i18n/index.jsx'
 
@@ -82,14 +83,56 @@ function WhatIf({ rain, temp, set, reset }) {
   )
 }
 
+// Advanced: every score side by side, and how much of each crop the region grows (MakStat)
+function Compare({ data }) {
+  const { t, lang } = useI18n()
+  const all = [data.current, ...data.suggestions]
+  const trend = data.regional_trend?.crops ?? {}
+  const crops = [...new Map(all.flatMap((r) => r.crops).map((c) => [c.crop, c])).values()]
+  return (
+    <div className="chart-grid">
+      <article className="card">
+        <div className="card-head"><h2>{t('rot.compareTitle')}</h2></div>
+        <div className="table-wrap">
+          <table className="data-table">
+            <thead><tr><th>{t('rot.rotation')}</th><th>{t('rot.total')}</th>{SCORE_KEYS.map((k) => <th key={k}>{t(`rot.score_${k}`)}</th>)}</tr></thead>
+            <tbody>{all.map((r) => (
+              <tr key={r.id} className={r.kind === 'current' ? 'is-current' : ''}>
+                <td><Link to={`/rotations/${r.id}`}>{r.name}</Link></td><td><strong>{r.total}</strong></td>
+                {SCORE_KEYS.map((k) => <td key={k}>{r.scores[k]}</td>)}
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+      </article>
+      <article className="card">
+        <div className="card-head"><h2>{t('rot.trendTitle')}</h2></div>
+        <p className="chart-help">{t('rot.trendHelp')}</p>
+        <ul className="trend-list">{crops.map((c) => {
+          const tr = trend[c.crop]
+          return (
+            <li key={c.crop}>
+              <span>{lang === 'mk' ? c.name_mk : c.name}</span>
+              {tr ? <span className={`trend trend-${tr.direction}`}>{tr.direction === 'up' ? '▲' : tr.direction === 'down' ? '▼' : '■'} {tr.production_change_pct > 0 ? '+' : ''}{tr.production_change_pct}% <span className="muted small">({tr.before_years} → {tr.last_years})</span></span>
+                : <span className="muted small">{t('market.noData')}</span>}
+            </li>
+          )
+        })}</ul>
+        <p className="source">MakStat · {t('market.soldMissing')}</p>
+      </article>
+    </div>
+  )
+}
+
 export default function Rotations() {
   const { t } = useI18n()
   const { rain, temp, set, reset, query } = useWhatIf()
   const { data, error, loading } = useRotations(rain, temp)
+  const [mode, setMode] = useMode('rotations')
 
   return (
-    <Screen section="rotations">
-      <WhatIf rain={rain} temp={temp} set={set} reset={reset} />
+    <Screen section="rotations" actions={<ModeToggle mode={mode} setMode={setMode} />}>
+      {mode === 'advanced' && <WhatIf rain={rain} temp={temp} set={set} reset={reset} />}
       {error && <p className="card">{t('server.down')}</p>}
       {!data && !error && <p className="card muted">{t('field.loading')}</p>}
       {data && (
@@ -99,6 +142,7 @@ export default function Rotations() {
           <div className={`rot-grid ${loading ? 'is-loading' : ''}`}>
             {[data.current, ...data.suggestions].map((r) => <RotationCard key={r.id} r={r} query={query} />)}
           </div>
+          {mode === 'advanced' && <Compare data={data} />}
           <p className="source">{data.sources.map((s) => `${s.dataset} (${s.dates})`).join(' · ')}</p>
         </>
       )}

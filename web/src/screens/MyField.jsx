@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { DEMO_FIELD, getField, getForecast, getLive, ownerToken, paths, peek } from '../api.js'
+import { DEMO_FIELD, forget, getField, getForecast, getLive, getSummary, ownerToken, paths, peek } from '../api.js'
+import CropTracker from '../components/CropTracker.jsx'
+import FieldMetrics from '../components/FieldMetrics.jsx'
 import ForecastChart from '../components/ForecastChart.jsx'
+import { ModeToggle, useMode } from '../components/Mode.jsx'
+import SummaryBanner from '../components/SummaryBanner.jsx'
+import { useData } from '../components/util.js'
 import Screen from '../components/Screen.jsx'
 import SensorTile from '../components/SensorTile.jsx'
 import TermHelp from '../components/TermHelp.jsx'
@@ -103,6 +108,11 @@ export default function MyField() {
   const soil = r?.soil_pct ?? null
   const level = soil != null ? soilLevel(soil) : null
   const isDemo = fieldId === DEMO_FIELD
+  const owner = ownerToken(fieldId) != null
+  const [mode, setMode] = useMode('field')
+  const summary = useData(() => getSummary(fieldId), paths.summary(fieldId), [fieldId])
+  const [harvestFor, setHarvestFor] = useState(null)
+  const refresh = () => { forget(fieldId); summary.reload() }
 
   const actions = (
     <>
@@ -113,12 +123,16 @@ export default function MyField() {
         {!error && live && !r && t('field.noSensor')}
         {!error && r && (isLive ? t('field.live') : `${t('field.lastReading')} ${ago(age, t)}`)}
       </span>
-      {isDemo && !ownerToken() && <Link className="btn btn-volt" to="/setup">{t('more.newField')}</Link>}
+      {isDemo && !owner && <Link className="btn btn-volt" to="/setup">{t('more.newField')}</Link>}
+      <ModeToggle mode={mode} setMode={setMode} />
     </>
   )
 
   return (
     <Screen section="field" eyebrow={field ? (isDemo ? t('field.eyebrow') : field.name) : undefined} actions={actions}>
+      {summary.data
+        ? <SummaryBanner s={summary.data} owner={owner} onHarvest={(c) => setHarvestFor({ ...c })} />
+        : <p className="card muted">{summary.error ? t('server.down') : t('summary.loading')}</p>}
       <div className="stats">
         <SensorTile label={t('field.soilMoisture')} value={soil} unit="%" level={level} bar
           levelText={level ? t(`field.soil_${level}`) : null} />
@@ -127,6 +141,8 @@ export default function MyField() {
         <SensorTile label={t('field.humidity')} value={r?.humidity_pct ?? null} unit="%" />
       </div>
       <ForecastCard fieldId={fieldId} />
+      <CropTracker fieldId={fieldId} owner={owner} harvestFor={harvestFor} onChange={refresh} />
+      {mode === 'advanced' && <FieldMetrics fieldId={fieldId} />}
     </Screen>
   )
 }

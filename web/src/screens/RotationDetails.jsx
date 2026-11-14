@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { fieldId, ownerToken, patchField } from '../api.js'
 import { ConfidencePill, MonthStrip, ScoreBars, StripLegend } from '../components/RotationCard.jsx'
 import SellCard from '../components/SellCard.jsx'
 import TermHelp from '../components/TermHelp.jsx'
@@ -13,6 +15,11 @@ export default function RotationDetails() {
   const { rain, temp, query } = useWhatIf()
   const { data, error } = useRotations(rain, temp)
   const r = data && [data.current, ...data.suggestions].find((x) => x.id === id)
+  const [followed, setFollowed] = useState(null)
+  const owner = ownerToken(fieldId()) != null
+  // "I follow this rotation": it becomes the field's current rotation (scores, pests and the banner use it)
+  const follow = () => patchField(fieldId(), { current_rotation: r.crops.map((c) => c.crop) })
+    .then(() => setFollowed('ok')).catch(() => setFollowed('bad'))
 
   return (
     <section className="screen">
@@ -29,6 +36,10 @@ export default function RotationDetails() {
               {(rain !== 0 || temp !== 0) && ` · ${t('rot.whatIf')}: ${rain > 0 ? '+' : ''}${rain}% ${t('rot.rain').toLowerCase()}, +${temp} °C`}
             </p>
             <span><ConfidencePill level={r.confidence} /> <TermHelp term="confidence" /></span>
+            {r.kind !== 'current' && owner && <div className="row-btns">
+              <button className="btn btn-volt" onClick={follow} disabled={followed === 'ok'}>{followed === 'ok' ? t('rot.following') : t('rot.follow')}</button>
+            </div>}
+            {followed === 'bad' && <p className="msg msg-bad">{t('crops.saveFailed')}</p>}
           </header>
 
           <div className="details-grid">
