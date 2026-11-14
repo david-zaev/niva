@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getLive } from '../api.js'
+import { getForecast, getLive } from '../api.js'
+import ForecastChart from '../components/ForecastChart.jsx'
 import Screen, { ComingSoon } from '../components/Screen.jsx'
 import SensorTile from '../components/SensorTile.jsx'
 import { load, useI18n } from '../i18n/index.jsx'
@@ -19,6 +20,59 @@ function ago(seconds, t) {
   if (seconds < 3600) return t('field.agoMinutes').replace('{n}', Math.round(seconds / 60))
   if (seconds < 86400) return t('field.agoHours').replace('{n}', Math.round(seconds / 3600))
   return t('field.agoDays').replace('{n}', Math.round(seconds / 86400))
+}
+
+function ForecastCard({ fieldId }) {
+  const { t } = useI18n()
+  const [fc, setFc] = useState(null)
+  const [failed, setFailed] = useState(false)
+  useEffect(() => {
+    let alive = true
+    const tick = () => getForecast(fieldId).then((d) => alive && (setFc(d), setFailed(false))).catch(() => alive && setFailed(true))
+    tick()
+    const id = setInterval(tick, 60000) // follows the sensor: the field correction moves with each new reading
+    return () => {
+      alive = false
+      clearInterval(id)
+    }
+  }, [fieldId])
+  if (failed && !fc) return <p className="card muted">{t('fc.notReady')}</p>
+  if (!fc) return null
+  const input = (x) => {
+    const tr = t(`fcInputs.${x}`)
+    return tr.startsWith('fcInputs.') ? x : tr
+  }
+  const fix = fc.field_correction
+  return (
+    <article className="card chart-card forecast">
+      <div className="fc-head">
+        <h2>{t('fc.title')}</h2>
+        <span className={`pill advice advice-${fc.advice}`}>{t(`fc.advice_${fc.advice}`)}</span>
+      </div>
+      <p className="chart-help">{t(`fc.help_${fc.advice}`)}</p>
+      <div className="fc-legend" aria-hidden="true">
+        <span><i className="sw sw-line" />{t('fc.forecast')}</span>
+        <span><i className="sw sw-band" />{t('fc.band')}</span>
+        <span><i className="sw sw-dry" />{t('fc.dryLine')}</span>
+      </div>
+      <ForecastChart fc={fc} />
+      <dl className="fc-facts">
+        <div>
+          <dt>{t('fc.error')}</dt>
+          <dd>±{fc.error.mae_pct_points.toFixed(1)} {t('fc.points')} <span className="muted">· {t('fc.baseline')} ±{fc.error.no_change_mae.toFixed(1)}</span></dd>
+        </div>
+        <div>
+          <dt>{t('fc.drivers')}</dt>
+          <dd>{fc.top_inputs.map(input).join(' · ')}</dd>
+        </div>
+        <div>
+          <dt>{t('fc.fieldFix')}</dt>
+          <dd>{fix.applied ? t('fc.fixOn').replace('{n}', `${fix.offset > 0 ? '+' : ''}${fix.offset}`) : t('fc.fixOff')}</dd>
+        </div>
+      </dl>
+      <p className="source">{fc.sources.map((x) => `${x.dataset} (${x.dates})`).join(' · ')} · {t('fc.errorNote')}</p>
+    </article>
+  )
 }
 
 export default function MyField() {
@@ -83,6 +137,7 @@ export default function MyField() {
         </div>
       )}
 
+      <ForecastCard fieldId={fieldId} />
       <ComingSoon>{t('field.nasaSoon')}</ComingSoon>
     </Screen>
   )

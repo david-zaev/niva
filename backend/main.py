@@ -10,18 +10,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field as PField
 from sqlmodel import Session, select
 
+import forecast
+import jobs
 import nasa
 import scoring
-from models import Device, FieldRow, Reading, engine, hash_key, init_db, utcnow
+from models import Device, FieldRow, Forecast, Reading, engine, hash_key, init_db, utcnow
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
+    sched = jobs.start() if os.getenv("NIVA_JOBS", "1") == "1" else None
     yield
+    if sched:
+        sched.shutdown(wait=False)
 
 
-app = FastAPI(title="Niva API", version="0.2.0", lifespan=lifespan)
+app = FastAPI(title="Niva API", version="0.3.0", lifespan=lifespan)
 
 # Comma-separated list in .env, e.g. "https://<org>.github.io,http://localhost:5173"
 origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",") if o.strip()]
@@ -246,6 +251,59 @@ def rotations(field_id: int,
             {"dataset": "NASA POWER daily", "dates": ind["sources"][0]["dates"]},
             {"dataset": "MakStat crop yields by municipality", "dates": "last 3 years with data, to 2025"},
             {"dataset": "ZPIS prices (Ministry of Agriculture)", "dates": f"retrieved {prices.get('retrieved')}"},
+        ],
+    }
+
+
+@app.get("/fields/{field_id}/forecast")
+def soil_forecast(field_id: int, s: Session = Depends(db)):
+    f = get_field(s, field_id)
+    made = s.exec(select(Forecast.made_at).where(Forecast.field_id == field_id)
+                  .order_by(Forecast.made_at.desc()).limit(1)).first()
+    rep = forecast.report()
+    if made is None or rep is None:
+        raise HTTPException(503, "forecast not made yet")
+    rows = s.exec(select(Forecast).where(Forecast.field_id == field_id, Forecast.made_at == made)
+                  .order_by(Forecast.day)).all()
+    loc, km, _ = nasa.location_for(f.lat, f.lon, f.region)
+    lr = rep["locations"][loc["id"]]
+    anchor = rows[0].day
+    today = datetime.now(timezone.utc).date()
+    by_day = {r.day: r for r in rows}
+    days = [by_day[d] for d in (today + timedelta(days=i) for i in range(8)) if d in by_day]
+    if not days:
+        raise HTTPException(503, "forecast is out of date")
+
+    # Field correction: SMAP/ERA5 see ~9 km, the sensor sees one spot. A fresh sensor reading shifts the whole
+    # curve so today's value matches it; the shape (drying, wetting) still comes from the model.
+    r = s.exec(select(Reading).where(Reading.field_id == field_id, Reading.soil_pct != None)  # noqa: E711
+               .order_by(Reading.time.desc()).limit(1)).first()
+    offset, reading = 0.0, None
+    if r and utcnow() - (r.time if r.time.tzinfo else r.time.replace(tzinfo=timezone.utc)) < timedelta(hours=6):
+        offset = max(-25.0, min(25.0, r.soil_pct - days[0].soil_moisture))
+        reading = {"time": iso(r.time), "soil_pct": r.soil_pct}
+
+    # Irrigation advice compares the uncorrected model with this place's own dry/wet days (same units)
+    low7 = min(d.soil_moisture for d in days)
+    advice = "dry" if low7 < lr["dry_threshold_pct"] else "wet" if days[-1].soil_moisture > lr["wet_threshold_pct"] else "ok"
+    h_end = (days[-1].day - anchor).days
+    mae, base = lr["test"]["mae_pct_points"][h_end - 1], lr["test"]["mae_no_change_baseline"][h_end - 1]
+    return {
+        "field_id": field_id, "made_at": made.isoformat(), "data_until": anchor.isoformat(),
+        "unit": "volumetric % (top 7 cm)", "location": loc["id"], "distance_km": km,
+        "days": [{"day": d.day.isoformat(), "soil_moisture": round(d.soil_moisture + offset, 1),
+                  "low": round(max(0.0, d.low + offset), 1), "high": round(d.high + offset, 1)} for d in days],
+        "field_correction": {"applied": reading is not None, "offset": round(offset, 1), "reading": reading},
+        "advice": advice, "dry_threshold": lr["dry_threshold_pct"] + offset,
+        "error": {"mae_pct_points": mae, "no_change_mae": base, "days_ahead": h_end,
+                  "test_years": rep["test"]},
+        "top_inputs": [i["input"] for i in lr["importance"][:3]],
+        "confidence": "medium" if km < 60 else "low",
+        "sources": [
+            {"dataset": "NASA POWER daily", "dates": f"to {anchor.isoformat()}"},
+            {"dataset": "ERA5-Land soil moisture 0-7 cm (Open-Meteo), backup for NASA SMAP",
+             "dates": f"to {anchor.isoformat()}"},
+            {"dataset": "Model trained on 2015-2022, tested on 2023-2024", "dates": f"trained {rep['trained']}"},
         ],
     }
 

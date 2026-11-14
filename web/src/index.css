@@ -243,3 +243,21 @@ button { font: inherit; color: inherit; }
   .details-grid > .card { position: sticky; top: 20px; }
 }
 @media (min-width: 1700px) { .rot-grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* ---------- Soil forecast ---------- */
+.forecast { margin-top: 12px; }
+.fc-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.fc-head h2 { margin: 0; }
+.advice-dry { background: var(--wait); border-color: var(--wait); color: #000; }
+.advice-ok { background: var(--live); border-color: var(--live); color: #fff; }
+.advice-wet { background: var(--viz-rain); border-color: var(--viz-rain); color: #fff; }
+.fc-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: var(--slate); margin-bottom: 8px; }
+.fc-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { display: inline-block; width: 16px; }
+.sw-line { height: 2px; background: var(--viz-rain); }
+.sw-band { height: 10px; border-radius: 2px; background: color-mix(in srgb, var(--viz-rain) 20%, transparent); }
+.sw-dry { height: 0; border-top: 2px dashed var(--wait); }
+.fc-facts { display: grid; gap: 10px; margin: 14px 0 0; }
+.fc-facts dt { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--smoke); }
+.fc-facts dd { margin: 2px 0 0; font-size: 0.92rem; }
+@media (min-width: 900px) { .fc-facts { grid-template-columns: repeat(3, 1fr); } }

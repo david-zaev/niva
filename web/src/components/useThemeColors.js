@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 // Reads the CSS colour tokens so charts (canvas) follow the light/dark theme.
-const names = ['ink', 'slate', 'smoke', 'line', 'card', 'viz-rain', 'viz-et0', 'viz-heat', 'viz-frost', 'font-body', 'font-mono']
+const names = ['ink', 'slate', 'smoke', 'line', 'card', 'viz-rain', 'viz-et0', 'viz-heat', 'viz-frost', 'wait', 'font-body', 'font-mono']
 
 function read() {
   const cs = getComputedStyle(document.documentElement)

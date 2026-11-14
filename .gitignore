@@ -28,3 +28,6 @@ web/dev-dist/
 Thumbs.db
 .vscode/
 .idea/
+
+# trained models: rebuild with data/scripts/train_model.py (7 s), copy to the server
+data/model/*.joblib

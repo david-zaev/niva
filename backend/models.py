@@ -71,6 +71,7 @@ class ClimateDaily(SQLModel, table=True):
     solar: Optional[float] = None
     wind: Optional[float] = None
     et0: Optional[float] = None
+    sm: Optional[float] = None  # top-soil moisture 0-7 cm, m3/m3 (ERA5-Land until SMAP is added)
 
 
 class Forecast(SQLModel, table=True):
@@ -89,6 +90,10 @@ DEMO_FIELD = dict(name="Ovče Pole (demo plant)", lat=41.865, lon=21.94, region=
 
 def init_db() -> None:
     SQLModel.metadata.create_all(engine)
+    with engine.begin() as c:  # create_all never adds columns to a table that already exists
+        cols = [r[1] for r in c.exec_driver_sql("PRAGMA table_info(climate_daily)")]
+        if "sm" not in cols:
+            c.exec_driver_sql("ALTER TABLE climate_daily ADD COLUMN sm FLOAT")
     with Session(engine) as s:
         if s.exec(select(FieldRow)).first() is None:
             s.add(FieldRow(**DEMO_FIELD))

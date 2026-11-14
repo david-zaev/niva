@@ -18,7 +18,7 @@ function doyLabel(doy, lang) {
 }
 
 // Shared look: recessive grid and axes, text in text tokens, tooltips on hover
-function baseOptions(c, { legend = false, yTitle, yTicks } = {}) {
+export function baseOptions(c, { legend = false, yTitle, yTicks } = {}) {
   return {
     responsive: true,
     maintainAspectRatio: false,

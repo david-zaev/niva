@@ -14,3 +14,4 @@ export const getField = (fieldId) => get(`/fields/${fieldId}`)
 export const getClimate = (fieldId) => get(`/fields/${fieldId}/climate`)
 export const getRotations = (fieldId, rain = 0, temp = 0) =>
   get(`/fields/${fieldId}/rotations?rain=${rain}&temp=${temp}`)
+export const getForecast = (fieldId) => get(`/fields/${fieldId}/forecast`)

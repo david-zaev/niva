@@ -115,5 +115,31 @@
     "h_benefits": "Benefits",
     "h_gaps": "Gaps",
     "h_risks": "Risks"
+  },
+  "fc": {
+    "title": "Soil moisture, next 7 days",
+    "today": "Today",
+    "forecast": "Forecast",
+    "band": "Likely range",
+    "bandHigh": "Likely high",
+    "bandLow": "Likely low",
+    "dryLine": "Dry for this area",
+    "unit": "% water in top 7 cm",
+    "range": "Likely range",
+    "advice_dry": "Water this week",
+    "advice_ok": "No watering needed",
+    "advice_wet": "Soil is wet",
+    "help_dry": "The soil is expected to drop below the dry level for this area this week. If a crop is growing, plan to irrigate.",
+    "help_ok": "The soil should stay above the dry level for this area all week.",
+    "help_wet": "The soil is wetter than on most growing-season days here. Wait with irrigation and with heavy machinery.",
+    "error": "Average error",
+    "points": "points at 7 days",
+    "baseline": "guessing \"no change\":",
+    "drivers": "What the model relies on most",
+    "fieldFix": "Your sensor",
+    "fixOn": "The curve is shifted {n} points to match your sensor today.",
+    "fixOff": "No fresh sensor reading: the curve is for the ~9 km area around the field.",
+    "errorNote": "Error measured on 2023–2024, years the model never saw.",
+    "notReady": "The soil forecast is not ready yet: it is made every morning at 06:00."
   }
 }
