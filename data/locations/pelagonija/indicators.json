@@ -291,6 +291,20 @@
    }
   ]
  },
+ "what_if_warming": {
+  "0": {
+   "heat_days": 6.4
+  },
+  "1": {
+   "heat_days": 11.2
+  },
+  "2": {
+   "heat_days": 15.6
+  },
+  "3": {
+   "heat_days": 21.8
+  }
+ },
  "yearly": [
   {
    "year": 1991,

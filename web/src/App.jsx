@@ -4,6 +4,7 @@ import { load, save, useI18n } from './i18n/index.jsx'
 import MyField from './screens/MyField.jsx'
 import Climate from './screens/Climate.jsx'
 import Rotations from './screens/Rotations.jsx'
+import RotationDetails from './screens/RotationDetails.jsx'
 import More from './screens/More.jsx'
 
 const base = import.meta.env.BASE_URL
@@ -73,6 +74,7 @@ export default function App() {
           <Route path="/" element={<MyField />} />
           <Route path="/climate" element={<Climate />} />
           <Route path="/rotations" element={<Rotations />} />
+          <Route path="/rotations/:id" element={<RotationDetails />} />
           <Route path="/more" element={<More theme={theme} setTheme={setTheme} />} />
           <Route path="*" element={<MyField />} />
         </Routes>

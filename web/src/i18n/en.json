@@ -67,7 +67,6 @@
   },
   "rotations": {
     "title": "Rotations",
-    "empty": "Coming soon: your current rotation and 3 alternatives, each explained.",
     "eyebrow": "Current + 3 options",
     "mark": "Rotations",
     "sub": "Your rotation next to three alternatives, each with why, evidence, benefits, gaps and risks."
@@ -84,5 +83,37 @@
     "mark": "More",
     "sub": "Language, look, sensors and the data behind Niva."
   },
-  "badge": "NASA Space Apps 2026"
+  "badge": "NASA Space Apps 2026",
+  "rot": {
+    "whatIf": "What if",
+    "rain": "Rain",
+    "temp": "Warmer by",
+    "now": "Now",
+    "suggested": "Option",
+    "total": "Total score",
+    "yearShort": "Y",
+    "details": "Details",
+    "back": "All rotations",
+    "notFound": "This rotation is not in the list for this scenario.",
+    "defaultCurrent": "You have not entered your rotation yet, so \"Now\" shows the most common one in your region.",
+    "stripLabel": "Months with a crop, bare soil, and bare soil in stormy months, for each year of the rotation",
+    "state_crop": "Crop",
+    "state_bare": "Bare",
+    "state_risk": "Bare in storm month",
+    "score_water": "Water",
+    "score_soil": "Soil",
+    "score_erosion": "Erosion",
+    "score_pest": "Pests",
+    "score_climate": "Climate",
+    "score_income": "Income",
+    "confidence": "Confidence",
+    "conf_high": "high",
+    "conf_medium": "medium",
+    "conf_low": "low",
+    "h_why": "Why",
+    "h_evidence": "Evidence",
+    "h_benefits": "Benefits",
+    "h_gaps": "Gaps",
+    "h_risks": "Risks"
+  }
 }

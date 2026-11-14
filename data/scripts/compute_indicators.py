@@ -120,6 +120,13 @@ def main() -> None:
                 "frost_free_days_change": r1(r["frost_free_days"] - b["frost_free_days"]),
             },
             "monthly": {"baseline": monthly(df, *BASELINE), "recent": monthly(df, *recent)},
+            # What-if "+N °C": recent summers with every day N degrees warmer (simple shift, no new weather)
+            "what_if_warming": {
+                str(n): {
+                    "heat_days": r1(df[(df.year >= recent[0]) & (df.year <= recent[1]) & df.month.isin([6, 7, 8])]
+                                    .assign(hot=lambda x: x.t_max + n > HEAT_C).groupby("year").hot.sum().mean()),
+                } for n in (0, 1, 2, 3)
+            },
             "yearly": [{k: (None if pd.isna(v) else (int(v) if k != "t_mean" else v)) for k, v in row.items()}
                        for row in py[["year", "heat_days", "heavy_rain_days", "rain_mm", "t_mean",
                                       "last_spring_frost_doy", "first_autumn_frost_doy"]].to_dict("records")],

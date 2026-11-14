@@ -1,0 +1,140 @@
+{
+ "source": "MakStat (State Statistical Office of North Macedonia), table 475_RastPr_Op_GlPosevNtes13",
+ "url": "https://makstat.stat.gov.mk/PXWeb/api/v1/en/MakStat/Zemjodelstvo/RastitelnoProizvodstvo/475_RastPr_Op_GlPosevNtes13_ml.px",
+ "unit": "kg/ha",
+ "retrieved": "2026-11-14",
+ "locations": {
+  "strumica": {
+   "municipality": "Strumitsa",
+   "crops": {
+    "wheat": {
+     "yield_kg_ha": 3000,
+     "years": "2023-2025"
+    },
+    "barley": {
+     "yield_kg_ha": 2500,
+     "years": "2023-2025"
+    },
+    "maize": {
+     "yield_kg_ha": 5000,
+     "years": "2023-2025"
+    },
+    "sunflower": null,
+    "tobacco": {
+     "yield_kg_ha": 1500,
+     "years": "2023-2025"
+    },
+    "bean": {
+     "yield_kg_ha": 1500,
+     "years": "2023-2025"
+    },
+    "tomato": {
+     "yield_kg_ha": 49920,
+     "years": "2023-2025"
+    },
+    "pepper": {
+     "yield_kg_ha": 30000,
+     "years": "2023-2025"
+    },
+    "alfalfa": {
+     "yield_kg_ha": 7500,
+     "years": "2023-2025"
+    },
+    "vetch_oat": {
+     "yield_kg_ha": 5000,
+     "years": "2023-2025"
+    }
+   }
+  },
+  "ovche-pole": {
+   "municipality": "Sveti Nikole",
+   "crops": {
+    "wheat": {
+     "yield_kg_ha": 2888,
+     "years": "2023-2025"
+    },
+    "barley": {
+     "yield_kg_ha": 3191,
+     "years": "2023-2025"
+    },
+    "maize": {
+     "yield_kg_ha": 1384,
+     "years": "2023-2025"
+    },
+    "sunflower": {
+     "yield_kg_ha": 601,
+     "years": "2023-2025"
+    },
+    "tobacco": {
+     "yield_kg_ha": 1443,
+     "years": "2023-2025"
+    },
+    "bean": {
+     "yield_kg_ha": 700,
+     "years": "2023-2025"
+    },
+    "tomato": {
+     "yield_kg_ha": 1819,
+     "years": "2023-2025"
+    },
+    "pepper": {
+     "yield_kg_ha": 1582,
+     "years": "2023-2025"
+    },
+    "alfalfa": {
+     "yield_kg_ha": 1808,
+     "years": "2023-2025"
+    },
+    "vetch_oat": {
+     "yield_kg_ha": 900,
+     "years": "2023-2025"
+    }
+   }
+  },
+  "pelagonija": {
+   "municipality": "Bitola",
+   "crops": {
+    "wheat": {
+     "yield_kg_ha": 4174,
+     "years": "2023-2025"
+    },
+    "barley": {
+     "yield_kg_ha": 3269,
+     "years": "2023-2025"
+    },
+    "maize": {
+     "yield_kg_ha": 4494,
+     "years": "2023-2025"
+    },
+    "sunflower": {
+     "yield_kg_ha": 1015,
+     "years": "2023-2025"
+    },
+    "tobacco": {
+     "yield_kg_ha": 1659,
+     "years": "2023-2025"
+    },
+    "bean": {
+     "yield_kg_ha": 999,
+     "years": "2023-2025"
+    },
+    "tomato": {
+     "yield_kg_ha": 11926,
+     "years": "2023-2025"
+    },
+    "pepper": {
+     "yield_kg_ha": 31539,
+     "years": "2023-2025"
+    },
+    "alfalfa": {
+     "yield_kg_ha": 3885,
+     "years": "2023-2025"
+    },
+    "vetch_oat": {
+     "yield_kg_ha": 2397,
+     "years": "2023-2025"
+    }
+   }
+  }
+ }
+}

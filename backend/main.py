@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field as PField
 from sqlmodel import Session, select
 
 import nasa
+import scoring
 from models import Device, FieldRow, Reading, engine, hash_key, init_db, utcnow
 
 
@@ -209,6 +210,43 @@ def climate(field_id: int, s: Session = Depends(db)):
         # Outside the 3 demo regions the nearest one stands in: say so, and lower confidence
         "confidence": "high" if exact and km < 25 else "medium" if km < 60 else "low",
         **ind,
+    }
+
+
+@app.get("/fields/{field_id}/rotations")
+def rotations(field_id: int,
+              rain: float = Query(0, ge=-50, le=50, description="What-if: rain change in %"),
+              temp: float = Query(0, ge=0, le=3, description="What-if: warming in °C"),
+              s: Session = Depends(db)):
+    f = get_field(s, field_id)
+    loc, km, _ = nasa.location_for(f.lat, f.lon, f.region)
+    ind = nasa.indicators(loc["id"])
+    crops_f, lib_f = nasa.read_data_file("crops.json"), nasa.read_data_file("rotations.json")
+    if ind is None or crops_f is None or lib_f is None:
+        raise HTTPException(503, "crop table, rotation library or indicators missing")
+    crops = {c["id"]: c for c in crops_f["crops"]}
+    library = lib_f["rotations"]
+    yields = nasa.read_data_file("yields.json") or {"locations": {}}
+    prices = nasa.read_data_file("prices.json") or {"prices": []}
+
+    valid = [c for c in (f.current_rotation or []) if c in crops]
+    if valid:
+        current = {"id": "current", "name": " → ".join(crops[c]["name"] for c in valid),
+                   "plantings": [{"crop": c, "year": i + 1} for i, c in enumerate(valid)]}
+    else:  # no rotation entered yet: use what is common in the region
+        current = next(r for r in library if r.get("kind") == "common" and loc["id"] in r.get("regions", []))
+    out = scoring.rank(library, crops, {**ind, "_distance_km": km}, yields, prices, current,
+                       priorities=f.priorities, what_if={"rain": rain, "temp": temp})
+    return {
+        "field_id": field_id, "location": ind["location"], "distance_km": km,
+        "what_if": {"rain_pct": rain, "temp_c": temp},
+        "current_is_default": not valid,
+        **out,
+        "sources": [
+            {"dataset": "NASA POWER daily", "dates": ind["sources"][0]["dates"]},
+            {"dataset": "MakStat crop yields by municipality", "dates": "last 3 years with data, to 2025"},
+            {"dataset": "ZPIS prices (Ministry of Agriculture)", "dates": f"retrieved {prices.get('retrieved')}"},
+        ],
     }
 
 
