@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field as PField
 from sqlmodel import Session, select
 
+import nasa
 from models import Device, FieldRow, Reading, engine, hash_key, init_db, utcnow
 
 
@@ -168,17 +169,19 @@ def pair_device(body: PairIn, x_owner_token: Optional[str] = Header(None), s: Se
 
 @app.get("/fields/{field_id}/live")
 def live(field_id: int, s: Session = Depends(db)):
-    get_field(s, field_id)
+    f = get_field(s, field_id)
     r = s.exec(select(Reading).where(Reading.field_id == field_id)
                .order_by(Reading.time.desc()).limit(1)).first()
     devices = s.exec(select(Device).where(Device.field_id == field_id)).all()
+    loc, km, _ = nasa.location_for(f.lat, f.lon, f.region)
     return {
         "field_id": field_id,
         "reading": reading_out(r) if r else None,
         "devices": [{"id": d.id, "last_seen": iso(d.last_seen)} for d in devices],
         "server_time": datetime.now(timezone.utc).isoformat(),
-        # NASA values for the same place (SMAP, POWER) come with M3
-        "nasa": None,
+        # NASA values for the same place; SMAP joins when the Data role adds it
+        "nasa": {"location": loc["id"], "distance_km": km,
+                 "power": nasa.latest_power(loc["id"]), "smap": None},
     }
 
 
@@ -191,3 +194,47 @@ def history(field_id: int, days: float = Query(7, gt=0, le=90), s: Session = Dep
     # Keep the answer small for phones: at most ~500 points, evenly thinned
     step = max(1, len(rows) // 500)
     return {"field_id": field_id, "days": days, "readings": [reading_out(r) for r in rows[::step]]}
+
+
+@app.get("/fields/{field_id}/climate")
+def climate(field_id: int, s: Session = Depends(db)):
+    f = get_field(s, field_id)
+    loc, km, exact = nasa.location_for(f.lat, f.lon, f.region)
+    ind = nasa.indicators(loc["id"])
+    if ind is None:
+        raise HTTPException(503, "climate indicators not computed yet")
+    return {
+        "field_id": field_id,
+        "distance_km": km,
+        # Outside the 3 demo regions the nearest one stands in: say so, and lower confidence
+        "confidence": "high" if exact and km < 25 else "medium" if km < 60 else "low",
+        **ind,
+    }
+
+
+def data_file_or_empty(name: str, key: str):
+    data = nasa.read_data_file(name)
+    if data is None:
+        return {key: [], "status": "not filled yet", "file": f"data/{name}"}
+    return data
+
+
+@app.get("/crops")
+def crops():
+    return data_file_or_empty("crops.json", "crops")
+
+
+@app.get("/prices")
+def prices():
+    return data_file_or_empty("prices.json", "prices")
+
+
+@app.get("/buyers")
+def buyers(crop: Optional[str] = None, region: Optional[str] = None):
+    data = data_file_or_empty("buyers.json", "buyers")
+    items = data.get("buyers", [])
+    if crop:
+        items = [b for b in items if crop in b.get("crops", [])]
+    if region:
+        items = [b for b in items if b.get("region") == region]
+    return {**data, "buyers": items}

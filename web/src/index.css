@@ -150,3 +150,29 @@ button { font: inherit; color: inherit; }
   .tile-big { grid-column: 1 / -1; }
 }
 .tiles-status { margin: 0 0 12px; }
+
+/* ---------- Climate ---------- */
+:root {
+  --viz-rain: #2a78d6; --viz-et0: #eb6834; --viz-heat: #eb6834; --viz-frost: #1baf7a;
+}
+[data-theme='dark'] { --viz-rain: #3987e5; --viz-et0: #d95926; --viz-heat: #d95926; --viz-frost: #199e70; }
+
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; }
+.stats .card { margin: 0; }
+.stat { display: flex; flex-direction: column; gap: 4px; }
+.stat-value { font-family: var(--font-display); font-weight: 700; font-size: 2rem; letter-spacing: -0.04em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.stat-note { font-size: 0.8rem; color: var(--slate); }
+
+.chart-grid { display: grid; gap: 12px; }
+.chart-grid .card { margin: 0; }
+.chart-card h2 { font-family: var(--font-display); font-size: 1.2rem; letter-spacing: -0.02em; margin: 0 0 4px; }
+.chart-help { margin: 0 0 12px; font-size: 0.9rem; color: var(--slate); }
+.chart { position: relative; height: 240px; }
+.source { margin: 10px 0 0; font-family: var(--font-mono); font-size: 0.68rem; color: var(--smoke); letter-spacing: 0.02em; }
+.chart-card .coming { margin: 8px 0 0; }
+
+@media (min-width: 900px) {
+  .stats { grid-template-columns: repeat(4, 1fr); }
+  .chart-grid { grid-template-columns: repeat(2, 1fr); }
+  .chart { height: 260px; }
+}

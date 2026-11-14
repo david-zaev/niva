@@ -290,6 +290,7 @@ Build the thinnest working path first, then thicken it. Each milestone ends with
 - [ ] **M2 — Live path (hour 4–8):** ESP32 → `POST /readings` → My field screen shows the number on a phone; app installs on Android and PC
   - Done: all tables, `POST /readings`, fields, pairing, `/live`, `/history` deployed; firmware with WiFiManager + HTTPS + offline queue; My field screen tested with a simulated sensor. Open: real board posting, install test on Android and PC
 - [ ] **M3 — NASA path (hour 4–10):** POWER, SMAP, NDVI saved for 3 locations; `indicators.json` done; Climate tab shows its charts
+  - Done: POWER 1991-01-01 to 2026-11-11 for all 3 locations (`data/scripts/download_power.py`), `indicators.json` (`compute_indicators.py`), `/fields/{id}/climate`, POWER value in `/live`, Climate tab with water balance, heat days and frost charts. Open: SMAP and SRTM (Earthdata login), MODIS NDVI greenness chart. Scripts instead of notebooks: same outputs, rerunnable
 - [ ] **M4 — Rotations (hour 8–12):** `crops.json`, `rotations.json` and `prices.json` filled; `scoring.py` returns current + top 3; Rotations tab shows cards with the five headings
 - [ ] **M5 — AI model (hour 8–14):** model trained and tested; `/forecast` live; forecast band on My field
 - [ ] **M6 — Polish (day 2):** pairing with QR, What-if sliders, "where to sell", Macedonian text, "?" help, offline banner, dark mode
