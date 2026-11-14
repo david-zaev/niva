@@ -3,7 +3,7 @@
 
 // ---- Pins (ESP32-32D DevKit, all sensors on 3V3) ----
 #define PIN_SOIL      34   // capacitive soil sensor AOUT (analog input only)
-#define PIN_DS18B20    4   // DS18B20 yellow wire, 4.7k pull-up to 3V3
+#define PIN_DS18B20    4   // DS18B20 yellow wire, 4.7k resistor between yellow and red
 #define PIN_DHT       27   // DHT22 / AM2302 DAT
 #define PIN_SDA       21   // BME280 / BMP280 SDA
 #define PIN_SCL       22   // BME280 / BMP280 SCL
@@ -14,6 +14,7 @@
 // The board has one 3V3 pin, so spare pins power the small sensors (each draws only a few mA):
 #define PIN_PWR_DHT   25   // HIGH = 3.3 V for the DHT22 VCC
 #define PIN_PWR_SOIL  26   // HIGH = 3.3 V for the soil sensor VCC
+#define PIN_PWR_DS18  14   // HIGH = 3.3 V for the DS18B20 red wire (3V3 is taken by the BME/BMP280)
 #define PIN_BARO_CSB  33   // HIGH: keeps the BMP/BME280 in I2C mode
 #define PIN_BARO_SDO  32   // LOW: BMP/BME280 address 0x76
 #define PIN_GND_EXTRA 13   // LOW: a third ground if the board has only two GND pins
