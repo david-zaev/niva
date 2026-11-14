@@ -10,6 +10,14 @@
 #define PIN_LED        2   // blue on-board LED
 #define PIN_BOOT       0   // BOOT button: hold 5 s to forget WiFi (M2)
 
+// ---- Direct wiring without a breadboard ----
+// The board has one 3V3 pin, so spare pins power the small sensors (each draws only a few mA):
+#define PIN_PWR_DHT   25   // HIGH = 3.3 V for the DHT22 VCC
+#define PIN_PWR_SOIL  26   // HIGH = 3.3 V for the soil sensor VCC
+#define PIN_BARO_CSB  33   // HIGH: keeps the BMP/BME280 in I2C mode
+#define PIN_BARO_SDO  32   // LOW: BMP/BME280 address 0x76
+#define PIN_GND_EXTRA 13   // LOW: a third ground if the board has only two GND pins
+
 // ---- Timing ----
 #define SEND_INTERVAL_MS 5000UL   // demo: 5 s. In a real field: 600000UL (10 min)
 

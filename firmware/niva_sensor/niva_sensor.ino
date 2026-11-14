@@ -231,6 +231,10 @@ void setup() {
   delay(300);
   pinMode(PIN_LED, OUTPUT);
   pinMode(PIN_BOOT, INPUT_PULLUP);
+  // power the sensors from spare pins (see config.h), then give them time to start
+  for (int pin : {PIN_PWR_DHT, PIN_PWR_SOIL, PIN_BARO_CSB}) { pinMode(pin, OUTPUT); digitalWrite(pin, HIGH); }
+  for (int pin : {PIN_BARO_SDO, PIN_GND_EXTRA}) { pinMode(pin, OUTPUT); digitalWrite(pin, LOW); }
+  delay(1500);  // the DHT22 needs about a second after power-up
   analogReadResolution(12);
   analogSetPinAttenuation(PIN_SOIL, ADC_11db);   // full 0..3.3 V range
 
