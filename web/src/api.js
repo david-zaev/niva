@@ -64,6 +64,8 @@ export const paths = {
   field: (id) => `/fields/${id}`,
   climate: (id) => `/fields/${id}/climate`,
   forecast: (id) => `/fields/${id}/forecast`,
+  terrain: (id) => `/fields/${id}/terrain`,
+  smap: (id) => `/fields/${id}/smap?days=365`,
   rotations: (id, rain = 0, temp = 0) => `/fields/${id}/rotations?rain=${rain}&temp=${temp}`,
 }
 export const getHealth = () => get('/health')
@@ -73,6 +75,8 @@ export const getField = (fieldId) => get(paths.field(fieldId))
 export const getClimate = (fieldId) => get(paths.climate(fieldId))
 export const getRotations = (fieldId, rain = 0, temp = 0) => get(paths.rotations(fieldId, rain, temp))
 export const getForecast = (fieldId) => get(paths.forecast(fieldId))
+export const getTerrain = (fieldId) => get(paths.terrain(fieldId))
+export const getSmap = (fieldId) => get(paths.smap(fieldId))
 export const getCrops = () => get('/crops')
 export const getPrices = () => get('/prices')
 export const getBuyers = (crop) => get(`/buyers${crop ? `?crop=${encodeURIComponent(crop)}` : ''}`)

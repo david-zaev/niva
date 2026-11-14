@@ -41,7 +41,7 @@ export default function SummaryBanner({ s, onHarvest, owner }) {
   const soilFc = s.soil_next?.advice
 
   return (
-    <section className="card banner" aria-label={t('summary.title')}>
+    <section className="card today" aria-label={t('summary.title')}>
       <div className="card-head"><h2>{t('summary.title')}</h2><span className="muted small">{s.name}</span></div>
 
       <Row icon="soil" light={LIGHT[r.status]} title={t(`summary.soilTitle_${r.status}`)}>

@@ -4,8 +4,8 @@
 
 Reads data/locations/<id>/power.csv, writes data/locations/<id>/indicators.json.
 Baseline = 1991-2020 (WMO climate normal). Recent = the last 10 full years.
-Slope (SRTM), bare months (MODIS NDVI) and soil-moisture anomaly (SMAP) stay null until
-the Data role adds those downloads; the app shows them as "waiting for data".
+Slope comes from NASA NASADEM (terrain.py) and the soil-moisture anomaly from NASA SMAP (smap.py) when their
+files are on disk; bare months (MODIS NDVI) stay null here (the field screens fetch NDVI live).
 """
 import json
 from pathlib import Path
@@ -13,6 +13,9 @@ from datetime import datetime, timezone
 import os
 
 import pandas as pd
+
+import smap
+import terrain
 
 DATA = Path(os.getenv("NIVA_DATA", Path(__file__).resolve().parent.parent / "data"))
 BASELINE = (1991, 2020)
@@ -149,6 +152,8 @@ def compute(df: pd.DataFrame, meta: dict, loc: dict) -> dict:
     b, r = summary(base), summary(rec)
 
     dataset = "NASA POWER daily"
+    terrain_at = terrain.for_field(loc["lat"], loc["lon"])
+    smap_at = smap.series(loc["lat"], loc["lon"], 30)
     out = {
         "location": {k: loc[k] for k in ("id", "name", "name_mk", "lat", "lon")},
         "periods": {"baseline": f"{BASELINE[0]}-{BASELINE[1]}", "recent": f"{recent[0]}-{recent[1]}"},
@@ -172,21 +177,23 @@ def compute(df: pd.DataFrame, meta: dict, loc: dict) -> dict:
         "yearly": [{k: (None if pd.isna(v) else (int(v) if k != "t_mean" else v)) for k, v in row.items()}
                    for row in py[["year", "heat_days", "heavy_rain_days", "rain_mm", "t_mean",
                                   "last_spring_frost_doy", "first_autumn_frost_doy"]].to_dict("records")],
-        # Filled by the Data role from other NASA datasets
-        "slope_deg": None,
+        "slope_deg": (terrain_at or {}).get("slope_deg"),
+        "terrain": terrain_at,
         "bare_months": None,
-        "soil_moisture_anomaly": None,
+        "soil_moisture_anomaly": (smap_at or {}).get("anomaly"),
+        "smap": {k: smap_at[k] for k in ("latest", "normal_for_date", "anomaly", "years_in_normal", "source")}
+                if smap_at else None,
         "sources": [{
             "dataset": dataset,
             "url": meta["source_url"],
             "dates": f"{meta['first_date']} to {meta['last_date']}",
             "used_for": "temperature, rain, heat days, frost dates, heavy-rain days, water balance (ET0: FAO-56 Hargreaves)",
         }],
-        "pending": [
-            {"indicator": "slope_deg", "dataset": "SRTM 30 m (NASA Earthdata / AppEEARS)"},
+        "pending": [p for p in [
+            None if terrain_at else {"indicator": "slope_deg", "dataset": terrain.DATASET},
             {"indicator": "bare_months", "dataset": "MODIS NDVI MOD13Q1 250 m (ORNL DAAC)"},
-            {"indicator": "soil_moisture_anomaly", "dataset": "SMAP 9 km (NASA Earthdata / AppEEARS)"},
-        ],
+            None if smap_at else {"indicator": "soil_moisture_anomaly", "dataset": smap.DATASET},
+        ] if p],
     }
     out["current"] = current_year(df)
     out["updated_at"] = meta.get("downloaded_at")

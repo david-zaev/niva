@@ -183,7 +183,17 @@ def score_rotation(rotation, crops, ind, yields, prices, priorities=None, what_i
     bare_rain = sum(rain[i % 12] for i, c in enumerate(cover) if c is None)
     total_rain = sum(rain) * n
     bare_months_year = sum(1 for c in cover if c is None) / n
-    erosion = clamp(100 - 160 * bare_rain / total_rain)
+    # Slope (NASA NASADEM 30 m): the RUSLE steepness factor against a gentle 2 % slope. Square-rooted so one
+    # input cannot swamp the bare-soil timing, which the farmer can change; the slope cannot be changed.
+    terrain = ind.get("terrain") or {}
+    slope_factor = terrain.get("erosion_factor") or 1.0
+    erosion = clamp(100 - 160 * bare_rain / total_rain * slope_factor ** 0.5)
+    if terrain:
+        notes.evidence.append(f"Field slope about {terrain['slope_deg']}° ({terrain['slope_pct']} %), {terrain['class']}: "
+                              f"bare soil washes off {slope_factor:.1f}x as fast as on a 2 % slope "
+                              f"(NASA NASADEM 30 m, RUSLE slope factor).")
+        if terrain["slope_deg"] >= 5:
+            notes.risks.append(f"Slope of {terrain['slope_deg']}°: plough across the slope and keep winter cover.")
     strip = []
     for y in range(n):
         row = []
@@ -330,7 +340,7 @@ def finish(results: list[dict], priorities: dict | None, current_id: str, ind: d
         gaps = list(notes.gaps) + [
             "No lab soil test yet: soil water and nutrients are estimates.",
             "NASA POWER rain is an average over a cell about 50 km wide, not this exact field.",
-            "Slope (SRTM) and satellite soil moisture (SMAP) are not added yet.",
+            *([] if ind.get("terrain") else ["Field slope (NASA NASADEM) could not be read at this point."]),
             "Crop numbers are approximate.",
         ]
         risks = list(dict.fromkeys(notes.risks))

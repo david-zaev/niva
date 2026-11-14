@@ -31,3 +31,7 @@ Thumbs.db
 
 # trained models: rebuild with data/scripts/train_model.py (7 s), copy to the server
 data/model/*.joblib
+
+# NASA downloads: re-created by data/scripts/download_dem.py and download_smap.py
+data/dem/
+data/smap/

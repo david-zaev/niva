@@ -1,3 +1,4 @@
+import time
 """Niva backend: FastAPI app. Endpoints follow DESIGN.md "API"."""
 import os
 import secrets
@@ -17,6 +18,8 @@ import market
 import nasa
 import pests
 import scoring
+import smap
+import terrain
 from models import (Device, FieldRow, Forecast, Harvest, PestReport, Planting, Reading, engine, hash_key,
                     init_db, utcnow)
 
@@ -231,10 +234,28 @@ def live(field_id: int, s: Session = Depends(db)):
         "reading": reading_out(r) if r else None,
         "devices": [{"id": d.id, "last_seen": iso(d.last_seen)} for d in devices],
         "server_time": datetime.now(timezone.utc).isoformat(),
-        # NASA values for the same place; SMAP joins when the Data role adds it
+        # NASA values for the same place: POWER for the region, SMAP at the field's own 9 km pixel
         "nasa": {"location": loc["id"], "distance_km": km,
-                 "power": nasa.latest_power(loc["id"]), "smap": None},
+                 "power": nasa.latest_power(loc["id"]), "smap": smap_latest(f)},
     }
+
+
+_smap_cache: dict = {}
+
+
+def smap_latest(f: FieldRow) -> dict | None:
+    """Latest SMAP pass at the field; /live is polled every 5 s, so the answer is kept for 10 minutes."""
+    key, now = (round(f.lat, 3), round(f.lon, 3)), time.monotonic()
+    hit = _smap_cache.get(key)
+    if hit and now - hit[0] < 600:
+        return hit[1]
+    out = smap.series(f.lat, f.lon, 30)
+    if not out:
+        return None
+    res = {"day": out["latest"]["day"], "soil_moisture": out["latest"]["sm"], "normal_for_date": out["normal_for_date"],
+           "anomaly": out["anomaly"], "source": out["source"]}
+    _smap_cache[key] = (now, res)
+    return res
 
 
 @app.get("/fields/{field_id}/history")
@@ -287,7 +308,8 @@ def rotations(field_id: int,
     else:  # no rotation entered yet: use what is common in the region
         current = next((r for r in library if r.get("kind") == "common" and loc["id"] in r.get("regions", [])),
                        next(r for r in library if r.get("kind") == "common"))
-    out = scoring.rank(library, crops, {**ind, "_distance_km": km}, yields, prices, current,
+    ter = terrain.for_field(f.lat, f.lon, f.polygon)
+    out = scoring.rank(library, crops, {**ind, "_distance_km": km, "terrain": ter}, yields, prices, current,
                        priorities=f.priorities, what_if={"rain": rain, "temp": temp})
     region = market.region_for(f.lat, f.lon)[0]
     yield_years = sorted({value['years'] for value in yields.get('locations', {}).get(loc['id'], {}).get('crops', {}).values() if value})
@@ -340,6 +362,10 @@ def soil_forecast(field_id: int, s: Session = Depends(db)):
     advice = "dry" if low7 < lr["dry_threshold_pct"] else "wet" if days[-1].soil_moisture > lr["wet_threshold_pct"] else "ok"
     h_end = (days[-1].day - anchor).days
     mae, base = lr["test"]["mae_pct_points"][h_end - 1], lr["test"]["mae_no_change_baseline"][h_end - 1]
+    # NASA SMAP's latest pass over the field: an independent satellite look at the same top soil
+    sm_sat = smap.series(f.lat, f.lon, 30)
+    sat = {"day": sm_sat["latest"]["day"], "soil_moisture": sm_sat["latest"]["sm"],
+           "normal_for_date": sm_sat["normal_for_date"], "source": sm_sat["source"]} if sm_sat else None
     return {
         "field_id": field_id, "made_at": made.isoformat(), "data_until": anchor.isoformat(),
         "unit": "volumetric % (top 7 cm)", "location": loc["id"], "distance_km": km,
@@ -348,13 +374,18 @@ def soil_forecast(field_id: int, s: Session = Depends(db)):
         "field_correction": {"applied": reading is not None, "offset": round(offset, 1), "reading": reading},
         "advice": advice, "dry_threshold": lr["dry_threshold_pct"] + offset,
         "error": {"mae_pct_points": mae, "no_change_mae": base, "days_ahead": h_end,
-                  "test_years": rep["test"]},
+                  "previous_model_mae": (lr["test"].get("mae_previous_model") or [None] * 14)[h_end - 1],
+                  "test_years": rep["test"], "caveat": rep.get("caveat")},
+        "model": rep["model"],
+        "satellite": sat,
         "top_inputs": [i["input"] for i in lr["importance"][:3]],
         "confidence": "medium" if km < 60 else "low",
         "sources": [
             {"dataset": "NASA POWER daily", "dates": f"to {anchor.isoformat()}"},
-            {"dataset": "ERA5-Land soil moisture 0-7 cm (Open-Meteo), backup for NASA SMAP",
-             "dates": f"to {anchor.isoformat()}"},
+            {"dataset": "ERA5-Land soil moisture 0-7 cm (Open-Meteo)", "dates": f"to {anchor.isoformat()}"},
+            {"dataset": "Open-Meteo weather forecast (ECMWF IFS, DWD ICON) for the coming days",
+             "dates": f"{anchor + timedelta(days=1)} to {days[-1].day}"},
+            *([sat["source"]] if sat else []),
             {"dataset": "Model trained on 2015-2022, tested on 2023-2024", "dates": f"trained {rep['trained']}"},
         ],
     }
@@ -429,8 +460,7 @@ def metrics(field_id: int, s: Session = Depends(db)):
             "sources": [{"dataset": "NASA POWER daily at the field point (T2M, PRECTOTCORR, RH2M, WS2M, GWETTOP, "
                                     "GWETROOT; ET0 = FAO-56 Hargreaves)",
                          "dates": f"{rows[0]['day']} to {rows[-1]['day']}" if rows else "not fetched yet"},
-                        {"dataset": "ERA5-Land soil moisture 0-7 cm (Open-Meteo), backup for NASA SMAP",
-                         "dates": "same days"}]}
+                        {"dataset": "ERA5-Land soil moisture 0-7 cm (Open-Meteo)", "dates": "same days"}]}
 
 
 @app.get("/fields/{field_id}/soil")
@@ -438,6 +468,24 @@ def field_soil(field_id: int, s: Session = Depends(db)):
     out = insights.soil(s, get_field(s, field_id))
     if not out:
         raise HTTPException(503, "SoilGrids not reachable or no soil data at this point")
+    return out
+
+
+@app.get("/fields/{field_id}/terrain")
+def field_terrain(field_id: int, s: Session = Depends(db)):
+    f = get_field(s, field_id)
+    out = terrain.for_field(f.lat, f.lon, f.polygon)
+    if not out:
+        raise HTTPException(503, "NASADEM elevation not available at this point")
+    return out
+
+
+@app.get("/fields/{field_id}/smap")
+def field_smap(field_id: int, days: int = Query(400, ge=7, le=4000), s: Session = Depends(db)):
+    f = get_field(s, field_id)
+    out = smap.series(f.lat, f.lon, days)
+    if not out:
+        raise HTTPException(503, "SMAP data not downloaded on the server yet")
     return out
 
 

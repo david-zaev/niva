@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { DEMO_FIELD, forget, getField, getForecast, getLive, getSummary, ownerToken, paths, peek } from '../api.js'
 import CropTracker from '../components/CropTracker.jsx'
 import FieldMetrics from '../components/FieldMetrics.jsx'
+import GroundCard from '../components/GroundCard.jsx'
 import ForecastChart from '../components/ForecastChart.jsx'
 import { ModeToggle, useMode } from '../components/Mode.jsx'
 import SummaryBanner from '../components/SummaryBanner.jsx'
@@ -63,6 +64,13 @@ function ForecastCard({ fieldId }) {
         {t('fc.usuallyOff').replace('{n}', fc.error.mae_pct_points.toFixed(1))} <TermHelp term="forecastError" />
         {fix.applied && <> · {t('fc.fixOn').replace('{n}', `${fix.offset > 0 ? '+' : ''}${fix.offset}`)}</>}
       </p>
+      {fc.error.previous_model_mae != null && (
+        <p className="fc-compare">
+          {t('fc.compare')
+            .replace('{o}', fc.error.previous_model_mae.toFixed(1)).replace('{b}', fc.error.no_change_mae.toFixed(1))}
+          {' '}{t('fc.caveat')}
+        </p>
+      )}
       <p className="source">{fc.sources.map((x) => `${x.dataset} (${x.dates})`).join(' · ')}</p>
     </article>
   )
@@ -113,6 +121,10 @@ export default function MyField() {
   const summary = useData(() => getSummary(fieldId), paths.summary(fieldId), [fieldId])
   const [harvestFor, setHarvestFor] = useState(null)
   const refresh = () => { forget(fieldId); summary.reload() }
+  // no sensor yet: NASA POWER's own soil wetness and air temperature, labelled as such
+  const est = summary.data?.readiness
+  const nasaSoil = est?.gwettop != null ? est.gwettop * 100 : null
+  const nasaLevel = { ok: 'good', dry: 'dry', wet: 'wet' }[est?.status] ?? null
 
   const actions = (
     <>
@@ -134,13 +146,16 @@ export default function MyField() {
         ? <SummaryBanner s={summary.data} owner={owner} onHarvest={(c) => setHarvestFor({ ...c })} />
         : <p className="card muted">{summary.error ? t('server.down') : t('summary.loading')}</p>}
       <div className="stats">
-        <SensorTile label={t('field.soilMoisture')} value={soil} unit="%" level={level} bar
-          levelText={level ? t(`field.soil_${level}`) : null} />
-        <SensorTile label={t('field.soilTemp')} value={r?.soil_temp_c ?? null} unit="°C" digits={1} />
-        <SensorTile label={t('field.airTemp')} value={r?.air_temp_c ?? null} unit="°C" digits={1} />
-        <SensorTile label={t('field.humidity')} value={r?.humidity_pct ?? null} unit="%" />
+        <SensorTile label={t('field.soilMoisture')} value={soil ?? nasaSoil} unit="%" bar
+          level={level ?? nasaLevel} levelText={(level ?? nasaLevel) ? t(`field.soil_${level ?? nasaLevel}`) : null}
+          note={soil == null && nasaSoil != null ? t('field.nasaEstimate').replace('{d}', est.wet_day) : null} empty={t('field.needsSensor')} />
+        <SensorTile label={t('field.soilTemp')} value={r?.soil_temp_c ?? null} unit="°C" digits={1} empty={t('field.needsSensor')} />
+        <SensorTile label={t('field.airTemp')} value={r?.air_temp_c ?? est?.air_temp_7d ?? null} unit="°C" digits={1}
+          note={r?.air_temp_c == null && est?.air_temp_7d != null ? t('field.avg7') : null} empty={t('field.needsSensor')} />
+        <SensorTile label={t('field.humidity')} value={r?.humidity_pct ?? null} unit="%" empty={t('field.needsSensor')} />
       </div>
       <ForecastCard fieldId={fieldId} />
+      <GroundCard fieldId={fieldId} />
       <CropTracker fieldId={fieldId} owner={owner} harvestFor={harvestFor} onChange={refresh} />
       {mode === 'advanced' && <FieldMetrics fieldId={fieldId} />}
     </Screen>

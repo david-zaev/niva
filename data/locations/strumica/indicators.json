@@ -622,9 +622,36 @@
    "first_autumn_frost_doy": 333
   }
  ],
- "slope_deg": null,
+ "slope_deg": 1.0,
+ "terrain": {
+  "elevation_m": 231,
+  "slope_deg": 1.0,
+  "slope_pct": 1.8,
+  "steepest_deg": 1.0,
+  "pixels": 1,
+  "from_outline": false,
+  "erosion_factor": 0.92,
+  "class": "flat",
+  "source": {
+   "dataset": "NASA NASADEM_HGT v001 (SRTM reprocessed), 30 m, LP DAAC",
+   "dates": "acquired February 2000 (SRTM)"
+  }
+ },
  "bare_months": null,
  "soil_moisture_anomaly": null,
+ "smap": {
+  "latest": {
+   "day": "2026-11-12",
+   "sm": 10.0
+  },
+  "normal_for_date": null,
+  "anomaly": null,
+  "years_in_normal": "2026-2025",
+  "source": {
+   "dataset": "NASA SMAP Enhanced L3 radiometer soil moisture, 9 km, daily (SPL3SMP_E v6, NSIDC)",
+   "dates": "2026-11-01 to 2026-11-12"
+  }
+ },
  "sources": [
   {
    "dataset": "NASA POWER daily",
@@ -635,16 +662,8 @@
  ],
  "pending": [
   {
-   "indicator": "slope_deg",
-   "dataset": "SRTM 30 m (NASA Earthdata / AppEEARS)"
-  },
-  {
    "indicator": "bare_months",
    "dataset": "MODIS NDVI MOD13Q1 250 m (ORNL DAAC)"
-  },
-  {
-   "indicator": "soil_moisture_anomaly",
-   "dataset": "SMAP 9 km (NASA Earthdata / AppEEARS)"
   }
  ],
  "current": {

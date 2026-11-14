@@ -4,6 +4,8 @@ climate_daily, run the soil forecast and save it to forecasts. Also runs once at
 is missing, so a fresh server is never empty.
 """
 import logging
+import subprocess
+import sys
 import threading
 import csv
 import json
@@ -25,6 +27,7 @@ PARAMS = {"T2M_MAX": "t_max", "T2M_MIN": "t_min", "PRECTOTCORR": "rain_mm", "RH2
           "ALLSKY_SFC_SW_DWN": "solar", "WS2M": "wind", "TOA_SW_DWN": "ra",
           "T2M": "t_mean", "GWETTOP": "gwettop", "GWETROOT": "gwetroot"}
 SOIL = "https://archive-api.open-meteo.com/v1/archive"
+WEATHER = "https://api.open-meteo.com/v1/forecast"
 
 
 def hargreaves_et0(t_max, t_min, ra):
@@ -93,6 +96,25 @@ def refresh_climate(loc: dict, today: date) -> None:
     climate_data.compute_location(loc)
 
 
+def fetch_coming(lat, lon) -> dict[date, dict]:
+    """Rain, heat and Hargreaves ET0 for the last 14 days and the next 8 (Open-Meteo: ECMWF/ICON analyses and
+    forecast). ET0 uses the same Hargreaves formula as the NASA POWER history the model was trained on."""
+    r = httpx.get(WEATHER, timeout=30, params={
+        "latitude": lat, "longitude": lon, "timezone": "Europe/Skopje", "past_days": 14, "forecast_days": 8,
+        "daily": "precipitation_sum,temperature_2m_max,temperature_2m_min"})
+    r.raise_for_status()
+    d = r.json()["daily"]
+    out = {}
+    for i, day in enumerate(d["time"]):
+        day = date.fromisoformat(day)
+        tx, tn, rain = d["temperature_2m_max"][i], d["temperature_2m_min"][i], d["precipitation_sum"][i]
+        if None in (tx, tn, rain):
+            continue
+        ra = forecast.extra_radiation(lat, day.timetuple().tm_yday)
+        out[day] = {"rain_mm": rain, "t_max": tx, "et0": hargreaves_et0(tx, tn, ra)}
+    return out
+
+
 def run_field(s: Session, f: FieldRow, today: date) -> int:
     import pandas as pd
     start, end = today - timedelta(days=DAYS_BACK), today - timedelta(days=1)
@@ -106,7 +128,12 @@ def run_field(s: Session, f: FieldRow, today: date) -> int:
     df = pd.DataFrame([r.model_dump() for r in rows]).drop(columns=["field_id", "t_mean", "gwettop", "gwetroot"])
     df.index = pd.to_datetime(df.pop("date"))
     loc, _, _ = nasa.location_for(f.lat, f.lon, f.region)
-    out = forecast.predict(loc["id"], forecast.build_frame(df))
+    # the days after the last soil reading: NASA POWER where it already has them, the forecast after that
+    coming = fetch_coming(f.lat, f.lon)
+    for d, row in power.items():
+        if all(row.get(k) is not None for k in forecast.WEATHER_COLS):
+            coming[d] = {k: row[k] for k in forecast.WEATHER_COLS}
+    out = forecast.predict(loc["id"], df, coming)
     if out is None:
         log.warning("field %s: no model or not enough data", f.id)
         return 0
@@ -120,8 +147,23 @@ def run_field(s: Session, f: FieldRow, today: date) -> int:
     return len(out["days"])
 
 
+def refresh_smap(today: date) -> None:
+    """Fetch the newest NASA SMAP days (they appear 1-2 days late); days already on disk are skipped."""
+    script = nasa.DATA_DIR / "scripts" / "download_smap.py"
+    if not script.exists():
+        return
+    # nice 19: the free VM has 1/8 of a CPU; the API must keep answering while this runs
+    r = subprocess.run(["nice", "-n", "19", sys.executable, str(script), "--start", (today - timedelta(days=20)).isoformat(), "--threads", "4"],
+                       capture_output=True, text=True, timeout=1200)
+    log.info("SMAP refresh: %s", (r.stdout.strip().splitlines() or ["no output"])[-1])
+
+
 def run_all() -> None:
     today = date.today()
+    try:
+        refresh_smap(today)
+    except Exception:
+        log.exception("SMAP refresh failed; keeping saved data")
     for loc in nasa.locations():
         try:
             refresh_climate(loc, today)

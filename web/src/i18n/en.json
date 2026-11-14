@@ -32,12 +32,14 @@
     "soil_dry": "Dry",
     "soil_good": "Good",
     "soil_wet": "Very wet",
-    "nasaSoon": "Coming soon: the NASA values (SMAP, POWER) for the same place, next to the readings.",
     "eyebrow": "Ovče Pole · demo plant",
     "mark": "field",
     "sub": "Live readings from the soil sensor in your field, every 5 seconds.",
     "demoNote": "You are looking at the demo field in Ovče Pole. Set up your own field to see your place, your rotation and your sensor.",
-    "noSensor": "No sensor yet"
+    "noSensor": "No sensor yet",
+    "nasaEstimate": "NASA POWER estimate, {d}",
+    "avg7": "7-day average, NASA POWER",
+    "needsSensor": "Needs your sensor"
   },
   "climate": {
     "title": "Climate",
@@ -122,7 +124,7 @@
     "installOther": "Open the browser menu and choose \"Install app\" or \"Add to Home screen\".",
     "about": "About the data",
     "data_power": "NASA POWER daily: rain, temperature, humidity, sun, wind (1991 to a few days ago).",
-    "data_soil": "Soil moisture: ERA5-Land 0–7 cm via Open-Meteo, standing in for NASA SMAP until we have an Earthdata login.",
+    "data_soil": "Soil moisture: NASA SMAP L3 9 km satellite passes since 2015 (Earthdata), plus ERA5-Land 0–7 cm via Open-Meteo for the daily forecast (SMAP passes every 2–3 days).",
     "data_makstat": "Yields: State Statistical Office (MakStat), by municipality, last 3 years.",
     "data_zpis": "Prices: Ministry of Agriculture market information system (ZPIS).",
     "data_osm": "Map: © OpenStreetMap contributors.",
@@ -196,7 +198,9 @@
     "fixOff": "No fresh sensor reading: the curve is for the ~9 km area around the field.",
     "errorNote": "Error measured on 2023–2024, years the model never saw.",
     "notReady": "The soil forecast is not ready yet: it is made every morning at 06:00.",
-    "usuallyOff": "Usually within ±{n} points of the real value a week ahead."
+    "usuallyOff": "Usually within ±{n} points of the real value a week ahead.",
+    "compare": "The previous model was off by {o} points, and guessing \"no change\" by {b}.",
+    "caveat": "Tested with the weather that really came. Real forecasts are less sure after about 5 days."
   },
   "soon": "Soon",
   "setup": {
@@ -470,7 +474,7 @@
   },
   "market": {
     "title": "Market",
-    "sub": "Prices, where to sell, and what your region grows more or less of.",
+    "sub": "This week's prices, where to sell, and what your region grows more or less of.",
     "produced": "Produced",
     "noData": "no data",
     "soldMissing": "Tonnes actually sold per region are not published anywhere, so they are left empty.",
@@ -501,7 +505,17 @@
     "noBuyers": "Named buyers are not listed yet: we only add a buyer after checking it is real.",
     "zpisLink": "ZPIS: all published prices",
     "analyzer": "Produced in {region}, year by year",
-    "municipalities": "Sum of the municipalities: {list} (MakStat)."
+    "municipalities": "Sum of the municipalities: {list} (MakStat).",
+    "sellTitle": "Where to sell",
+    "sellHelp": "Places that reported a price to ZPIS this week, best price first. Distance is a straight line from your field.",
+    "place": "Place",
+    "price": "Price",
+    "distance": "From your field",
+    "best": "best price",
+    "nearest": "nearest",
+    "showMap": "map",
+    "noPlaces": "No place reported a price for this crop this week.",
+    "kindsTitle": "Kinds of buyers"
   },
   "map": {
     "title": "Your fields",
@@ -533,6 +547,33 @@
     "picked": "Outline picked: check it and save.",
     "found": "{n} farmland outlines found: tap one.",
     "osmDown": "OpenStreetMap search did not answer. Try again in a minute.",
-    "saved": "Outline saved."
+    "saved": "Outline saved.",
+    "base": "Base map",
+    "satellite": "Satellite",
+    "street": "Street map",
+    "undo": "Undo last corner",
+    "area": "Area: about {ha} ha"
+  },
+  "ground": {
+    "title": "What NASA sees at this field",
+    "help": "Satellite soil moisture from NASA SMAP (the top ~5 cm, a 9 km square around the field) against its normal for this time of year, and the slope of the field from NASA elevation data.",
+    "smapNow": "Satellite soil moisture",
+    "vsNormal": "Normal for this time: {n}% · pass {d}",
+    "passed": "Satellite pass {d}",
+    "slope": "Slope",
+    "elevation": "Elevation",
+    "erosion": "Erosion risk from slope",
+    "erosionNote": "vs. a gentle 2% slope",
+    "outline": "average of {n} points in your outline",
+    "point": "at the field point",
+    "class_flat": "Flat",
+    "class_gentle": "Gentle",
+    "class_moderate": "Moderate",
+    "class_steep": "Steep",
+    "state_dry": "Drier than normal",
+    "state_ok": "Near normal",
+    "state_wet": "Wetter than normal",
+    "smap": "NASA SMAP",
+    "normal": "Normal (2015 on)"
   }
 }

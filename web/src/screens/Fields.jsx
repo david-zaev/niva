@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { DEMO_FIELD, fieldId as currentField, getFields, isOwner, myFieldIds, paths, peek, saveOutline, switchField } from '../api.js'
 import Screen from '../components/Screen.jsx'
 import TermHelp from '../components/TermHelp.jsx'
+import { addBasemap, hectares } from '../components/basemap.js'
 import { fmt, useCrops } from '../components/util.js'
 import { useI18n } from '../i18n/index.jsx'
 
@@ -32,6 +33,8 @@ export default function Fields() {
   const [selected, setSelected] = useState(currentField())
   const [showAll, setShowAll] = useState(false)
   const [layer, setLayer] = useState(null)
+  const [base, setBase] = useState('satellite')
+  const baseLayer = useRef(null)
   const [drawing, setDrawing] = useState(false)
   const [points, setPoints] = useState([])
   const [msg, setMsg] = useState(null)
@@ -47,15 +50,19 @@ export default function Fields() {
   // map once
   useEffect(() => {
     const m = L.map(box.current, { center: [41.6, 21.75], zoom: 8 })
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(m)
     shapes.current = L.layerGroup().addTo(m)
     farmland.current = L.layerGroup().addTo(m)
     draft.current = L.layerGroup().addTo(m)
     map.current = m
     return () => m.remove()
   }, [])
+
+  // base map: satellite by default, street map on request
+  useEffect(() => {
+    if (!map.current) return
+    baseLayer.current?.remove()
+    baseLayer.current = addBasemap(map.current, base)
+  }, [base])
 
   // drawing: each tap adds a corner
   useEffect(() => {
@@ -142,6 +149,10 @@ export default function Fields() {
     <Screen section="map" eyebrow={active ? label(active) : undefined}
       actions={<button className="btn btn-ghost" aria-pressed={showAll} onClick={() => setShowAll(!showAll)}>{showAll ? t('map.onlyThis') : t('map.showAll')}</button>}>
       <div className="map-tools">
+        <div className="segmented layer-toggle" role="group" aria-label={t('map.base')}>
+          <button aria-pressed={base === 'satellite'} onClick={() => setBase('satellite')}>{t('map.satellite')}</button>
+          <button aria-pressed={base === 'street'} onClick={() => setBase('street')}>{t('map.street')}</button>
+        </div>
         <div className="segmented layer-toggle" role="group" aria-label={t('map.layers')}>
           <button aria-pressed={layer == null} onClick={() => setLayer(null)}>{t('map.none')}</button>
           {GIBS.map((x) => <button key={x.id} aria-pressed={layer === x.id} onClick={() => setLayer(x.id)}>{t(`map.l_${x.id}`)}</button>)}
@@ -168,12 +179,15 @@ export default function Fields() {
               <div className="row-btns">
                 <button className="btn" aria-pressed={drawing} onClick={() => { setDrawing(!drawing); if (!drawing) setPoints([]) }}>{drawing ? t('map.stopDrawing') : t('map.draw')}</button>
                 <button className="btn btn-ghost" onClick={findFarmland}>{t('map.findFarmland')}</button>
+                {points.length > 0 && <button className="btn btn-ghost" onClick={() => setPoints((p) => p.slice(0, -1))}>{t('map.undo')}</button>}
                 {points.length >= 3 && <button className="btn btn-volt" onClick={save}>{fmt(t('map.saveOutline'), { n: points.length })}</button>}
                 {points.length > 0 && <button className="btn btn-ghost" onClick={() => setPoints([])}>{t('map.clear')}</button>}
                 {active?.polygon?.length >= 3 && <button className="btn btn-ghost" onClick={() => { setPoints([]); saveOutline(selected, []).then(reload) }}>{t('map.removeOutline')}</button>}
               </div>
             </>
           : <p className="chart-help">{t('map.viewOnly')} <Link to="/setup">{t('more.newField')}</Link></p>}
+        {points.length >= 3 && <p className="area-readout">{fmt(t('map.area'), { ha: hectares(points).toFixed(2) })}</p>}
+        {!drawing && active?.polygon?.length >= 3 && <p className="area-readout">{fmt(t('map.area'), { ha: hectares(active.polygon).toFixed(2) })}</p>}
         {msg && <p className={`msg ${msg.ok ? 'msg-ok' : 'msg-bad'}`} role="status">{msg.text}</p>}
         <p className="note">{t('map.cadastre')} <a href="https://e-uslugi.katastar.gov.mk/katastarskiPlanovi" target="_blank" rel="noreferrer">{t('map.cadastreLink')} ↗</a></p>
       </article>

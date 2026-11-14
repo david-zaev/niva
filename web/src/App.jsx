@@ -18,7 +18,6 @@ import Market from './screens/Market.jsx'
 import FieldSwitcher from './components/FieldSwitcher.jsx'
 import Pair from './screens/Pair.jsx'
 import { OfflineBanner, UpdateButton } from './components/StatusBars.jsx'
-import FarmGrid from './components/FarmGrid.jsx'
 import Logo from './components/Logo.jsx'
 import LanguagePicker from './components/LanguagePicker.jsx'
 import './pwa.js'
@@ -131,7 +130,6 @@ export default function App() {
 
   return (
     <div className="app">
-      <FarmGrid />
       <header className="topbar">
         <Link to="/" className="brand" aria-label="Niva"><Logo /></Link>
         <div className="top-right">

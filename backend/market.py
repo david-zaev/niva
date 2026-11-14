@@ -44,12 +44,23 @@ def regional_trends(region: str) -> dict:
     return {c: trend(v) for c, v in crops.items()}
 
 
+def sell_places(lat: float, lon: float, p: dict, coords: dict) -> list[dict]:
+    """Every ZPIS place that reported this product, with road-free distance from the field. Real names only."""
+    out = []
+    for x in p.get("places", []):
+        c = coords.get(x["place"])
+        km = round(nasa.km_between(lat, lon, c["lat"], c["lon"])) if c else None
+        out.append({"place": x["place"], "price": x["price"], "km": km, "lat": c and c["lat"], "lon": c and c["lon"]})
+    return out
+
+
 def view(lat: float, lon: float) -> dict:
     region, km = region_for(lat, lon)
     prod = nasa.read_data_file("production.json") or {"regions": {}, "years": []}
     prices = nasa.read_data_file("prices.json") or {"prices": []}
     crops = {c["id"]: c for c in (nasa.read_data_file("crops.json") or {"crops": []})["crops"]}
     loc, _, _ = nasa.location_for(lat, lon, None)
+    coords = (nasa.read_data_file("zpis_places.json") or {}).get("places", {})
     price_by_crop = {}
     for p in prices.get("prices", []):
         price_by_crop.setdefault(p["crop"], []).append(p)
@@ -59,11 +70,23 @@ def view(lat: float, lon: float) -> dict:
         t = trend(series)
         ps = price_by_crop.get(cid, [])
         local = next((p["local"].get(loc["id"]) for p in ps if p.get("local", {}).get(loc["id"]) is not None), None)
+        places = sell_places(lat, lon, ps[0], coords) if ps else []
+        near = [x for x in places if x["km"] is not None and x["km"] <= 60]
+        if local is None and near:
+            local = min(near, key=lambda x: x["km"])["price"]
         rows.append({"crop": cid, "name": crops.get(cid, {}).get("name", cid), "name_mk": crops.get(cid, {}).get("name_mk"),
                      "series": series, "trend": t, "sold_t": None,
                      "prices": [{"price": p["price"], "market": p["market"], "scope": p.get("scope"), "url": p.get("url"),
                                  "product": p.get("product")} for p in ps],
+                     "places": places,
                      "local_price": local})
+    for cid, ps in price_by_crop.items():
+        if cid not in reg.get("crops", {}):
+            rows.append({"crop": cid, "name": crops.get(cid, {}).get("name", cid), "name_mk": crops.get(cid, {}).get("name_mk"),
+                         "series": [], "trend": None, "sold_t": None,
+                         "prices": [{"price": p["price"], "market": p["market"], "scope": p.get("scope"), "url": p.get("url"),
+                                     "product": p.get("product")} for p in ps],
+                         "places": sell_places(lat, lon, ps[0], coords), "local_price": None})
     rows.sort(key=lambda r: -((r["trend"] or {}).get("production_t") or 0))
     buyers = nasa.read_data_file("buyers.json") or {}
     return {
@@ -76,5 +99,6 @@ def view(lat: float, lon: float) -> dict:
             {"dataset": "MakStat area and production of crops by municipality (PxWeb)",
              "dates": f"{prod['years'][0]}-{prod['years'][-1]}, retrieved {prod.get('retrieved')}" if prod.get("years") else "not downloaded"},
             {"dataset": "ZPIS prices (Ministry of Agriculture)", "dates": f"retrieved {prices.get('retrieved')}"},
+            {"dataset": "Place locations: OpenStreetMap Nominatim", "dates": "town / municipality centres"},
         ],
     }

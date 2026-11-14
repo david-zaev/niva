@@ -5,8 +5,9 @@ import { getCrops } from '../api.js'
 import { useI18n } from '../i18n/index.jsx'
 import { SCORE_KEYS } from './RotationCard.jsx'
 import TermHelp from './TermHelp.jsx'
+import { addBasemap } from './basemap.js'
 
-// Tap the field on an OpenStreetMap map (a circle marker: no image files to bundle)
+// Tap the field on a satellite map (a circle marker: no image files to bundle)
 export function FieldMap({ value, onChange }) {
   const { t } = useI18n()
   const box = useRef(null)
@@ -14,9 +15,7 @@ export function FieldMap({ value, onChange }) {
   const dot = useRef(null)
   useEffect(() => {
     const m = L.map(box.current, { center: value ? [value.lat, value.lon] : [41.6, 21.75], zoom: value ? 13 : 8 })
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(m)
+    addBasemap(m, 'satellite')
     m.on('click', (e) => onChange({ lat: +e.latlng.lat.toFixed(5), lon: +e.latlng.lng.toFixed(5) }))
     map.current = m
     return () => m.remove()

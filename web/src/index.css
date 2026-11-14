@@ -1,9 +1,9 @@
 /* Layout and components. Colours and fonts come only from brand/niva-theme.css.
-   Look: calm console style. One big number per card, short labels, quiet borders, a faint field grid behind. */
+   Look: calm console style. One big number per card, short labels, quiet borders, a flat page colour. */
 :root {
   --tab-h: 72px;
   --top-h: 64px;
-  --gap: 16px;
+  --gap: 20px;
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.5;
@@ -24,32 +24,13 @@ a { color: inherit; }
 
 .app { position: relative; min-height: 100dvh; isolation: isolate; }
 
-/* ---------- background: crisp field plots in muted theme colours ---------- */
-.farm-grid {
-  --plot-plain: #e8eae6; --plot-green: #dce8df; --plot-rows: #d0e2d5;
-  --plot-volt: #eeedbb; --plot-line: #a7c7b2;
-  position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
-}
-.farm-grid svg { width: 100%; height: 100%; }
-.plot { fill: var(--plot-plain); }
-.plot-green { fill: var(--plot-green); }
-.plot-rows { fill: var(--plot-rows); }
-.plot-volt { fill: var(--plot-volt); }
-.plot-line { stroke: var(--plot-line); stroke-width: 3; stroke-linecap: round; }
-[data-theme='dark'] .farm-grid {
-  --plot-plain: #171a17; --plot-green: #152b1f; --plot-rows: #193625;
-  --plot-volt: #353414; --plot-line: #2f593e;
-}
-
 /* ---------- top bar ---------- */
 .topbar {
   position: sticky; top: 0; z-index: 10;
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   height: calc(var(--top-h) + env(safe-area-inset-top));
   padding: env(safe-area-inset-top) 16px 0;
-  background: color-mix(in srgb, var(--canvas) 82%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: var(--canvas); border-bottom: 1px solid var(--line);
 }
 .brand { display: inline-flex; align-items: center; color: var(--ink); text-decoration: none; }
 .logo { display: block; width: auto; }
@@ -127,28 +108,29 @@ a { color: inherit; }
   .tab-icon { display: none; }
   .tab:hover { color: var(--ink); }
   .tab.is-on { color: var(--ink); }
-  .content { max-width: none; margin-left: var(--sidebar-w); padding: 36px 28px 56px; }
+  .content { max-width: calc(var(--sidebar-w) + 1160px); margin: 0; padding: 40px 40px 72px var(--sidebar-w); }
+  .content > .page { padding-left: 12px; }
   .banner-offline { margin-left: var(--sidebar-w); }
 }
 
 /* ---------- page head ---------- */
 .screen-head {
   display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px 24px;
-  margin: 8px 0 22px;
+  margin: 8px 0 28px;
 }
 .crumb { margin: 0 0 4px; font-size: 0.85rem; font-weight: 500; color: var(--smoke); }
 .screen h1 {
   font-family: var(--font-display); font-weight: 650; margin: 0;
-  font-size: clamp(1.75rem, 5vw, 2.25rem); line-height: 1.1; letter-spacing: -0.025em;
+  font-size: clamp(1.9rem, 5vw, 2.6rem); line-height: 1.05; letter-spacing: -0.03em;
 }
-.screen-sub { margin: 6px 0 0; color: var(--slate); max-width: 60ch; }
+.screen-sub { margin: 10px 0 0; color: var(--slate); max-width: 60ch; font-size: 1.02rem; }
 .head-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 
 /* ---------- basics ---------- */
 .card {
   position: relative;
-  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
-  padding: 20px 22px; margin: 0 0 var(--gap);
+  background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+  padding: 24px; margin: 0 0 var(--gap);
 }
 .label { display: block; margin-bottom: 8px; font-size: 0.88rem; font-weight: 600; color: var(--ink); }
 .pill, .chip {
@@ -184,7 +166,7 @@ a { color: inherit; }
 .segmented.big button { min-height: 52px; padding: 0 24px; font-size: 1.05rem; }
 
 .disclaimer { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--smoke); }
-.source { margin: 12px 0 0; font-family: var(--font-mono); font-size: 0.68rem; color: var(--smoke); letter-spacing: 0.01em; }
+.source { margin: 16px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 0.72rem; line-height: 1.5; color: var(--smoke); }
 .note { margin: 0 0 14px; font-size: 0.9rem; color: var(--slate); }
 .coming { display: flex; gap: 12px; align-items: flex-start; border-style: dashed; background: transparent; }
 .coming p { margin: 0; color: var(--slate); }
@@ -192,14 +174,16 @@ a { color: inherit; }
 /* ---------- stat cards (one big number) ---------- */
 .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); margin-bottom: var(--gap); }
 .stats .card { margin: 0; }
-.stat { display: flex; flex-direction: column; gap: 6px; min-height: 132px; }
-.stat-label { font-size: 0.92rem; font-weight: 600; color: var(--ink); }
+.stat { display: flex; flex-direction: column; gap: 8px; min-height: 148px; }
+.stat-label { font-size: 0.85rem; font-weight: 500; color: var(--slate); }
+.stat-empty { margin-top: auto; font-size: 0.92rem; color: var(--smoke); }
+.stat.is-empty { background: transparent; border-style: dashed; }
 .stat-value {
   margin-top: auto; font-family: var(--font-display); font-weight: 650; letter-spacing: -0.03em;
   font-size: clamp(2rem, 7vw, 2.6rem); line-height: 1; font-variant-numeric: tabular-nums;
 }
 .stat-unit { font-size: 0.5em; font-weight: 600; letter-spacing: 0; margin-left: 4px; color: var(--smoke); }
-.stat-note { font-size: 0.82rem; color: var(--slate); }
+.stat-note { font-size: 0.75rem; color: var(--smoke); }
 .stat-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--slate); }
 .stat .bar { height: 6px; border-radius: 999px; background: var(--mist); overflow: hidden; }
 .stat .bar span { display: block; height: 100%; border-radius: inherit; background: var(--ink); transition: width 0.6s ease; }
@@ -221,10 +205,10 @@ a { color: inherit; }
 
 .chart-grid { display: grid; gap: var(--gap); }
 .chart-grid .card { margin: 0; }
-.card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-bottom: 6px; }
+.card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-bottom: 10px; }
 .card-head h2, .chart-card > h2 {
   display: inline-flex; align-items: center; gap: 8px; margin: 0;
-  font-family: var(--font-body); font-size: 1rem; font-weight: 650; letter-spacing: 0;
+  font-family: var(--font-display); font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em;
 }
 .card-icon { color: var(--smoke); flex: none; }
 .chart-help { margin: 0 0 14px; font-size: 0.9rem; color: var(--slate); max-width: 70ch; }
@@ -419,7 +403,6 @@ a { color: inherit; }
 .mode-toggle button { min-height: 36px; padding: 0 14px; font-size: 0.85rem; }
 
 /* ---------- summary banner ---------- */
-.banner { border-left: 4px solid var(--volt); }
 .banner-row { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--line); }
 .banner .card-head + .banner-row { border-top: 0; }
 .banner-text strong { display: block; font-size: 0.98rem; }
@@ -528,3 +511,40 @@ h2 .light-none { background: var(--ash); }
 .field-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .field-row { display: grid; gap: 2px; width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); text-align: left; cursor: pointer; color: var(--ink); font: inherit; }
 .field-row.is-on { border-color: var(--ink); box-shadow: inset 4px 0 0 var(--volt); }
+
+/* ---------- where to sell, map extras ---------- */
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.chip-btn { cursor: pointer; }
+.chip-btn:hover { background: var(--mist); }
+.chip-btn[aria-pressed='true'] { background: var(--ink); color: var(--canvas); border-color: var(--ink); }
+.tag { margin-left: 8px; padding: 2px 8px; font-size: 0.7rem; }
+.sell-table td { padding: 10px 8px; }
+.area-readout { margin: 10px 0 0; font-weight: 600; }
+.btn { transition: transform 0.12s ease, background 0.15s ease; }
+.btn:active { transform: scale(0.97); }
+.sell-table td, .sell-table th { white-space: normal; }
+@media (max-width: 520px) { .sell-table .tag { display: block; width: max-content; margin: 4px 0 0; } }
+
+/* ---------- today on this field: four insight tiles ---------- */
+.today { display: grid; gap: 12px; }
+.today > .card-head, .today > .source { grid-column: 1 / -1; margin-bottom: 0; }
+.today .banner-row {
+  grid-template-columns: 40px 1fr; align-items: start; gap: 14px; padding: 16px;
+  border: 0; border-radius: 14px; background: var(--mist);
+}
+.today .banner-row > .btn { grid-column: 2; justify-self: start; }
+.today .banner-light { width: 40px; height: 40px; border-radius: 12px; }
+.today .light-none { background: var(--card); }
+.today .banner-text strong { font-size: 1rem; }
+.today .banner-text p { margin-top: 4px; line-height: 1.5; }
+@media (min-width: 1100px) { .today { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.market-row { border-radius: 10px; padding: 10px 8px; }
+.market-row:hover { background: var(--mist); }
+
+/* NASA ground card: SMAP and NASADEM numbers in a row of small stats */
+.ground-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin: 4px 0 16px; }
+.mini-stat { display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: var(--radius-sm); background: var(--mist); min-width: 0; }
+.mini-value { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; line-height: 1.1; color: var(--ink); }
+.mini-value small { font-size: 0.85rem; font-weight: 500; color: var(--slate); margin-left: 2px; }
+.chart-sm { height: 200px; }
+.fc-compare { font-size: 0.8rem; color: var(--slate); margin-top: 6px; }
