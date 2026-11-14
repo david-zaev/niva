@@ -1,0 +1,4 @@
+niva-api.92-5-133-111.sslip.io {
+	encode gzip
+	reverse_proxy 127.0.0.1:8000
+}

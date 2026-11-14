@@ -1,0 +1,31 @@
+{
+  "tabs": { "field": "My field", "climate": "Climate", "rotations": "Rotations", "more": "More" },
+  "disclaimer": "Niva supports your decision; it does not replace your experience or a local agronomist.",
+  "server": {
+    "title": "Server",
+    "checking": "Checking…",
+    "ok": "Connected",
+    "down": "Cannot reach the server"
+  },
+  "field": {
+    "title": "My field",
+    "empty": "Coming soon: live readings from the soil sensor, next to the NASA values."
+  },
+  "climate": {
+    "title": "Climate",
+    "empty": "Coming soon: water balance, heat days, frost and greenness from NASA data."
+  },
+  "rotations": {
+    "title": "Rotations",
+    "empty": "Coming soon: your current rotation and 3 alternatives, each explained."
+  },
+  "more": {
+    "title": "More",
+    "language": "Language",
+    "theme": "Look",
+    "themeAuto": "Like the phone",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "empty": "Coming soon: add sensor, priorities, install the app, about the data."
+  }
+}
