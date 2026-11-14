@@ -27,7 +27,7 @@ function lookup(dict, key) {
 }
 
 export function I18nProvider({ children }) {
-  const [lang, setLangState] = useState(() => load('niva.lang', 'mk'))
+  const [lang, setLangState] = useState(() => load('niva.lang', 'en'))
 
   useEffect(() => {
     document.documentElement.lang = lang

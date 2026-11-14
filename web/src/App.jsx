@@ -50,16 +50,19 @@ export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        <img src={`${base}icons/logo.svg`} alt="" width="36" height="36" />
+        <img src={`${base}icons/logo.svg`} alt="" width="34" height="34" />
         <span className="wordmark">Niva</span>
+        <span className="pill">{t('badge')}</span>
       </header>
 
       <nav className="tabs" aria-label="Niva">
         {tabs.map(({ key, path }) => (
           <NavLink key={key} to={path} end={path === '/'} className="tab">
-            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-              <path d={icons[key]} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <span className="tab-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path d={icons[key]} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
             <span>{t(`tabs.${key}`)}</span>
           </NavLink>
         ))}

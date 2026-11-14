@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getLive } from '../api.js'
-import Screen from '../components/Screen.jsx'
+import Screen, { ComingSoon } from '../components/Screen.jsx'
 import SensorTile from '../components/SensorTile.jsx'
 import { load, useI18n } from '../i18n/index.jsx'
 
@@ -51,14 +51,16 @@ export default function MyField() {
   const level = soil != null ? soilLevel(soil) : null
 
   return (
-    <Screen title={t('field.title')}>
-      <div className={`card freshness ${isLive ? 'is-live' : ''}`} role="status">
-        <span className="dot" aria-hidden="true" />
-        {live == null && !error && t('field.loading')}
-        {error && t('server.down')}
-        {!error && live && !r && t('field.noReadings')}
-        {!error && r && (isLive ? t('field.live') : `${t('field.lastReading')} ${ago(age, t)}`)}
-      </div>
+    <Screen section="field">
+      <p className="tiles-status">
+        <span className={`pill freshness ${isLive ? 'is-live' : ''} ${error ? 'is-down' : ''}`} role="status">
+          <span className="dot" aria-hidden="true" />
+          {live == null && !error && t('field.loading')}
+          {error && t('server.down')}
+          {!error && live && !r && t('field.noReadings')}
+          {!error && r && (isLive ? t('field.live') : `${t('field.lastReading')} ${ago(age, t)}`)}
+        </span>
+      </p>
 
       {r && (
         <div className="tiles">
@@ -81,7 +83,7 @@ export default function MyField() {
         </div>
       )}
 
-      <p className="card muted">{t('field.nasaSoon')}</p>
+      <ComingSoon>{t('field.nasaSoon')}</ComingSoon>
     </Screen>
   )
 }

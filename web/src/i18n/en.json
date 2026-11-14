@@ -30,15 +30,24 @@
     "soil_dry": "Dry",
     "soil_good": "Good",
     "soil_wet": "Very wet",
-    "nasaSoon": "Coming soon: the NASA values (SMAP, POWER) for the same place, next to the readings."
+    "nasaSoon": "Coming soon: the NASA values (SMAP, POWER) for the same place, next to the readings.",
+    "eyebrow": "Ovče Pole · demo plant",
+    "mark": "field",
+    "sub": "Live readings from the soil sensor in your field, every 5 seconds."
   },
   "climate": {
     "title": "Climate",
-    "empty": "Coming soon: water balance, heat days, frost and greenness from NASA data."
+    "empty": "Coming soon: water balance, heat days, frost and greenness from NASA data.",
+    "eyebrow": "NASA data",
+    "mark": "Climate",
+    "sub": "Rain, heat, frost and greenness for your field, from NASA satellites."
   },
   "rotations": {
     "title": "Rotations",
-    "empty": "Coming soon: your current rotation and 3 alternatives, each explained."
+    "empty": "Coming soon: your current rotation and 3 alternatives, each explained.",
+    "eyebrow": "Current + 3 options",
+    "mark": "Rotations",
+    "sub": "Your rotation next to three alternatives, each with why, evidence, benefits, gaps and risks."
   },
   "more": {
     "title": "More",
@@ -47,6 +56,10 @@
     "themeAuto": "Like the phone",
     "themeLight": "Light",
     "themeDark": "Dark",
-    "empty": "Coming soon: add sensor, priorities, install the app, about the data."
-  }
+    "empty": "Coming soon: add sensor, priorities, install the app, about the data.",
+    "eyebrow": "Settings",
+    "mark": "More",
+    "sub": "Language, look, sensors and the data behind Niva."
+  },
+  "badge": "NASA Space Apps 2026"
 }

@@ -1,10 +1,10 @@
-import Screen from '../components/Screen.jsx'
+import Screen, { ComingSoon } from '../components/Screen.jsx'
 import { useI18n } from '../i18n/index.jsx'
 
 export default function More({ theme, setTheme }) {
   const { t, lang, setLang } = useI18n()
   return (
-    <Screen title={t('more.title')}>
+    <Screen section="more">
       <div className="card setting">
         <span className="label">{t('more.language')}</span>
         <div className="segmented">
@@ -22,7 +22,7 @@ export default function More({ theme, setTheme }) {
           ))}
         </div>
       </div>
-      <p className="card muted">{t('more.empty')}</p>
+      <ComingSoon>{t('more.empty')}</ComingSoon>
     </Screen>
   )
 }

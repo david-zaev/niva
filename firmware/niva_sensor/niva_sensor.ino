@@ -2,6 +2,10 @@
 // Every SEND_INTERVAL_MS: read all sensors -> print one JSON line over USB (the Web Serial backup)
 // -> POST the same JSON to the Niva server over HTTPS.
 //
+// Board: "ESP32 Dev Module". Tools -> Partition Scheme -> "Huge APP (3MB No OTA/1MB SPIFFS)":
+// WiFi + HTTPS + WiFiManager fill ~90% of the default 1.2 MB app partition.
+// arduino-cli: --fqbn esp32:esp32:esp32:PartitionScheme=huge_app
+//
 // Libraries (Arduino Library Manager):
 //   OneWire, DallasTemperature, DHT sensor library (Adafruit), Adafruit Unified Sensor,
 //   Adafruit BME280 Library, Adafruit BMP280 Library, ArduinoJson (v7), WiFiManager (tzapu)

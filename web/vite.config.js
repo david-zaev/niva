@@ -20,9 +20,9 @@ export default defineConfig({
         name: 'Niva',
         short_name: 'Niva',
         description: 'Crop rotation advice from NASA data and your own soil sensor',
-        lang: 'mk',
-        theme_color: '#145C38',
-        background_color: '#145C38',
+        lang: 'en',
+        theme_color: '#0b0b0b',
+        background_color: '#0b0b0b',
         display: 'standalone',
         start_url: base,
         scope: base,
@@ -34,7 +34,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,json}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,json,woff2}'],
         navigateFallback: `${base}index.html`,
         runtimeCaching: [
           {
