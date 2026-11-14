@@ -245,6 +245,7 @@ def rotations(field_id: int,
         current = next(r for r in library if r.get("kind") == "common" and loc["id"] in r.get("regions", []))
     out = scoring.rank(library, crops, {**ind, "_distance_km": km}, yields, prices, current,
                        priorities=f.priorities, what_if={"rain": rain, "temp": temp})
+    yield_years = sorted({value['years'] for value in yields.get('locations', {}).get(loc['id'], {}).get('crops', {}).values() if value})
     return {
         "field_id": field_id, "location": ind["location"], "distance_km": km,
         "what_if": {"rain_pct": rain, "temp_c": temp},
@@ -252,7 +253,7 @@ def rotations(field_id: int,
         **out,
         "sources": [
             {"dataset": "NASA POWER daily", "dates": ind["sources"][0]["dates"]},
-            {"dataset": "MakStat crop yields by municipality", "dates": "last 3 years with data, to 2025"},
+            {"dataset": "MakStat crop yields by municipality", "dates": ', '.join(yield_years) or 'not available'},
             {"dataset": "ZPIS prices (Ministry of Agriculture)", "dates": f"retrieved {prices.get('retrieved')}"},
         ],
     }

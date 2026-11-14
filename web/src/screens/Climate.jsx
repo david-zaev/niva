@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getClimate } from '../api.js'
+import { getClimate, paths, peek } from '../api.js'
 import { FrostChart, HeatDaysChart, WaterBalanceChart } from '../components/ClimateCharts.jsx'
 import Screen from '../components/Screen.jsx'
 import TermHelp from '../components/TermHelp.jsx'
@@ -36,27 +36,53 @@ function ChartCard({ title, term, help, source, children }) {
 }
 
 export default function Climate() {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const fieldId = load('niva.fieldId', '1')
-  const [d, setD] = useState(null)
+  const [d, setD] = useState(() => peek(paths.climate(fieldId)))
   const [error, setError] = useState(false)
+  const [historical, setHistorical] = useState(false)
 
   useEffect(() => {
-    getClimate(fieldId).then(setD).catch(() => setError(true))
+    const refresh = () => getClimate(fieldId).then((data) => { setD(data); setError(false) }).catch(() => setError(true))
+    refresh()
+    const timer = setInterval(refresh, 15 * 60 * 1000)
+    window.addEventListener('focus', refresh)
+    return () => { clearInterval(timer); window.removeEventListener('focus', refresh) }
   }, [fieldId])
 
-  if (error) return <Screen section="climate"><p className="card">{t('server.down')}</p></Screen>
+  if (error && !d) return <Screen section="climate"><p className="card">{t('server.down')}</p></Screen>
   if (!d) return <Screen section="climate"><p className="card muted">{t('field.loading')}</p></Screen>
 
   const src = d.sources[0]
   const base = d.periods.baseline
   const recent = d.periods.recent
+  const current = d.current
+  const showCurrent = current && !historical
+  const date = (value) => value ? new Intl.DateTimeFormat(lang === 'mk' ? 'mk-MK' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(`${value}T12:00:00`)) : '—'
+  const currentLabel = current ? `${current.year} ${t(current.partial ? 'climate.soFar' : 'climate.observed')}` : ''
+  const yearly = current && !d.yearly.some((row) => row.year === current.year) ? [...d.yearly, current] : d.yearly
   const source = (period) => `${src.dataset} · ${period} · ${d.location.name} (${d.location.lat}, ${d.location.lon})`
   const deficit = d.monthly.recent.filter((m) => m.balance_mm < 0)
   const deficitTotal = Math.round(deficit.reduce((s, m) => s + m.balance_mm, 0))
 
   return (
     <Screen section="climate">
+      {current && <div className="climate-freshness">
+        <strong>{t('climate.latestData')} · {date(current.end_date)}</strong>
+        <span>{t('climate.availableNote')}</span>
+      </div>}
+      {current && <div className="stats">
+        <Stat label={`${t('climate.rain')} · ${currentLabel}`} value={current.rain_mm ?? '—'} unit=" mm"
+          note={`${t('climate.through')} ${date(current.dates.rain_mm)}`} />
+        <Stat label={`${t('climate.heatDaysYear')} · ${currentLabel}`} value={current.heat_days} unit={` ${t('climate.daysUnit')}`}
+          note={`${t('climate.through')} ${date(current.end_date)}`} />
+        <Stat label={t('climate.temperatureChange')} value={current.t_mean_change_c == null ? '—' : sign(current.t_mean_change_c)} unit="°C"
+          note={`${currentLabel} ${t('climate.samePeriod')} ${base}`} />
+        <Stat label={t('climate.latestMax')} value={current.latest.t_max ?? '—'} unit="°C"
+          note={date(current.latest.date)} />
+      </div>}
+      <details className="climate-history">
+      <summary>{t('climate.longTerm')} · {recent}</summary>
       <div className="stats">
         <Stat label={t('climate.warmer')} value={sign(d.trend.t_mean_change_c)} unit="°C"
           note={`${recent} ${t('climate.vs')} ${base}`} />
@@ -67,20 +93,25 @@ export default function Climate() {
         <Stat label={t('climate.rainYear')} value={Math.round(d.recent.rain_mm)} unit=" mm"
           note={`${sign(d.trend.rain_change_pct)}% ${t('climate.vs')} ${base}`} />
       </div>
+      </details>
 
       <div className="chart-grid">
         <ChartCard title={t('climate.waterTitle')} term="et0"
-          help={t('climate.waterHelp').replace('{n}', Math.abs(deficitTotal))}
-          source={source(recent)}>
-          <WaterBalanceChart monthly={d.monthly.recent} />
+          help={showCurrent ? `${t('climate.partialHelp')} ${t('climate.rain')}: ${date(current.dates.rain_mm)} · ET₀: ${date(current.dates.et0)}` : t('climate.waterHelp').replace('{n}', Math.abs(deficitTotal))}
+          source={source(showCurrent ? `${current.start_date}–${current.end_date}` : recent)}>
+          {current && <div className="segmented climate-period" role="group" aria-label={t('climate.period')}>
+            <button aria-pressed={!historical} onClick={() => setHistorical(false)}>{currentLabel}</button>
+            <button aria-pressed={historical} onClick={() => setHistorical(true)}>{recent} · {t('climate.average')}</button>
+          </div>}
+          <WaterBalanceChart monthly={showCurrent ? current.monthly : d.monthly.recent} />
         </ChartCard>
 
-        <ChartCard title={t('climate.heatTitle')} term="heatDays" help={t('climate.heatHelp')} source={source(d.yearly[0].year + '–' + d.yearly.at(-1).year)}>
-          <HeatDaysChart yearly={d.yearly} baselineAvg={d.baseline.heat_days} />
+        <ChartCard title={t('climate.heatTitle')} term="heatDays" help={`${t('climate.heatHelp')} ${current?.partial ? t('climate.partialYearNote').replace('{year}', current.year) : ''}`} source={source(yearly[0].year + '–' + yearly.at(-1).year)}>
+          <HeatDaysChart yearly={yearly} baselineAvg={d.baseline.heat_days} />
         </ChartCard>
 
-        <ChartCard title={t('climate.frostTitle')} term="frostFree" help={t('climate.frostHelp')} source={source(d.yearly[0].year + '–' + d.yearly.at(-1).year)}>
-          <FrostChart yearly={d.yearly} />
+        <ChartCard title={t('climate.frostTitle')} term="frostFree" help={`${t('climate.frostHelp')} ${t('climate.frostObserved')}`} source={source(yearly[0].year + '–' + yearly.filter((row) => row.last_spring_frost_doy && row.first_autumn_frost_doy).at(-1)?.year)}>
+          <FrostChart yearly={yearly} />
         </ChartCard>
 
       </div>

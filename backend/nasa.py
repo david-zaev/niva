@@ -36,13 +36,11 @@ def location_for(lat: float, lon: float, region: str | None) -> tuple[dict, floa
     return l, round(km_between(lat, lon, l["lat"], l["lon"]), 1), False
 
 
-@lru_cache
 def indicators(location_id: str) -> dict | None:
     path = DATA_DIR / "locations" / location_id / "indicators.json"
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 
-@lru_cache
 def latest_power(location_id: str) -> dict | None:
     """Most recent day in power.csv with temperature data, plus its source line."""
     path = DATA_DIR / "locations" / location_id / "power.csv"

@@ -1,5 +1,5 @@
 // Background artefact: field plots seen from above, square tiles tilted like the logo, a few with crop rows.
-// Purely decorative, very faint, fading out below the header so it never competes with the numbers.
+// Decorative tiles use solid theme colours so the pattern stays crisp in both themes.
 const TILE = 64
 const GAP = 8
 const COLS = 18

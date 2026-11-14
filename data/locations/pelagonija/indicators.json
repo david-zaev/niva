@@ -646,5 +646,109 @@
    "indicator": "soil_moisture_anomaly",
    "dataset": "SMAP 9 km (NASA Earthdata / AppEEARS)"
   }
- ]
+ ],
+ "current": {
+  "year": 2026,
+  "start_date": "2026-01-01",
+  "end_date": "2026-11-11",
+  "partial": true,
+  "dates": {
+   "t_max": "2026-11-11",
+   "t_min": "2026-11-11",
+   "rain_mm": "2026-11-11",
+   "humidity": "2026-11-11",
+   "solar": "2026-11-09",
+   "wind": "2026-11-11",
+   "et0": "2026-11-09"
+  },
+  "temperature_days": 315,
+  "rain_days": 315,
+  "t_mean": 13.4,
+  "t_mean_change_c": 1.5,
+  "rain_mm": 565.4,
+  "rain_change_pct": 8.2,
+  "heat_days": 4,
+  "last_spring_frost_doy": 122,
+  "first_autumn_frost_doy": null,
+  "latest": {
+   "date": "2026-11-11",
+   "t_max": 17.5,
+   "t_min": 6.2
+  },
+  "monthly": [
+   {
+    "month": 1,
+    "rain_mm": 124.8,
+    "et0_mm": 20.8,
+    "balance_mm": 104.0
+   },
+   {
+    "month": 2,
+    "rain_mm": 107.3,
+    "et0_mm": 31.7,
+    "balance_mm": 75.6
+   },
+   {
+    "month": 3,
+    "rain_mm": 19.5,
+    "et0_mm": 55.0,
+    "balance_mm": -35.5
+   },
+   {
+    "month": 4,
+    "rain_mm": 61.7,
+    "et0_mm": 84.9,
+    "balance_mm": -23.2
+   },
+   {
+    "month": 5,
+    "rain_mm": 51.6,
+    "et0_mm": 116.2,
+    "balance_mm": -64.6
+   },
+   {
+    "month": 6,
+    "rain_mm": 56.4,
+    "et0_mm": 149.8,
+    "balance_mm": -93.4
+   },
+   {
+    "month": 7,
+    "rain_mm": 24.9,
+    "et0_mm": 176.6,
+    "balance_mm": -151.6
+   },
+   {
+    "month": 8,
+    "rain_mm": 8.3,
+    "et0_mm": 168.6,
+    "balance_mm": -160.4
+   },
+   {
+    "month": 9,
+    "rain_mm": 30.6,
+    "et0_mm": 106.4,
+    "balance_mm": -75.8
+   },
+   {
+    "month": 10,
+    "rain_mm": 46.5,
+    "et0_mm": 60.8,
+    "balance_mm": -14.3
+   },
+   {
+    "month": 11,
+    "rain_mm": 33.9,
+    "et0_mm": 9.2,
+    "balance_mm": 24.8
+   },
+   {
+    "month": 12,
+    "rain_mm": null,
+    "et0_mm": null,
+    "balance_mm": null
+   }
+  ]
+ },
+ "updated_at": "2026-11-14T12:55:12+00:00"
 }

@@ -5,13 +5,16 @@ is missing, so a fresh server is never empty.
 """
 import logging
 import threading
-from datetime import date, timedelta
+import csv
+import json
+from datetime import date, datetime, timedelta, timezone
 
 import httpx
 from sqlmodel import Session, delete, select
 
 import forecast
 import nasa
+import climate_data
 from models import ClimateDaily, FieldRow, Forecast, engine
 
 log = logging.getLogger("niva.jobs")
@@ -58,6 +61,36 @@ def fetch_soil(lat, lon, start: date, end: date) -> dict[date, float]:
     return {date.fromisoformat(d): sum(v) / 24 for d, v in days.items() if len(v) == 24}  # full days only
 
 
+def refresh_climate(loc: dict, today: date) -> None:
+    """Refresh the regional history and climate charts, including late solar data."""
+    folder = nasa.DATA_DIR / 'locations' / loc['id']
+    path = folder / 'power.csv'
+    with path.open(encoding='utf-8', newline='') as stream:
+        reader = csv.DictReader(stream)
+        columns = reader.fieldnames
+        saved = {row['date']: row for row in reader}
+    start = date.fromisoformat(max(saved)) - timedelta(days=14)
+    updates = fetch_power(loc['lat'], loc['lon'], start, today - timedelta(days=1))
+    for day, values in updates.items():
+        key = day.isoformat()
+        row = saved.setdefault(key, {'date': key})
+        row.update({k: v for k, v in values.items() if v is not None})
+    temporary = path.with_suffix('.csv.tmp')
+    with temporary.open('w', encoding='utf-8', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=columns)
+        writer.writeheader()
+        writer.writerows(saved[key] for key in sorted(saved))
+    temporary.replace(path)
+    meta_path = folder / 'power_meta.json'
+    meta = json.loads(meta_path.read_text(encoding='utf-8'))
+    meta.update(last_date=max(saved), days=len(saved),
+                downloaded_at=datetime.now(timezone.utc).isoformat(timespec='seconds'),
+                request_url=f'{POWER}?parameters={",".join(PARAMS)}&community=AG&latitude={loc["lat"]}'
+                            f'&longitude={loc["lon"]}&start={start:%Y%m%d}&end={today - timedelta(days=1):%Y%m%d}&format=JSON')
+    climate_data.write_json(meta_path, meta)
+    climate_data.compute_location(loc)
+
+
 def run_field(s: Session, f: FieldRow, today: date) -> int:
     import pandas as pd
     start, end = today - timedelta(days=DAYS_BACK), today - timedelta(days=1)
@@ -87,6 +120,11 @@ def run_field(s: Session, f: FieldRow, today: date) -> int:
 
 def run_all() -> None:
     today = date.today()
+    for loc in nasa.locations():
+        try:
+            refresh_climate(loc, today)
+        except Exception:
+            log.exception('location %s: climate refresh failed; keeping saved data', loc['id'])
     with Session(engine) as s:
         for f in s.exec(select(FieldRow)).all():
             try:
@@ -117,6 +155,8 @@ def start() -> object | None:
     with Session(engine) as s:  # any field without today's forecast (new server, new field, missed 06:00)?
         done = set(s.exec(select(Forecast.field_id).where(Forecast.made_at == date.today())).all())
         fields = set(s.exec(select(FieldRow.id)).all())
-        if fields - done:
+        climate_stale = any(((nasa.indicators(loc['id']) or {}).get('updated_at') or '')[:10] != date.today().isoformat()
+                            for loc in nasa.locations())
+        if fields - done or climate_stale:
             threading.Thread(target=run_all, daemon=True).start()
     return sched

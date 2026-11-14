@@ -10,7 +10,7 @@ import json
 import sys
 import time
 import urllib.request
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 DATA = Path(__file__).resolve().parent.parent
@@ -49,7 +49,8 @@ def hargreaves_et0(t_max, t_min, ra_mj) -> float | None:
     return round(0.0023 * 0.408 * ra_mj * (t_mean + 17.8) * (t_max - t_min) ** 0.5, 2)
 
 
-def main(start="1991-01-01", end="2025-12-31") -> None:
+def main(start="1991-01-01", end=None) -> None:
+    end = end or (date.today() - timedelta(days=1)).isoformat()
     locations = json.loads((DATA / "locations.json").read_text(encoding="utf-8"))
     for loc in locations:
         print(f"{loc['id']}: {start} .. {end}")

@@ -42,16 +42,37 @@ async function call(method, path, body, headers = {}) {
   }
   return res.json()
 }
-const get = (path) => call('GET', path)
+// Last answer per path, kept in memory: a tab you come back to shows its data at once and refreshes quietly.
+// Requests already on their way are shared (the background preload and a screen can ask at the same time).
+const cache = new Map()
+const inflight = new Map()
+function get(path) {
+  if (inflight.has(path)) return inflight.get(path)
+  const p = call('GET', path)
+    .then((data) => {
+      cache.set(path, data)
+      return data
+    })
+    .finally(() => inflight.delete(path))
+  inflight.set(path, p)
+  return p
+}
+export const peek = (path) => cache.get(path) ?? null
 
+export const paths = {
+  live: (id) => `/fields/${id}/live`,
+  field: (id) => `/fields/${id}`,
+  climate: (id) => `/fields/${id}/climate`,
+  forecast: (id) => `/fields/${id}/forecast`,
+  rotations: (id, rain = 0, temp = 0) => `/fields/${id}/rotations?rain=${rain}&temp=${temp}`,
+}
 export const getHealth = () => get('/health')
-export const getLive = (fieldId) => get(`/fields/${fieldId}/live`)
+export const getLive = (fieldId) => get(paths.live(fieldId))
 export const getHistory = (fieldId, days = 7) => get(`/fields/${fieldId}/history?days=${days}`)
-export const getField = (fieldId) => get(`/fields/${fieldId}`)
-export const getClimate = (fieldId) => get(`/fields/${fieldId}/climate`)
-export const getRotations = (fieldId, rain = 0, temp = 0) =>
-  get(`/fields/${fieldId}/rotations?rain=${rain}&temp=${temp}`)
-export const getForecast = (fieldId) => get(`/fields/${fieldId}/forecast`)
+export const getField = (fieldId) => get(paths.field(fieldId))
+export const getClimate = (fieldId) => get(paths.climate(fieldId))
+export const getRotations = (fieldId, rain = 0, temp = 0) => get(paths.rotations(fieldId, rain, temp))
+export const getForecast = (fieldId) => get(paths.forecast(fieldId))
 export const getCrops = () => get('/crops')
 export const getPrices = () => get('/prices')
 export const getBuyers = (crop) => get(`/buyers${crop ? `?crop=${encodeURIComponent(crop)}` : ''}`)

@@ -47,7 +47,16 @@ def main():
             e = min(f"{y + 3}-12-31", end)
             days.update(fetch(loc["lat"], loc["lon"], s, e))
         out = DATA / "locations" / loc["id"]
-        with open(out / "soil.csv", "w", newline="", encoding="utf-8") as f:
+        path = out / 'soil.csv'
+        existing = {}
+        if path.exists():
+            with path.open(encoding='utf-8') as stream:
+                existing = {row['date']: float(row['sm']) for row in csv.DictReader(stream) if row['sm']}
+        days = {**existing, **days}
+        if not days:
+            print(loc['id'], 'no published soil data; keeping saved files')
+            continue
+        with open(path, "w", newline="", encoding="utf-8") as f:
             w = csv.writer(f, lineterminator="\n")
             w.writerow(["date", "sm"])
             for d in sorted(days):

@@ -1,17 +1,21 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
-import { Link, NavLink, Route, Routes } from 'react-router-dom'
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Link, NavLink, Route, Routes, useLocation } from 'react-router-dom'
+import { fieldId, getClimate, getField, getForecast, getRotations } from './api.js'
 import { load, save, useI18n } from './i18n/index.jsx'
 import MyField from './screens/MyField.jsx'
 import Climate from './screens/Climate.jsx'
 import Rotations from './screens/Rotations.jsx'
 import RotationDetails from './screens/RotationDetails.jsx'
 // the map (Leaflet) is only needed here: load these screens when opened
-const More = lazy(() => import('./screens/More.jsx'))
-const Setup = lazy(() => import('./screens/Setup.jsx'))
+const loadMore = () => import('./screens/More.jsx')
+const loadSetup = () => import('./screens/Setup.jsx')
+const More = lazy(loadMore)
+const Setup = lazy(loadSetup)
 import Pair from './screens/Pair.jsx'
 import { OfflineBanner, UpdateButton } from './components/StatusBars.jsx'
 import FarmGrid from './components/FarmGrid.jsx'
 import Logo from './components/Logo.jsx'
+import LanguagePicker from './components/LanguagePicker.jsx'
 import './pwa.js'
 
 // Simple line icons, drawn with currentColor so they follow the theme
@@ -49,9 +53,66 @@ function useTheme() {
   return [theme, setTheme]
 }
 
+// After the first screen shows, quietly fetch the other tabs and their code, so switching is instant
+function usePreload() {
+  useEffect(() => {
+    const idle = window.requestIdleCallback ?? ((fn) => setTimeout(fn, 1200))
+    const id = fieldId()
+    idle(() => { // at the latest after 2 s, even if the phone never goes idle
+      Promise.allSettled([getField(id), getForecast(id), getClimate(id), getRotations(id), loadMore(), loadSetup()])
+    }, { timeout: 2000 })
+  }, [])
+}
+
+const activeIndex = (pathname) => {
+  if (pathname === '/') return 0
+  const i = tabs.findIndex((tab) => tab.path !== '/' && pathname.startsWith(tab.path))
+  return i
+}
+
+// Attached bottom navigation on phones, left sidebar on a PC.
+function TabBar({ t }) {
+  const { pathname } = useLocation()
+  const nav = useRef(null)
+  const [pill, setPill] = useState(null)
+  const index = activeIndex(pathname)
+  const measure = useCallback(() => {
+    const el = nav.current?.querySelectorAll('.tab')[index]
+    setPill(el ? { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight } : null)
+  }, [index])
+  useLayoutEffect(measure, [measure, t])
+  useEffect(() => {
+    const ro = new ResizeObserver(measure)
+    if (nav.current) ro.observe(nav.current)
+    document.fonts?.ready.then(measure)
+    return () => ro.disconnect()
+  }, [measure])
+  return (
+    <nav className="tabs" aria-label="Niva" ref={nav}>
+      <span className={`tab-pill ${pill ? '' : 'is-hidden'}`} aria-hidden="true"
+        style={pill ? { transform: `translate(${pill.x}px, ${pill.y}px)`, width: pill.w, height: pill.h } : undefined} />
+      {tabs.map(({ key, path }, i) => (
+        <NavLink key={key} to={path} end={path === '/'} className={`tab ${i === index ? 'is-on' : ''}`}>
+          <svg className="tab-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d={icons[key]} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="tab-label">{t(`tabs.${key}`)}</span>
+        </NavLink>
+      ))}
+    </nav>
+  )
+}
+
 export default function App() {
-  const { t, lang, setLang } = useI18n()
+  const { t } = useI18n()
   const [theme, setTheme] = useTheme()
+  const { pathname } = useLocation()
+  // a new page fades in; moving within Rotations (sliders, details) keeps its place
+  const pageKey = pathname.startsWith('/rotations') ? '/rotations' : pathname
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [pageKey])
+  usePreload()
 
   return (
     <div className="app">
@@ -60,26 +121,15 @@ export default function App() {
         <Link to="/" className="brand" aria-label="Niva"><Logo /></Link>
         <div className="top-right">
           <UpdateButton />
-          <div className="lang-toggle" role="group" aria-label={t('more.language')}>
-            <button aria-pressed={lang === 'en'} onClick={() => setLang('en')}>EN</button>
-            <button aria-pressed={lang === 'mk'} onClick={() => setLang('mk')}>МК</button>
-          </div>
+          <LanguagePicker />
         </div>
       </header>
 
-      <nav className="tabs" aria-label="Niva">
-        {tabs.map(({ key, path }) => (
-          <NavLink key={key} to={path} end={path === '/'} className="tab">
-            <svg className="tab-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-              <path d={icons[key]} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span>{t(`tabs.${key}`)}</span>
-          </NavLink>
-        ))}
-      </nav>
+      <TabBar t={t} />
       <OfflineBanner />
 
       <main className="content">
+        <div className="page" key={pageKey}>
         <Suspense fallback={<p className="muted">{t('field.loading')}</p>}>
           <Routes>
             <Route path="/" element={<MyField />} />
@@ -92,6 +142,7 @@ export default function App() {
             <Route path="*" element={<MyField />} />
           </Routes>
         </Suspense>
+        </div>
       </main>
     </div>
   )

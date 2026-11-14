@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { DEMO_FIELD, getField, getForecast, getLive, ownerToken } from '../api.js'
+import { DEMO_FIELD, getField, getForecast, getLive, ownerToken, paths, peek } from '../api.js'
 import ForecastChart from '../components/ForecastChart.jsx'
 import Screen from '../components/Screen.jsx'
 import SensorTile from '../components/SensorTile.jsx'
@@ -26,7 +26,7 @@ function ago(seconds, t) {
 
 function ForecastCard({ fieldId }) {
   const { t } = useI18n()
-  const [fc, setFc] = useState(null)
+  const [fc, setFc] = useState(() => peek(paths.forecast(fieldId)))
   const [failed, setFailed] = useState(false)
   useEffect(() => {
     let alive = true
@@ -74,10 +74,10 @@ export function Icon({ d }) {
 export default function MyField() {
   const { t } = useI18n()
   const fieldId = load('niva.fieldId', '1')
-  const [live, setLive] = useState(null)
+  const [live, setLive] = useState(() => peek(paths.live(fieldId)))
   const [error, setError] = useState(false)
   const [now, setNow] = useState(Date.now())
-  const [field, setField] = useState(null)
+  const [field, setField] = useState(() => peek(paths.field(fieldId)))
   useEffect(() => {
     getField(fieldId).then(setField).catch(() => {})
   }, [fieldId])

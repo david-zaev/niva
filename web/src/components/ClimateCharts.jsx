@@ -70,9 +70,9 @@ export function HeatDaysChart({ yearly, baselineAvg }) {
   const { t } = useI18n()
   const c = useThemeColors()
   const data = {
-    labels: yearly.map((y) => y.year),
+    labels: yearly.map((y) => `${y.year}${y.partial ? '*' : ''}`),
     datasets: [
-      { type: 'bar', label: t('climate.heatDays'), data: yearly.map((y) => y.heat_days), backgroundColor: c['viz-heat'], ...bar, maxBarThickness: 10, order: 2 },
+      { type: 'bar', label: t('climate.heatDays'), data: yearly.map((y) => y.heat_days), backgroundColor: yearly.map((y) => y.partial ? c['viz-rain'] : c['viz-heat']), ...bar, maxBarThickness: 10, order: 2 },
       {
         type: 'line', label: t('climate.normalAvg'), data: yearly.map(() => baselineAvg),
         borderColor: c.slate, borderWidth: 2, borderDash: [5, 4], pointRadius: 0, order: 1,
@@ -89,7 +89,7 @@ export function FrostChart({ yearly }) {
   const c = useThemeColors()
   const rows = yearly.filter((y) => y.last_spring_frost_doy && y.first_autumn_frost_doy)
   const data = {
-    labels: rows.map((y) => y.year),
+    labels: rows.map((y) => `${y.year}${y.partial ? '*' : ''}`),
     datasets: [{
       label: t('climate.frostFree'),
       data: rows.map((y) => [y.last_spring_frost_doy, y.first_autumn_frost_doy]),

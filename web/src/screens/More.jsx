@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { DEMO_FIELD, fieldId, getField, ownerToken, pairDevice, patchField, selectField } from '../api.js'
+import { DEMO_FIELD, fieldId, getField, ownerToken, pairDevice, patchField, paths, peek, selectField } from '../api.js'
 import { PrioritySliders, RotationPicker } from '../components/FieldForms.jsx'
 import QrScanner, { canScan } from '../components/QrScanner.jsx'
 import Screen from '../components/Screen.jsx'
@@ -113,7 +113,7 @@ const DATA = ['power', 'soil', 'makstat', 'zpis', 'osm']
 
 export default function More({ theme, setTheme }) {
   const { t, lang, setLang } = useI18n()
-  const [field, setField] = useState(null)
+  const [field, setField] = useState(() => peek(paths.field(fieldId())))
   const owner = !!ownerToken()
   useEffect(() => {
     getField(fieldId()).then(setField).catch(() => {})
