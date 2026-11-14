@@ -1,5 +1,10 @@
 {
-  "tabs": { "field": "My field", "climate": "Climate", "rotations": "Rotations", "more": "More" },
+  "tabs": {
+    "field": "My field",
+    "climate": "Climate",
+    "rotations": "Rotations",
+    "more": "More"
+  },
   "disclaimer": "Niva supports your decision; it does not replace your experience or a local agronomist.",
   "server": {
     "title": "Server",
@@ -9,7 +14,23 @@
   },
   "field": {
     "title": "My field",
-    "empty": "Coming soon: live readings from the soil sensor, next to the NASA values."
+    "loading": "Loading…",
+    "live": "Live from the sensor",
+    "lastReading": "Last reading",
+    "noReadings": "No readings from the sensor yet.",
+    "agoSeconds": "{n} s ago",
+    "agoMinutes": "{n} min ago",
+    "agoHours": "{n} h ago",
+    "agoDays": "{n} days ago",
+    "soilMoisture": "Soil moisture",
+    "soilTemp": "Soil temperature",
+    "airTemp": "Air temperature",
+    "humidity": "Air humidity",
+    "pressure": "Air pressure",
+    "soil_dry": "Dry",
+    "soil_good": "Good",
+    "soil_wet": "Very wet",
+    "nasaSoon": "Coming soon: the NASA values (SMAP, POWER) for the same place, next to the readings."
   },
   "climate": {
     "title": "Climate",

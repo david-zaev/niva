@@ -2,7 +2,7 @@
 .env
 .env.*
 !.env.example
-firmware/secrets.h
+firmware/**/secrets.h
 *.pem
 *.key
 

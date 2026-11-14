@@ -48,12 +48,15 @@ One GitHub repo, one folder per part, so the four roles rarely touch the same fi
 
 ```
 niva/
-├── firmware/                 ESP32 (Hardware role)
+├── firmware/niva_sensor/     ESP32 (Hardware role); Arduino IDE needs folder name = sketch name
 │   ├── niva_sensor.ino       main sketch
-│   └── config.h              server address, calibration numbers, device key
+│   ├── config.h              pins, server address, calibration numbers
+│   ├── root_ca.h             Let's Encrypt root certificates for HTTPS
+│   └── secrets.h             device key (not in git; copy secrets.example.h)
 ├── backend/                  Python server (App role)
 │   ├── main.py               FastAPI app and routes
 │   ├── models.py             database tables
+│   ├── manage.py             admin: add-device, pair, list fields/devices
 │   ├── scoring.py            rotation scoring rules
 │   ├── forecast.py           loads the AI model, makes forecasts
 │   ├── nasa.py               NASA POWER calls
@@ -283,7 +286,9 @@ Build the thinnest working path first, then thicken it. Each milestone ends with
 ### Milestones
 
 - [ ] **M1 — Skeleton (hour 0–4):** repo created; `/health` answers over HTTPS on Oracle; PWA with 4 empty tabs live on GitHub Pages; ESP32 prints all sensors over USB
+  - Done: repo, `/health` + CORS for GitHub Pages, PWA live at https://david-zaev.github.io/niva/, firmware compiles. Open: flash the board and check every sensor prints; open the site on a phone on mobile data
 - [ ] **M2 — Live path (hour 4–8):** ESP32 → `POST /readings` → My field screen shows the number on a phone; app installs on Android and PC
+  - Done: all tables, `POST /readings`, fields, pairing, `/live`, `/history` deployed; firmware with WiFiManager + HTTPS + offline queue; My field screen tested with a simulated sensor. Open: real board posting, install test on Android and PC
 - [ ] **M3 — NASA path (hour 4–10):** POWER, SMAP, NDVI saved for 3 locations; `indicators.json` done; Climate tab shows its charts
 - [ ] **M4 — Rotations (hour 8–12):** `crops.json`, `rotations.json` and `prices.json` filled; `scoring.py` returns current + top 3; Rotations tab shows cards with the five headings
 - [ ] **M5 — AI model (hour 8–14):** model trained and tested; `/forecast` live; forecast band on My field

@@ -11,7 +11,7 @@
 #define PIN_BOOT       0   // BOOT button: hold 5 s to forget WiFi (M2)
 
 // ---- Timing ----
-#define SEND_INTERVAL_MS 5000UL   // demo: 5 s. In a real field: 600000 (10 min)
+#define SEND_INTERVAL_MS 5000UL   // demo: 5 s. In a real field: 600000UL (10 min)
 
 // ---- Soil calibration: raw analog values (0..4095) ----
 // Day-1 calibration: hold the sensor in dry air -> SOIL_RAW_DRY,

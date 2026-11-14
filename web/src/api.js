@@ -8,3 +8,6 @@ async function get(path) {
 }
 
 export const getHealth = () => get('/health')
+export const getLive = (fieldId) => get(`/fields/${fieldId}/live`)
+export const getHistory = (fieldId, days = 7) => get(`/fields/${fieldId}/history?days=${days}`)
+export const getField = (fieldId) => get(`/fields/${fieldId}`)
