@@ -13,8 +13,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      // autoUpdate while we deploy many times a day; the "Update ready" button comes in M6
-      registerType: 'autoUpdate',
+      // a new version waits until the farmer taps "Update ready" (UpdateButton)
+      registerType: 'prompt',
       includeAssets: ['icons/*.png', 'icons/*.svg', 'icons/favicon.ico'],
       manifest: {
         name: 'Niva',

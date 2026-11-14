@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query
+from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field as PField
 from sqlmodel import Session, select
@@ -30,7 +30,9 @@ app = FastAPI(title="Niva API", version="0.3.0", lifespan=lifespan)
 
 # Comma-separated list in .env, e.g. "https://<org>.github.io,http://localhost:5173"
 origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",") if o.strip()]
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"])
+# Date is exposed so the app can tell a fresh answer from the service worker's saved copy (OfflineBanner)
+app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"],
+                   expose_headers=["Date"])
 
 
 def db():
@@ -134,11 +136,12 @@ def post_reading(
 
 
 @app.post("/fields", status_code=201)
-def create_field(body: FieldIn, s: Session = Depends(db)):
+def create_field(body: FieldIn, bg: BackgroundTasks, s: Session = Depends(db)):
     f = FieldRow(**body.model_dump())
     s.add(f)
     s.commit()
     s.refresh(f)
+    bg.add_task(jobs.run_one, f.id)  # its first soil forecast, without waiting for 06:00
     return {**field_out(f), "owner_token": f.owner_token}
 
 

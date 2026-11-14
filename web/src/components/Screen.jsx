@@ -14,12 +14,13 @@ function Title({ text, mark }) {
 }
 
 // Every screen: a header, its content, and the line that Niva supports, not replaces, the farmer.
-export default function Screen({ section, children }) {
+export default function Screen({ section, eyebrow, children }) {
   const { t } = useI18n()
+  const brow = eyebrow ?? (t(`${section}.eyebrow`) !== `${section}.eyebrow` ? t(`${section}.eyebrow`) : null)
   return (
     <section className="screen">
       <header className="screen-head">
-        {t(`${section}.eyebrow`) !== `${section}.eyebrow` && <span className="pill">{t(`${section}.eyebrow`)}</span>}
+        {brow && <span className="pill">{brow}</span>}
         <Title text={t(`${section}.title`)} mark={t(`${section}.mark`)} />
         <p className="screen-sub">{t(`${section}.sub`)}</p>
       </header>
@@ -31,9 +32,10 @@ export default function Screen({ section, children }) {
 
 // Dashed placeholder for parts that come in a later milestone
 export function ComingSoon({ children }) {
+  const { t } = useI18n()
   return (
     <div className="card coming">
-      <span className="pill">Soon</span>
+      <span className="pill">{t('soon')}</span>
       <p>{children}</p>
     </div>
   )

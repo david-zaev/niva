@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { getForecast, getLive } from '../api.js'
+import { Link } from 'react-router-dom'
+import { DEMO_FIELD, getField, getForecast, getLive, ownerToken } from '../api.js'
+import TermHelp from '../components/TermHelp.jsx'
 import ForecastChart from '../components/ForecastChart.jsx'
 import Screen, { ComingSoon } from '../components/Screen.jsx'
 import SensorTile from '../components/SensorTile.jsx'
@@ -58,7 +60,7 @@ function ForecastCard({ fieldId }) {
       <ForecastChart fc={fc} />
       <dl className="fc-facts">
         <div>
-          <dt>{t('fc.error')}</dt>
+          <dt>{t('fc.error')} <TermHelp term="forecastError" /></dt>
           <dd>±{fc.error.mae_pct_points.toFixed(1)} {t('fc.points')} <span className="muted">· {t('fc.baseline')} ±{fc.error.no_change_mae.toFixed(1)}</span></dd>
         </div>
         <div>
@@ -81,6 +83,10 @@ export default function MyField() {
   const [live, setLive] = useState(null)
   const [error, setError] = useState(false)
   const [now, setNow] = useState(Date.now())
+  const [field, setField] = useState(null)
+  useEffect(() => {
+    getField(fieldId).then(setField).catch(() => {})
+  }, [fieldId])
 
   useEffect(() => {
     let alive = true
@@ -105,7 +111,13 @@ export default function MyField() {
   const level = soil != null ? soilLevel(soil) : null
 
   return (
-    <Screen section="field">
+    <Screen section="field" eyebrow={field ? (fieldId === DEMO_FIELD ? t('field.eyebrow') : field.name) : undefined}>
+      {fieldId === DEMO_FIELD && !ownerToken() && (
+        <div className="card own-field">
+          <p>{t('field.demoNote')}</p>
+          <Link className="btn btn-volt" to="/setup">{t('more.newField')} →</Link>
+        </div>
+      )}
       <p className="tiles-status">
         <span className={`pill freshness ${isLive ? 'is-live' : ''} ${error ? 'is-down' : ''}`} role="status">
           <span className="dot" aria-hidden="true" />

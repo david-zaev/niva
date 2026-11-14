@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useI18n } from '../i18n/index.jsx'
+import TermHelp from './TermHelp.jsx'
 
 export const SCORE_KEYS = ['water', 'soil', 'erosion', 'pest', 'climate', 'income']
 const MONTH_LETTERS = { en: 'JFMAMJJASOND', mk: 'ЈФМАМЈЈАСОНД' }
@@ -43,13 +44,13 @@ export function StripLegend() {
   )
 }
 
-export function ScoreBars({ scores }) {
+export function ScoreBars({ scores, help = false }) {
   const { t } = useI18n()
   return (
     <ul className="scores">
       {SCORE_KEYS.map((k) => (
         <li key={k}>
-          <span className="score-name">{t(`rot.score_${k}`)}</span>
+          <span className="score-name">{t(`rot.score_${k}`)}{help && <TermHelp term={`score_${k}`} />}</span>
           <span className="score-bar" aria-hidden="true">
             {scores[k] != null && <span style={{ width: `${scores[k]}%` }} className={scores[k] >= 70 ? 'hi' : scores[k] >= 45 ? 'mid' : 'lo'} />}
           </span>

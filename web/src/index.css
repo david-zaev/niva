@@ -261,3 +261,78 @@ button { font: inherit; color: inherit; }
 .fc-facts dt { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--smoke); }
 .fc-facts dd { margin: 2px 0 0; font-size: 0.92rem; }
 @media (min-width: 900px) { .fc-facts { grid-template-columns: repeat(3, 1fr); } }
+
+/* ---------- M6: forms, setup, settings ---------- */
+.btn { border: 0; cursor: pointer; font-family: inherit; min-height: 44px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-volt { background: var(--volt); color: var(--on-volt); }
+.btn-ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.small { font-size: 0.85rem; }
+.spaced { margin-top: 18px; }
+.row-btns { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+.setting-main { margin: 0; font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+.setting .muted.small { margin: 4px 0 0; }
+.settings-grid { display: grid; gap: 12px; }
+.settings-grid .card { margin: 0; }
+@media (min-width: 900px) { .settings-grid { grid-template-columns: repeat(2, 1fr); align-items: start; } }
+
+.text-input { display: grid; gap: 4px; margin-bottom: 12px; }
+.text-input input, .select select {
+  font: inherit; color: var(--ink); background: var(--canvas); border: 1px solid var(--line);
+  border-radius: 12px; min-height: 44px; padding: 0 12px; width: 100%;
+}
+.text-input input:focus-visible, .select select:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.rot-picker { display: grid; gap: 10px; }
+.select { display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 8px; }
+.select > span { font-family: var(--font-mono); font-size: 0.75rem; color: var(--smoke); }
+.priorities { display: grid; gap: 14px; }
+.pair-form { display: grid; gap: 4px; margin-top: 10px; }
+.pair-form > .btn-volt { margin-bottom: 12px; justify-self: start; }
+.pair-form > .btn:last-child { justify-self: start; }
+.msg { margin: 10px 0 0; font-weight: 600; }
+.msg-ok { color: var(--live); }
+.msg-bad { color: var(--down); }
+.qr { display: grid; gap: 10px; margin-top: 10px; }
+.qr video { width: 100%; max-height: 320px; object-fit: cover; border-radius: 12px; background: #000; }
+.about ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 0.92rem; }
+
+.field-map .map { height: 320px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); z-index: 0; }
+.map-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; font-size: 0.85rem; }
+.segmented.big button { min-height: 56px; padding: 0 22px; font-size: 1.05rem; }
+.wizard-nav { display: flex; justify-content: space-between; gap: 10px; margin: 4px 0 12px; }
+.error { color: var(--down); }
+.own-field { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; border-style: dashed; }
+.own-field p { margin: 0; flex: 1 1 240px; color: var(--slate); }
+
+/* "?" help */
+.term-help { position: relative; display: inline-block; vertical-align: middle; margin-left: 6px; }
+.help-btn {
+  width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); background: var(--card);
+  color: var(--slate); font: 700 0.75rem/1 var(--font-mono); cursor: pointer; padding: 0;
+}
+.help-btn::before { content: ''; position: absolute; inset: -11px; } /* 44 px finger target */
+.help-btn[aria-expanded='true'] { background: var(--ink); color: var(--card); border-color: var(--ink); }
+.help-pop {
+  position: fixed; z-index: 30; padding: 10px 12px; border-radius: 12px; background: var(--ink); color: var(--card);
+  font: 400 0.85rem/1.4 var(--font-body); letter-spacing: 0; text-transform: none; text-align: left;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+}
+.score-name .term-help { margin-left: 4px; }
+.scores li { grid-template-columns: 96px 1fr 28px; }
+
+/* offline + update */
+.banner-offline {
+  position: sticky; top: var(--top-h); z-index: 15; display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; background: var(--wait); color: #000; font-size: 0.88rem; font-weight: 600;
+}
+.banner-offline .dot { background: #000; }
+.update-btn { min-height: 34px; padding: 0 12px; font-size: 0.8rem; margin-left: 8px; }
+
+/* where to sell */
+.sell h2 { font-family: var(--font-display); font-size: 1.05rem; margin: 0 0 8px; }
+.sell-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.sell-list li { display: grid; gap: 2px; padding: 10px 0; border-top: 1px solid var(--line); }
+.sell-list li:first-child { border-top: 0; padding-top: 0; }
+.sell-crop { font-weight: 700; }
+.sell-price strong { font-family: var(--font-display); font-size: 1.2rem; }
+.sell-buyers { font-size: 0.85rem; }

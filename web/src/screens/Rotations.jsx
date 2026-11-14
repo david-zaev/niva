@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { getRotations } from '../api.js'
 import RotationCard, { StripLegend } from '../components/RotationCard.jsx'
 import Screen from '../components/Screen.jsx'
+import TermHelp from '../components/TermHelp.jsx'
 import { load, useI18n } from '../i18n/index.jsx'
 
 // What-if sliders live in the URL so the details page and a shared link see the same scenario
@@ -43,7 +44,7 @@ function WhatIf({ rain, temp, set }) {
   const { t } = useI18n()
   return (
     <div className="card whatif">
-      <span className="label">{t('rot.whatIf')}</span>
+      <span className="label">{t('rot.whatIf')} <TermHelp term="whatIf" /></span>
       <label className="slider">
         <span>{t('rot.rain')} <strong>{rain > 0 ? '+' : ''}{rain}%</strong></span>
         <input type="range" min="-40" max="20" step="10" value={rain} onChange={(e) => set('rain', e.target.value)} />

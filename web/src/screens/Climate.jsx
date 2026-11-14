@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getClimate } from '../api.js'
 import { FrostChart, HeatDaysChart, WaterBalanceChart } from '../components/ClimateCharts.jsx'
 import Screen, { ComingSoon } from '../components/Screen.jsx'
+import TermHelp from '../components/TermHelp.jsx'
 import { load, useI18n } from '../i18n/index.jsx'
 
 const sign = (v) => (v > 0 ? `+${v}` : `${v}`)
@@ -16,10 +17,10 @@ function Stat({ label, value, unit, note }) {
   )
 }
 
-function ChartCard({ title, help, source, children }) {
+function ChartCard({ title, term, help, source, children }) {
   return (
     <div className="card chart-card">
-      <h2>{title}</h2>
+      <h2>{title}{term && <TermHelp term={term} />}</h2>
       {help && <p className="chart-help">{help}</p>}
       {children}
       <p className="source">{source}</p>
@@ -61,17 +62,17 @@ export default function Climate() {
       </div>
 
       <div className="chart-grid">
-        <ChartCard title={t('climate.waterTitle')}
+        <ChartCard title={t('climate.waterTitle')} term="et0"
           help={t('climate.waterHelp').replace('{n}', Math.abs(deficitTotal))}
           source={source(recent)}>
           <WaterBalanceChart monthly={d.monthly.recent} />
         </ChartCard>
 
-        <ChartCard title={t('climate.heatTitle')} help={t('climate.heatHelp')} source={source(d.yearly[0].year + '–' + d.yearly.at(-1).year)}>
+        <ChartCard title={t('climate.heatTitle')} term="heatDays" help={t('climate.heatHelp')} source={source(d.yearly[0].year + '–' + d.yearly.at(-1).year)}>
           <HeatDaysChart yearly={d.yearly} baselineAvg={d.baseline.heat_days} />
         </ChartCard>
 
-        <ChartCard title={t('climate.frostTitle')} help={t('climate.frostHelp')} source={source(d.yearly[0].year + '–' + d.yearly.at(-1).year)}>
+        <ChartCard title={t('climate.frostTitle')} term="frostFree" help={t('climate.frostHelp')} source={source(d.yearly[0].year + '–' + d.yearly.at(-1).year)}>
           <FrostChart yearly={d.yearly} />
         </ChartCard>
 

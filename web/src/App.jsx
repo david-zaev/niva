@@ -1,11 +1,16 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { NavLink, Route, Routes } from 'react-router-dom'
 import { load, save, useI18n } from './i18n/index.jsx'
 import MyField from './screens/MyField.jsx'
 import Climate from './screens/Climate.jsx'
 import Rotations from './screens/Rotations.jsx'
 import RotationDetails from './screens/RotationDetails.jsx'
-import More from './screens/More.jsx'
+// the map (Leaflet) is only needed here: load these screens when opened
+const More = lazy(() => import('./screens/More.jsx'))
+const Setup = lazy(() => import('./screens/Setup.jsx'))
+import Pair from './screens/Pair.jsx'
+import { OfflineBanner, UpdateButton } from './components/StatusBars.jsx'
+import './pwa.js'
 
 const base = import.meta.env.BASE_URL
 
@@ -54,7 +59,9 @@ export default function App() {
         <img src={`${base}icons/logo.svg`} alt="" width="34" height="34" />
         <span className="wordmark">Niva</span>
         <span className="pill">{t('badge')}</span>
+        <UpdateButton />
       </header>
+      <OfflineBanner />
 
       <nav className="tabs" aria-label="Niva">
         {tabs.map(({ key, path }) => (
@@ -70,14 +77,18 @@ export default function App() {
       </nav>
 
       <main className="content">
+        <Suspense fallback={<p className="card muted">{t('field.loading')}</p>}>
         <Routes>
           <Route path="/" element={<MyField />} />
           <Route path="/climate" element={<Climate />} />
           <Route path="/rotations" element={<Rotations />} />
           <Route path="/rotations/:id" element={<RotationDetails />} />
+          <Route path="/setup" element={<Setup />} />
+          <Route path="/pair" element={<Pair />} />
           <Route path="/more" element={<More theme={theme} setTheme={setTheme} />} />
           <Route path="*" element={<MyField />} />
         </Routes>
+        </Suspense>
       </main>
     </div>
   )

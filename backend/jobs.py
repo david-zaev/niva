@@ -97,13 +97,26 @@ def run_all() -> None:
                 log.exception("field %s: daily job failed", f.id)
 
 
+def run_one(field_id: int) -> None:
+    """First forecast for a field just created in the app (runs after the answer is sent)."""
+    with Session(engine) as s:
+        f = s.get(FieldRow, field_id)
+        if f:
+            try:
+                run_field(s, f, date.today())
+            except Exception:
+                log.exception("field %s: first forecast failed", field_id)
+
+
 def start() -> object | None:
     """Start the scheduler (one uvicorn worker, so exactly one copy runs)."""
     from apscheduler.schedulers.background import BackgroundScheduler
     sched = BackgroundScheduler(timezone="Europe/Skopje")
     sched.add_job(run_all, "cron", hour=6, minute=0, id="daily", coalesce=True, misfire_grace_time=3600)
     sched.start()
-    with Session(engine) as s:
-        if s.exec(select(Forecast).where(Forecast.made_at == date.today())).first() is None:
+    with Session(engine) as s:  # any field without today's forecast (new server, new field, missed 06:00)?
+        done = set(s.exec(select(Forecast.field_id).where(Forecast.made_at == date.today())).all())
+        fields = set(s.exec(select(FieldRow.id)).all())
+        if fields - done:
             threading.Thread(target=run_all, daemon=True).start()
     return sched

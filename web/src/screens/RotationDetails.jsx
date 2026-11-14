@@ -1,5 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { ConfidencePill, MonthStrip, ScoreBars, StripLegend } from '../components/RotationCard.jsx'
+import SellCard from '../components/SellCard.jsx'
+import TermHelp from '../components/TermHelp.jsx'
 import { useI18n } from '../i18n/index.jsx'
 import { useRotations, useWhatIf } from './Rotations.jsx'
 
@@ -26,14 +28,14 @@ export default function RotationDetails() {
               {t('rot.total')}: <strong>{r.total}/100</strong>
               {(rain !== 0 || temp !== 0) && ` · ${t('rot.whatIf')}: ${rain > 0 ? '+' : ''}${rain}% ${t('rot.rain').toLowerCase()}, +${temp} °C`}
             </p>
-            <ConfidencePill level={r.confidence} />
+            <span><ConfidencePill level={r.confidence} /> <TermHelp term="confidence" /></span>
           </header>
 
           <div className="details-grid">
             <div className="card">
               <StripLegend />
               <MonthStrip strip={r.strip} crops={r.crops} />
-              <ScoreBars scores={r.scores} />
+              <ScoreBars scores={r.scores} help />
             </div>
             <div className="headings">
               {HEADINGS.map((h) => (
@@ -42,6 +44,7 @@ export default function RotationDetails() {
                   {Array.isArray(r[h]) ? <ul>{r[h].map((line, i) => <li key={i}>{line}</li>)}</ul> : <p>{r[h]}</p>}
                 </div>
               ))}
+              <SellCard crops={r.crops} region={data.location.id} />
             </div>
           </div>
           <p className="source">{data.sources.map((s) => `${s.dataset} (${s.dates})`).join(' · ')}</p>
