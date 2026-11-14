@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { DEMO_FIELD, getField, getForecast, getLive, ownerToken } from '../api.js'
-import TermHelp from '../components/TermHelp.jsx'
 import ForecastChart from '../components/ForecastChart.jsx'
-import Screen, { ComingSoon } from '../components/Screen.jsx'
+import Screen from '../components/Screen.jsx'
 import SensorTile from '../components/SensorTile.jsx'
+import TermHelp from '../components/TermHelp.jsx'
 import { load, useI18n } from '../i18n/index.jsx'
 
 const POLL_MS = 5000
@@ -40,40 +40,34 @@ function ForecastCard({ fieldId }) {
   }, [fieldId])
   if (failed && !fc) return <p className="card muted">{t('fc.notReady')}</p>
   if (!fc) return null
-  const input = (x) => {
-    const tr = t(`fcInputs.${x}`)
-    return tr.startsWith('fcInputs.') ? x : tr
-  }
   const fix = fc.field_correction
   return (
-    <article className="card chart-card forecast">
-      <div className="fc-head">
-        <h2>{t('fc.title')}</h2>
-        <span className={`pill advice advice-${fc.advice}`}>{t(`fc.advice_${fc.advice}`)}</span>
+    <article className="card chart-card">
+      <div className="card-head">
+        <h2><Icon d="M4 14c3-6 5-9 8-9s5 3 8 9M4 19h16" />{t('fc.title')}</h2>
+        <span className={`status status-${fc.advice}`}><span className="dot" aria-hidden="true" />{t(`fc.advice_${fc.advice}`)}</span>
       </div>
       <p className="chart-help">{t(`fc.help_${fc.advice}`)}</p>
-      <div className="fc-legend" aria-hidden="true">
+      <div className="legend" aria-hidden="true">
         <span><i className="sw sw-line" />{t('fc.forecast')}</span>
         <span><i className="sw sw-band" />{t('fc.band')}</span>
         <span><i className="sw sw-dry" />{t('fc.dryLine')}</span>
       </div>
       <ForecastChart fc={fc} />
-      <dl className="fc-facts">
-        <div>
-          <dt>{t('fc.error')} <TermHelp term="forecastError" /></dt>
-          <dd>±{fc.error.mae_pct_points.toFixed(1)} {t('fc.points')} <span className="muted">· {t('fc.baseline')} ±{fc.error.no_change_mae.toFixed(1)}</span></dd>
-        </div>
-        <div>
-          <dt>{t('fc.drivers')}</dt>
-          <dd>{fc.top_inputs.map(input).join(' · ')}</dd>
-        </div>
-        <div>
-          <dt>{t('fc.fieldFix')}</dt>
-          <dd>{fix.applied ? t('fc.fixOn').replace('{n}', `${fix.offset > 0 ? '+' : ''}${fix.offset}`) : t('fc.fixOff')}</dd>
-        </div>
-      </dl>
-      <p className="source">{fc.sources.map((x) => `${x.dataset} (${x.dates})`).join(' · ')} · {t('fc.errorNote')}</p>
+      <p className="card-foot">
+        {t('fc.usuallyOff').replace('{n}', fc.error.mae_pct_points.toFixed(1))} <TermHelp term="forecastError" />
+        {fix.applied && <> · {t('fc.fixOn').replace('{n}', `${fix.offset > 0 ? '+' : ''}${fix.offset}`)}</>}
+      </p>
+      <p className="source">{fc.sources.map((x) => `${x.dataset} (${x.dates})`).join(' · ')}</p>
     </article>
+  )
+}
+
+export function Icon({ d }) {
+  return (
+    <svg className="card-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <path d={d} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   )
 }
 
@@ -106,51 +100,33 @@ export default function MyField() {
   const r = live?.reading
   const age = r ? (now - new Date(r.time).getTime()) / 1000 : null
   const isLive = age != null && age < LIVE_WINDOW_S && !error
-
-  const soil = r?.soil_pct
+  const soil = r?.soil_pct ?? null
   const level = soil != null ? soilLevel(soil) : null
+  const isDemo = fieldId === DEMO_FIELD
+
+  const actions = (
+    <>
+      <span className={`chip freshness ${isLive ? 'is-live' : ''} ${error ? 'is-down' : ''}`} role="status">
+        <span className="dot" aria-hidden="true" />
+        {live == null && !error && t('field.loading')}
+        {error && t('server.down')}
+        {!error && live && !r && t('field.noSensor')}
+        {!error && r && (isLive ? t('field.live') : `${t('field.lastReading')} ${ago(age, t)}`)}
+      </span>
+      {isDemo && !ownerToken() && <Link className="btn btn-volt" to="/setup">{t('more.newField')}</Link>}
+    </>
+  )
 
   return (
-    <Screen section="field" eyebrow={field ? (fieldId === DEMO_FIELD ? t('field.eyebrow') : field.name) : undefined}>
-      {fieldId === DEMO_FIELD && !ownerToken() && (
-        <div className="card own-field">
-          <p>{t('field.demoNote')}</p>
-          <Link className="btn btn-volt" to="/setup">{t('more.newField')} →</Link>
-        </div>
-      )}
-      <p className="tiles-status">
-        <span className={`pill freshness ${isLive ? 'is-live' : ''} ${error ? 'is-down' : ''}`} role="status">
-          <span className="dot" aria-hidden="true" />
-          {live == null && !error && t('field.loading')}
-          {error && t('server.down')}
-          {!error && live && !r && t('field.noReadings')}
-          {!error && r && (isLive ? t('field.live') : `${t('field.lastReading')} ${ago(age, t)}`)}
-        </span>
-      </p>
-
-      {r && (
-        <div className="tiles">
-          {soil != null && (
-            <SensorTile big label={t('field.soilMoisture')} value={soil} unit="%" level={level}
-              levelText={t(`field.soil_${level}`)} />
-          )}
-          {r.soil_temp_c != null && (
-            <SensorTile label={t('field.soilTemp')} value={r.soil_temp_c} unit="°C" digits={1} />
-          )}
-          {r.air_temp_c != null && (
-            <SensorTile label={t('field.airTemp')} value={r.air_temp_c} unit="°C" digits={1} />
-          )}
-          {r.humidity_pct != null && (
-            <SensorTile label={t('field.humidity')} value={r.humidity_pct} unit="%" />
-          )}
-          {r.pressure_hpa != null && (
-            <SensorTile label={t('field.pressure')} value={r.pressure_hpa} unit=" hPa" />
-          )}
-        </div>
-      )}
-
+    <Screen section="field" eyebrow={field ? (isDemo ? t('field.eyebrow') : field.name) : undefined} actions={actions}>
+      <div className="stats">
+        <SensorTile label={t('field.soilMoisture')} value={soil} unit="%" level={level} bar
+          levelText={level ? t(`field.soil_${level}`) : null} />
+        <SensorTile label={t('field.soilTemp')} value={r?.soil_temp_c ?? null} unit="°C" digits={1} />
+        <SensorTile label={t('field.airTemp')} value={r?.air_temp_c ?? null} unit="°C" digits={1} />
+        <SensorTile label={t('field.humidity')} value={r?.humidity_pct ?? null} unit="%" />
+      </div>
       <ForecastCard fieldId={fieldId} />
-      <ComingSoon>{t('field.nasaSoon')}</ComingSoon>
     </Screen>
   )
 }

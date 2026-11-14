@@ -34,7 +34,8 @@
     "eyebrow": "Ovče Pole · demo plant",
     "mark": "field",
     "sub": "Live readings from the soil sensor in your field, every 5 seconds.",
-    "demoNote": "You are looking at the demo field in Ovče Pole. Set up your own field to see your place, your rotation and your sensor."
+    "demoNote": "You are looking at the demo field in Ovče Pole. Set up your own field to see your place, your rotation and your sensor.",
+    "noSensor": "No sensor yet"
   },
   "climate": {
     "title": "Climate",
@@ -169,7 +170,8 @@
     "fixOn": "The curve is shifted {n} points to match your sensor today.",
     "fixOff": "No fresh sensor reading: the curve is for the ~9 km area around the field.",
     "errorNote": "Error measured on 2023–2024, years the model never saw.",
-    "notReady": "The soil forecast is not ready yet: it is made every morning at 06:00."
+    "notReady": "The soil forecast is not ready yet: it is made every morning at 06:00.",
+    "usuallyOff": "Usually within ±{n} points of the real value a week ahead."
   },
   "soon": "Soon",
   "setup": {

@@ -1,26 +1,33 @@
 import { useEffect, useState } from 'react'
 import { getClimate } from '../api.js'
 import { FrostChart, HeatDaysChart, WaterBalanceChart } from '../components/ClimateCharts.jsx'
-import Screen, { ComingSoon } from '../components/Screen.jsx'
+import Screen from '../components/Screen.jsx'
 import TermHelp from '../components/TermHelp.jsx'
 import { load, useI18n } from '../i18n/index.jsx'
+import { Icon } from './MyField.jsx'
 
 const sign = (v) => (v > 0 ? `+${v}` : `${v}`)
 
 function Stat({ label, value, unit, note }) {
   return (
     <div className="card stat">
-      <span className="label">{label}</span>
-      <span className="stat-value">{value}<span className="tile-unit">{unit}</span></span>
+      <span className="stat-label">{label}</span>
+      <span className="stat-value">{value}<span className="stat-unit">{unit}</span></span>
       <span className="stat-note">{note}</span>
     </div>
   )
 }
 
+const ICONS = {
+  et0: 'M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z',
+  heatDays: 'M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z',
+  frostFree: 'M12 2v20M4 6l16 12M20 6 4 18',
+}
+
 function ChartCard({ title, term, help, source, children }) {
   return (
     <div className="card chart-card">
-      <h2>{title}{term && <TermHelp term={term} />}</h2>
+      <div className="card-head"><h2>{term && <Icon d={ICONS[term]} />}{title}{term && <TermHelp term={term} />}</h2></div>
       {help && <p className="chart-help">{help}</p>}
       {children}
       <p className="source">{source}</p>
@@ -76,9 +83,6 @@ export default function Climate() {
           <FrostChart yearly={d.yearly} />
         </ChartCard>
 
-        <ChartCard title={t('climate.greenTitle')} source="MODIS NDVI MOD13Q1, 250 m">
-          <ComingSoon>{t('climate.greenPending')}</ComingSoon>
-        </ChartCard>
       </div>
     </Screen>
   )

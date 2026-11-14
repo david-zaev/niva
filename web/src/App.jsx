@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { NavLink, Route, Routes } from 'react-router-dom'
+import { Link, NavLink, Route, Routes } from 'react-router-dom'
 import { load, save, useI18n } from './i18n/index.jsx'
 import MyField from './screens/MyField.jsx'
 import Climate from './screens/Climate.jsx'
@@ -10,9 +10,9 @@ const More = lazy(() => import('./screens/More.jsx'))
 const Setup = lazy(() => import('./screens/Setup.jsx'))
 import Pair from './screens/Pair.jsx'
 import { OfflineBanner, UpdateButton } from './components/StatusBars.jsx'
+import FarmGrid from './components/FarmGrid.jsx'
+import Logo from './components/Logo.jsx'
 import './pwa.js'
-
-const base = import.meta.env.BASE_URL
 
 // Simple line icons, drawn with currentColor so they follow the theme
 const icons = {
@@ -50,44 +50,47 @@ function useTheme() {
 }
 
 export default function App() {
-  const { t } = useI18n()
+  const { t, lang, setLang } = useI18n()
   const [theme, setTheme] = useTheme()
 
   return (
     <div className="app">
+      <FarmGrid />
       <header className="topbar">
-        <img src={`${base}icons/logo.svg`} alt="" width="34" height="34" />
-        <span className="wordmark">Niva</span>
-        <span className="pill">{t('badge')}</span>
-        <UpdateButton />
+        <Link to="/" className="brand" aria-label="Niva"><Logo /></Link>
+        <div className="top-right">
+          <UpdateButton />
+          <div className="lang-toggle" role="group" aria-label={t('more.language')}>
+            <button aria-pressed={lang === 'en'} onClick={() => setLang('en')}>EN</button>
+            <button aria-pressed={lang === 'mk'} onClick={() => setLang('mk')}>МК</button>
+          </div>
+        </div>
       </header>
-      <OfflineBanner />
 
       <nav className="tabs" aria-label="Niva">
         {tabs.map(({ key, path }) => (
           <NavLink key={key} to={path} end={path === '/'} className="tab">
-            <span className="tab-icon">
-              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                <path d={icons[key]} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
+            <svg className="tab-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path d={icons[key]} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
             <span>{t(`tabs.${key}`)}</span>
           </NavLink>
         ))}
       </nav>
+      <OfflineBanner />
 
       <main className="content">
-        <Suspense fallback={<p className="card muted">{t('field.loading')}</p>}>
-        <Routes>
-          <Route path="/" element={<MyField />} />
-          <Route path="/climate" element={<Climate />} />
-          <Route path="/rotations" element={<Rotations />} />
-          <Route path="/rotations/:id" element={<RotationDetails />} />
-          <Route path="/setup" element={<Setup />} />
-          <Route path="/pair" element={<Pair />} />
-          <Route path="/more" element={<More theme={theme} setTheme={setTheme} />} />
-          <Route path="*" element={<MyField />} />
-        </Routes>
+        <Suspense fallback={<p className="muted">{t('field.loading')}</p>}>
+          <Routes>
+            <Route path="/" element={<MyField />} />
+            <Route path="/climate" element={<Climate />} />
+            <Route path="/rotations" element={<Rotations />} />
+            <Route path="/rotations/:id" element={<RotationDetails />} />
+            <Route path="/setup" element={<Setup />} />
+            <Route path="/pair" element={<Pair />} />
+            <Route path="/more" element={<More theme={theme} setTheme={setTheme} />} />
+            <Route path="*" element={<MyField />} />
+          </Routes>
         </Suspense>
       </main>
     </div>

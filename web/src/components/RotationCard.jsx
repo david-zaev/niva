@@ -73,16 +73,9 @@ export default function RotationCard({ r, query }) {
     <article className={`card rot-card ${isCurrent ? 'is-current' : ''}`}>
       <header className="rot-head">
         <span className={`pill ${isCurrent ? '' : 'pill-volt'}`}>{isCurrent ? t('rot.now') : t('rot.suggested')}</span>
-        <span className="rot-total" aria-label={t('rot.total')}>{r.total}<span className="tile-unit">/100</span></span>
+        <span className="rot-total" aria-label={t('rot.total')}>{r.total}<span className="stat-unit">/100</span></span>
       </header>
       <h2 className="rot-name">{r.name}</h2>
-      <ol className="rot-crops">
-        {r.crops.map((c, i) => (
-          <li key={i} className={c.cover_crop ? 'is-cover' : ''}>
-            <span className="rot-y">{t('rot.yearShort')}{c.year}</span>{lang === 'mk' ? c.name_mk : c.name}
-          </li>
-        ))}
-      </ol>
       <MonthStrip strip={r.strip} crops={r.crops} />
       <ScoreBars scores={r.scores} />
       <p className="rot-why">{r.why}</p>
