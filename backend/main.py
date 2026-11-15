@@ -1,4 +1,5 @@
 """Niva API: crop rotations for a field from NASA data and the field's own ESP32 soil sensor. See PLAN.md."""
+import copy
 import hashlib
 import json
 import logging
@@ -22,6 +23,7 @@ import power
 import rotations
 import sensor
 import simulate
+import mk
 import soil as soilmod
 import terrain
 from models import Device, Farm, FieldRow, Reading, SoilTest, engine, hash_key, init_db, utcnow
@@ -401,7 +403,7 @@ def profile(field_id: int, s: Session = Depends(db)):
 
 
 @app.get("/fields/{field_id}/rotations")
-def field_rotations(field_id: int, show: int = Query(3, ge=2, le=10), s: Session = Depends(db)):
+def field_rotations(field_id: int, show: int = Query(3, ge=2, le=10), lang: str = "en", s: Session = Depends(db)):
     """The current rotation and the best `show` alternatives, each with its card. Location data only."""
     f = get_field(s, field_id)
     r = ranking(f)
@@ -427,11 +429,12 @@ def field_rotations(field_id: int, show: int = Query(3, ge=2, le=10), s: Session
     others = [{"id": e["id"], "name": e["name"], "score": e["score"], "scores": e["scores"]} for e in alts[show:]]
     dropped = [{"id": e["id"], "name": e["name"], "because": e["not_offered_because"]}
                for e in evs[1:] if not e["offered"]]
-    return {"field_id": field_id, "soil": r["soil"], "terrain": r["terrain"], "irrigation": f.irrigation,
+    out = {"field_id": field_id, "soil": r["soil"], "terrain": r["terrain"], "irrigation": f.irrigation,
             "priorities": {**rotations.WEIGHTS, **(f.priorities or {})}, "rotations": out, "others": others,
             "not_offered": dropped, "farm_type": r["farm_type"],
             "smap_check": ctx["smap_check"], "chosen": f.chosen_rotation,
             "climate_years": cl["years"]}
+    return mk.rotations(copy.deepcopy(out)) if lang == "mk" else out
 
 
 # ---------- ESP32 ----------
@@ -499,7 +502,7 @@ def current_crop(f: FieldRow) -> dict | None:
 
 
 @app.get("/fields/{field_id}/live")
-def live(field_id: int, minutes: int = Query(120, ge=5, le=60 * 24 * 14), s: Session = Depends(db)):
+def live(field_id: int, minutes: int = Query(120, ge=5, le=60 * 24 * 14), lang: str = "en", s: Session = Depends(db)):
     f = get_field(s, field_id)
     now = utcnow()
     recent = readings_since(s, field_id, now - timedelta(minutes=minutes))
@@ -511,7 +514,7 @@ def live(field_id: int, minutes: int = Query(120, ge=5, le=60 * 24 * 14), s: Ses
     lt = s.exec(select(SoilTest).where(SoilTest.field_id == field_id).order_by(SoilTest.id.desc())).first()
     last = s.exec(select(Reading).where(Reading.field_id == field_id).order_by(Reading.time.desc()).limit(1)).first()
     devs = s.exec(select(Device).where(Device.field_id == field_id)).all()
-    return {
+    out = {
         "field_id": field_id,
         "reading": reading_out(last) if last else None,
         "age_s": round((now - (last.time if last.time.tzinfo else last.time.replace(tzinfo=timezone.utc)))
@@ -530,6 +533,7 @@ def live(field_id: int, minutes: int = Query(120, ge=5, le=60 * 24 * 14), s: Ses
         "nasa_today": climate.today_vs_history(w),
         "t_offset": f.t_offset,
     }
+    return mk.live(out) if lang == "mk" else out
 
 
 @app.post("/fields/{field_id}/microclimate/apply")

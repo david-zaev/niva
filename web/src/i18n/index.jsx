@@ -37,7 +37,11 @@ export function I18nProvider({ children }) {
     setLangState(next)
     save('niva.lang', next)
   }
-  const t = (key) => lookup(dictionaries[lang], key) ?? lookup(en, key) ?? key
+  // t('app.rot.option', { n: 2 }) gives "Option 2": {name} placeholders are filled from vars
+  const t = (key, vars) => {
+    const text = lookup(dictionaries[lang], key) ?? lookup(en, key) ?? key
+    return vars ? String(text).replace(/\{(\w+)\}/g, (m, k) => String(vars[k] ?? m)) : text
+  }
 
   return <I18nContext.Provider value={{ lang, setLang, t }}>{children}</I18nContext.Provider>
 }

@@ -21,7 +21,7 @@ function useTheme() {
 
 export default function App() {
   useTheme()
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const [session, setSession] = useState(currentSession)
   const [farm, setFarm] = useState(null)
   const [crops, setCrops] = useState([])
@@ -38,7 +38,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    loadFarm().catch((e) => setErr(`Cannot reach the Niva API (${e.message}). Check that the server is running.`))
+    loadFarm().catch((e) => setErr(t('app.apiDown', { msg: e.message })))
     api.crops().then((d) => setCrops(d.crops)).catch(() => {})
   }, [loadFarm])
 
@@ -46,9 +46,9 @@ export default function App() {
     setRot(null)
     if (!selected) return undefined
     let alive = true
-    api.rotations(selected).then((d) => alive && setRot(d)).catch((e) => alive && setErr(e.message))
+    api.rotations(selected, lang).then((d) => alive && setRot(d)).catch((e) => alive && setErr(e.message))
     return () => { alive = false }
-  }, [selected])
+  }, [selected, lang])
 
   const field = farm?.fields.find((f) => f.id === selected)
 
@@ -83,17 +83,16 @@ export default function App() {
             {field
               ? <HealthCard fieldId={selected} fieldName={field.name} />
               : <section className="card health health-none">
-                  <p className="eyebrow">Soil health · ESP32 sensor</p>
-                  <h2 className="health-label">Draw your field</h2>
-                  <p className="health-summary">Mark your field on the map below. The ESP32 in it then shows how healthy the soil is, and NASA data gives the crop rotation plans.</p>
+                  <p className="eyebrow">{t('app.emptyEyebrow')}</p>
+                  <h2 className="health-label">{t('app.emptyTitle')}</h2>
+                  <p className="health-summary">{t('app.emptyText')}</p>
                 </section>}
             <FarmMap fields={farm.fields} selectedId={selected} onSelect={setSelected} onCreate={create} onDelete={remove} crops={crops} />
             {field && <>
               <Rotations data={rot} />
             </>}
             <footer className="foot muted small">
-              Niva supports farmer judgement; it does not replace it. Check every plan with a local agronomist.
-              Data: NASA POWER, NASA SMAP, NASA MODIS (LP DAAC), NASA NASADEM/SRTM, ISRIC SoilGrids, ZPIS and MakStat.
+              {t('app.footer')} {t('app.footerData')}
             </footer>
           </div>
         )}

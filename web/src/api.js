@@ -25,9 +25,9 @@ export const api = {
   createField: (farmId, body) => call(`/farms/${farmId}/fields`, { method: 'POST', body }),
   updateField: (id, body) => call(`/fields/${id}`, { method: 'PATCH', body }),
   deleteField: (id) => call(`/fields/${id}`, { method: 'DELETE' }),
-  rotations: (id) => call(`/fields/${id}/rotations`),
+  rotations: (id, lang = 'en') => call(`/fields/${id}/rotations?lang=${lang}`),
   profile: (id) => call(`/fields/${id}/profile`),
-  live: (id, minutes = 120) => call(`/fields/${id}/live?minutes=${minutes}`),
+  live: (id, minutes = 120, lang = 'en') => call(`/fields/${id}/live?minutes=${minutes}&lang=${lang}`),
 }
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

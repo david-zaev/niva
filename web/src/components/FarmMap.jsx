@@ -4,6 +4,7 @@ import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import { useEffect, useRef, useState } from 'react'
 import { addBasemap } from './basemap.js'
+import { useI18n } from '../i18n/index.jsx'
 
 function areaHa(latlngs) {
   if (latlngs.length < 3) return 0
@@ -20,7 +21,8 @@ function areaHa(latlngs) {
 }
 
 function NewFieldForm({ draft, crops, onSave, onCancel }) {
-  const [name, setName] = useState('New field')
+  const { t, lang } = useI18n()
+  const [name, setName] = useState(() => t('app.map.defaultName'))
   const [seasons, setSeasons] = useState([['pepper'], ['pepper'], ['tomato']])
   const [irrigation, setIrrigation] = useState('drip')
   const [busy, setBusy] = useState(false)
@@ -31,29 +33,28 @@ function NewFieldForm({ draft, crops, onSave, onCancel }) {
       e.preventDefault(); setBusy(true)
       try { await onSave({ name, current_rotation: seasons, irrigation }) } finally { setBusy(false) }
     }}>
-      <h3>New field · {draft.area.toFixed(2)} ha</h3>
-      <label>Name<input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} required /></label>
+      <h3>{t('app.map.newField', { ha: draft.area.toFixed(2) })}</h3>
+      <label>{t('app.map.name')}<input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} required /></label>
       <fieldset>
-        <legend>What it grows now (one crop per season)</legend>
+        <legend>{t('app.map.grows')}</legend>
         <div className="season-pick">
           {seasons.map((s, i) => (
-            <select key={i} value={s[0]} onChange={(e) => setSeason(i, e.target.value)} aria-label={`Season ${i + 1}`}>
-              {main.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            <select key={i} value={s[0]} onChange={(e) => setSeason(i, e.target.value)} aria-label={t('app.map.season', { n: i + 1 })}>
+              {main.map((c) => <option key={c.id} value={c.id}>{lang === 'mk' && c.name_mk ? c.name_mk : c.name}</option>)}
             </select>
           ))}
-          {seasons.length < 5 && <button type="button" className="btn btn-ghost" onClick={() => setSeasons([...seasons, [seasons[0][0]]])}>+ season</button>}
-          {seasons.length > 1 && <button type="button" className="btn btn-ghost" onClick={() => setSeasons(seasons.slice(0, -1))}>−</button>}
+          {seasons.length < 5 && <button type="button" className="btn btn-ghost" onClick={() => setSeasons([...seasons, [seasons[0][0]]])}>{t('app.map.addSeason')}</button>}
+          {seasons.length > 1 && <button type="button" className="btn btn-ghost" onClick={() => setSeasons(seasons.slice(0, -1))} aria-label={t('app.map.removeSeason')}>−</button>}
         </div>
       </fieldset>
-      <label>Irrigation
+      <label>{t('app.map.irrigation')}
         <select value={irrigation} onChange={(e) => setIrrigation(e.target.value)}>
-          <option value="drip">Drip</option><option value="sprinkler">Sprinkler</option>
-          <option value="furrow">Furrow</option><option value="none">None (rain-fed)</option>
+          {['drip', 'sprinkler', 'furrow', 'none'].map((k) => <option key={k} value={k}>{t(`app.map.${k}`)}</option>)}
         </select>
       </label>
       <div className="row-actions">
-        <button className="btn btn-volt" disabled={busy}>{busy ? 'Saving…' : 'Save field'}</button>
-        <button type="button" className="btn btn-ghost" onClick={onCancel}>Cancel</button>
+        <button className="btn btn-volt" disabled={busy}>{busy ? t('app.map.saving') : t('app.map.save')}</button>
+        <button type="button" className="btn btn-ghost" onClick={onCancel}>{t('app.map.cancel')}</button>
       </div>
     </form>
   )
@@ -61,6 +62,7 @@ function NewFieldForm({ draft, crops, onSave, onCancel }) {
 
 // Place search on the map (OpenStreetMap Nominatim): only on submit, as its usage policy asks
 function PlaceSearch({ onPick }) {
+  const { t, lang } = useI18n()
   const [q, setQ] = useState('')
   const [hits, setHits] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -70,7 +72,7 @@ function PlaceSearch({ onPick }) {
     if (text.length < 2) return
     setBusy(true)
     try {
-      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&accept-language=en&q=${encodeURIComponent(text)}`
+      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&accept-language=${lang === 'mk' ? 'mk,en' : 'en'}&q=${encodeURIComponent(text)}`
       const res = await fetch(url, { headers: { Accept: 'application/json' } })
       setHits(res.ok ? await res.json() : [])
     } catch {
@@ -88,12 +90,12 @@ function PlaceSearch({ onPick }) {
     <div className="place-search">
       <form role="search" onSubmit={search}>
         <input type="search" value={q} onChange={(e) => { setQ(e.target.value); if (!e.target.value) setHits(null) }}
-          placeholder="Search a village or place, e.g. Murtino" aria-label="Search a place on the map" />
-        <button className="btn" disabled={busy}>{busy ? '…' : 'Search'}</button>
+          placeholder={t('app.map.searchPh')} aria-label={t('app.map.searchLabel')} />
+        <button className="btn" disabled={busy}>{busy ? '…' : t('app.map.search')}</button>
       </form>
       {hits && (
         <ul className="place-hits">
-          {hits.length === 0 && <li className="muted small">No place found. Try another spelling or add the country.</li>}
+          {hits.length === 0 && <li className="muted small">{t('app.map.noPlace')}</li>}
           {hits.map((h) => (
             <li key={h.place_id}>
               <button type="button" onClick={() => pick(h)}>
@@ -109,6 +111,7 @@ function PlaceSearch({ onPick }) {
 }
 
 export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDelete, crops }) {
+  const { t } = useI18n()
   const box = useRef(null)
   const map = useRef(null)
   const layer = useRef(null)
@@ -118,7 +121,7 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
   const [deleting, setDeleting] = useState(false)
   const selected = fields.find((f) => String(f.id) === String(selectedId))
   const removeSelected = async () => {
-    if (!selected || !window.confirm(`Delete "${selected.name}"? Its outline and rotation choice are removed; the sensor readings are kept.`)) return
+    if (!selected || !window.confirm(t('app.map.confirmDelete', { name: selected.name }))) return
     setDeleting(true)
     try { await onDelete(selected.id) } finally { setDeleting(false) }
   }
@@ -185,20 +188,20 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
     <section className="card map-card">
       <div className="map-head">
         <div>
-          <p className="eyebrow">Your farm</p>
-          <h2>{fields.length ? 'Select a field' : 'Draw your field'}</h2>
+          <p className="eyebrow">{t('app.map.eyebrow')}</p>
+          <h2>{fields.length ? t('app.map.select') : t('app.map.draw')}</h2>
         </div>
         <div className="row-actions">
           {selected && !drawing && (
-            <button className="btn btn-ghost" disabled={deleting} onClick={removeSelected}>{deleting ? 'Deleting…' : 'Delete field'}</button>
+            <button className="btn btn-quiet btn-danger" disabled={deleting} onClick={removeSelected}>{deleting ? t('app.map.deleting') : t('app.map.delete')}</button>
           )}
           {drawing
-            ? <button className="btn btn-ghost" onClick={cancelDraw}>Cancel drawing</button>
-            : <button className="btn" onClick={startDraw}>Draw a field</button>}
+            ? <button className="btn btn-ghost" onClick={cancelDraw}>{t('app.map.cancelDraw')}</button>
+            : <button className="btn btn-volt" onClick={startDraw}>{t('app.map.drawBtn')}</button>}
         </div>
       </div>
-      {!fields.length && !drawing && !draft && <p className="muted small">No fields yet. Press "Draw a field" and click the corners of your field on the photo.</p>}
-      {drawing && <p className="muted small">Click each corner of the field on the photo; click the first corner again to finish.</p>}
+      {!fields.length && !drawing && !draft && <p className="muted small">{t('app.map.noFields')}</p>}
+      {drawing && <p className="muted small">{t('app.map.drawHint')}</p>}
       <PlaceSearch onPick={(bounds, center) => {
         const m = map.current
         if (!m) return
@@ -208,7 +211,7 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
         else m.flyToBounds(bounds, { maxZoom: 17 })
       }} />
       <div className="map-wrap">
-        <div ref={box} className="farm-map" role="application" aria-label="Farm map" />
+        <div ref={box} className="farm-map" role="application" aria-label={t('app.map.mapLabel')} />
         {draft && (
           <NewFieldForm draft={draft} crops={crops}
             onCancel={() => setDraft(null)}
