@@ -28,6 +28,22 @@ A farmer draws a field on the map. Niva then answers three questions:
    (Healthy / Needs attention / Poor) and live alerts for frost, heat, storms and disease weather.
 3. **Why?** Every number links back to the dataset it came from.
 
+> [!IMPORTANT]
+> **Niva's model replays 25 years of real NASA weather on your field.**
+> For the exact spot you draw, it takes NASA POWER's daily record since 1 January 2001 (over 9,400 days of rain,
+> sun, heat, wind and humidity) and runs every candidate rotation through every one of those seasons, day by day,
+> with a soil-water simulation (FAO-56). So the advice is not "pepper usually needs X": it is "on *this* field,
+> through every dry summer and every wet year since 2001, this rotation needed this much water
+> and kept this much harvest."
+
+| | |
+|---|---|
+| **25 years** | of daily NASA POWER weather, 2001 → today |
+| **9,400+ days** | simulated for each rotation, on each field |
+| **5 NASA and open datasets** | weather, elevation, vegetation, soil moisture, soil |
+| **4 scores per rotation** | water · soil · resilience · income |
+| **1 sensor** | live soil and air readings from the field |
+
 The app works in **English and Macedonian**, on a phone or a PC, and can be installed as an app.
 
 <p align="center">
