@@ -20,18 +20,24 @@ node_modules/
 web/dist/
 web/dev-dist/
 
-# Jupyter
-.ipynb_checkpoints/
-
-# OS / editors
+# OS / editors / local tools
 .DS_Store
 Thumbs.db
+*.stackdump
 .vscode/
 .idea/
+.claude/
+skills-lock.json
 
-# trained models: rebuild with data/scripts/train_model.py (7 s), copy to the server
-data/model/*.joblib
-
-# NASA downloads: re-created by data/scripts/download_dem.py and download_smap.py
+# NASA downloads and caches: re-created on first use
+#   data/dem, data/smap: data/scripts/download_dem.py and download_smap.py
+#   data/cache/power: fetched from NASA POWER the first time a place is asked for
 data/dem/
 data/smap/
+data/cache/
+data/model/
+
+# Working files that are not part of the app
+backend/audit_rotations.py
+docs/audits/
+docs/presentation/

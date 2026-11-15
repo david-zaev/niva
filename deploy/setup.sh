@@ -3,7 +3,7 @@
 set -euxo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
-# 1. 2 GB swap: the VM has only 1 GB RAM (pandas / scikit-learn need headroom)
+# 1. 2 GB swap: the VM has only 1 GB RAM (pandas needs headroom)
 if [ ! -f /swapfile ]; then
   sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile
   sudo mkswap /swapfile && sudo swapon /swapfile
