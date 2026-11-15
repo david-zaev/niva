@@ -146,10 +146,13 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .season-pick select { flex: 1 1 100px; }
 
 /* ---------- rotations ---------- */
-.rot-grid { display: grid; gap: var(--gap); grid-template-columns: 1fr; align-items: start; }
-@media (min-width: 760px) { .rot-grid { grid-template-columns: 1fr 1fr; } }
+/* each card is as tall as its own content: opening one never stretches the card beside it */
+.rot-grid { display: grid; gap: var(--gap); grid-template-columns: minmax(0, 1fr); align-items: start; margin-top: 16px; }
+@media (min-width: 760px) { .rot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .rot-card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .rot-card.is-current { background: var(--mist); }
+.rot-footer { min-width: 0; }
+.rot-footer > .toggle { margin-top: 0; }
 .seasons { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .seasons li { border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; font-size: 0.85rem; background: var(--card); }
 .seasons small { display: block; font-size: 0.68rem; color: var(--smoke); }
@@ -285,7 +288,7 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
   .section-head h2 { font-size: 1.3rem; }
   .section-head p.muted { font-size: 0.88rem; }
   /* options swipe sideways instead of stacking into one very tall page */
-  .rot-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin: 0 -12px; padding: 0 12px 6px; scroll-padding: 0 12px; scrollbar-width: none; align-items: flex-start; }
+  .rot-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin: 16px -12px 0; padding: 0 12px 6px; scroll-padding: 0 12px; scrollbar-width: none; align-items: flex-start; }
   .rot-grid::-webkit-scrollbar { display: none; }
   .rot-card { flex: 0 0 86%; scroll-snap-align: start; padding: 14px; gap: 10px; border-radius: 14px; }
   .rot-card h3 { font-size: 1.05rem; }

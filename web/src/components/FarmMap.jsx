@@ -139,9 +139,25 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
       setDrawing(false)
       setDraft({ polygon: ll.map((p) => [+p.lat.toFixed(6), +p.lng.toFixed(6)]), area: areaHa(ll) })
     })
+    // Alt + scroll wheel zooms the map; a plain scroll keeps scrolling the page
+    const el = box.current
+    let last = -Infinity
+    const onWheel = (e) => {
+      if (!e.altKey || e.deltaY === 0) return
+      e.preventDefault()
+      e.stopPropagation()
+      const now = Date.now()
+      if (now - last < 300) return // let Leaflet's 250 ms zoom transition finish between steps
+      const zoom = Math.max(m.getMinZoom(), Math.min(m.getMaxZoom(), m.getZoom() + (e.deltaY < 0 ? 1 : -1)))
+      if (zoom === m.getZoom()) return
+      last = now
+      m.stop()
+      m.setZoomAround(m.mouseEventToContainerPoint(e), zoom, { animate: true })
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
     map.current = m
     fitted.current = false // a new map (React may mount twice in development) must zoom again
-    return () => { m.remove(); map.current = null }
+    return () => { el.removeEventListener('wheel', onWheel); m.remove(); map.current = null }
   }, [])
 
   useEffect(() => {

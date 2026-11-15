@@ -59,8 +59,9 @@ function Card({ r, now }) {
         <Row label={t('app.rot.income')} hint={t('app.rot.incomeHint')} value={eur(m.gross_eur_ha)}
           cmp={n && change(t, m.gross_eur_ha, n.gross_eur_ha, true, 'eur')} />
       </dl>
-      <Toggle open={open} onClick={() => setOpen(!open)} more={t('app.rot.details')} less={t('app.rot.hide')} />
-      {open && (
+      <div className="rot-footer">
+        <Toggle open={open} onClick={() => setOpen(!open)} more={t('app.rot.details')} less={t('app.rot.hide')} />
+        {open && (
         <div className="rot-details">
           {c.why.length > 0 && <><h4>{t('app.rot.why')}</h4><ul>{c.why.map((x, i) => <li key={i}>{x}</li>)}</ul></>}
           {c.risks.length > 0 && <><h4>{t('app.rot.risks')}</h4><ul>{c.risks.map((x, i) => <li key={i}>{x}</li>)}</ul></>}
@@ -68,7 +69,8 @@ function Card({ r, now }) {
           <ul className="evidence">{c.evidence.map((e, i) => <li key={i}>{e.text}<small>{e.source}</small></li>)}</ul>
           <h4>{t('app.rot.gaps')}</h4><ul className="muted">{c.gaps.map((x, i) => <li key={i}>{x}</li>)}</ul>
         </div>
-      )}
+        )}
+      </div>
     </article>
   )
 }
