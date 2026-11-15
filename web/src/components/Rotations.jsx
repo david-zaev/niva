@@ -148,14 +148,6 @@ export default function Rotations({ data }) {
         <div role="tabpanel">
           <Card key={shown.id} r={shown} now={now} />
         </div>
-        {(data.others?.length > 0 || data.not_offered?.length > 0) && (
-          <div className="rot-also muted small">
-            {data.others?.length > 0 && <p>{t('app.rot.others', { list: data.others.map((o) => o.name).join(', ') })}</p>}
-            {data.not_offered?.length > 0 && (
-              <p>{t('app.rot.notOffered', { list: data.not_offered.map((o) => `${o.name} (${o.because})`).join('; ') })}</p>
-            )}
-          </div>
-        )}
       </section>
     </>
   )
