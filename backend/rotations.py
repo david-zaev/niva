@@ -9,7 +9,9 @@ import numpy as np
 import simulate
 import smap
 
-WEIGHTS = {"water": 1.0, "soil": 1.0, "resilience": 1.0, "income": 1.0}
+WEIGHTS = {"water": 1.0, "soil": 1.0, "pests": 1.5, "resilience": 1.0, "income": 1.0}
+REPEAT_PENALTY = 50
+KEEPS_CROP_BONUS = 5  # score points for keeping a crop the farmer already grows: known methods, buyers, machinery  # pest score points lost for each crop whose plant family comes back too soon
 MKD_PER_EUR = 61.5
 REPEAT_LOSS = 0.15  # assumed yield loss when a plant family returns too soon (rotation studies: about 10-30 %)
 
@@ -27,7 +29,8 @@ def _family_breaks(seasons: list[list[str]]) -> list[dict]:
                 continue
             for gap in range(1, c["min_return"]):
                 prev = main[(i - gap) % L]
-                same = [p for p in prev if cs[p]["family"] == c["family"]]
+                # maize pests (rootworm) need maize itself; other crops share soil diseases across the family
+                same = [p for p in prev if (p == cid if c.get("repeat_by") == "crop" else cs[p]["family"] == c["family"])]
                 if same:
                     out.append({"season": i + 1, "crop": c["name"], "after": cs[same[0]]["name"], "gap": gap,
                                 "family": c["family"], "min_return": c["min_return"]})
@@ -148,7 +151,10 @@ def score(evals: list[dict], priorities: dict | None) -> None:
     w = {**WEIGHTS, **{k: float(v) for k, v in (priorities or {}).items() if k in WEIGHTS}}
     tot = sum(w.values()) or 1
     for i, e in enumerate(evals):
-        e["scores"] = {"water": round(water[i]), "soil": round(soil_parts[i]), "resilience": round(resil[i]),
+        # pest and disease cycle: absolute, so a rotation that keeps repeating a family never scores well
+        pests = max(0, 100 - REPEAT_PENALTY * len(m[i]["family_breaks"]))
+        e["scores"] = {"water": round(water[i]), "soil": round(soil_parts[i]), "pests": pests,
+                       "resilience": round(resil[i]),
                        "income": round(income[i])}
         e["score"] = round(sum(e["scores"][k] * w[k] for k in w) / tot)
 
@@ -324,8 +330,60 @@ def with_cover(rot: dict) -> dict | None:
     if not added:
         return None
     name = rot["name"].replace(" (now)", "")
-    return {"id": f"{rot['id']}-cover", "name": f"{name}, with winter vetch", "kind": "suggested",
+    name = f"{name}, vetch every winter" if "vetch" in name else f"{name}, with winter vetch"
+    return {"id": f"{rot['id']}-cover", "name": name, "kind": "suggested",
             "seasons": seasons, "idea": "What you grow now, plus a vetch and oat cover crop over each winter."}
+
+
+def keep_and_break(rot: dict) -> dict | None:
+    """The farmer's main crop kept, followed by wheat and a legume: the textbook way to break a pest cycle."""
+    cs = simulate.crops()
+    mains = [c for s in rot["seasons"] for c in s if not cs[c].get("cover_crop")]
+    if not mains:
+        return None
+    top = max(set(mains), key=mains.count)
+    if cs[top]["family"] in ("Poaceae", "Fabaceae") or cs[top]["kind"] == "perennial":
+        return None  # cereal and legume farms are served by the field-crop rotations
+    legume = "bean" if rot.get("_irrigated", True) else "chickpea"
+    seasons = [["vetch_oat", top], ["wheat"], [legume]]
+    return {"id": f"keep-{top}-wheat-{legume}", "kind": "suggested", "seasons": seasons,
+            "name": f"{cs[top]['name']} → wheat → {cs[legume]['name'].lower()}, vetch before {cs[top]['name'].lower()}",
+            "idea": f"Keeps your {cs[top]['name'].lower()}, then two years of other families so its pests and soil "
+                    f"diseases die down; the legume adds nitrogen."}
+
+
+MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+          "November", "December"]
+
+
+def plant_next(seasons: list[list[str]], now_seasons: list[list[str]], n: int = 3) -> list[dict]:
+    """The next n seasons of a rotation, started where it does not follow the farmer's last crop with the same
+    plant family, each with what to sow and when."""
+    cs = simulate.crops()
+
+    def mains(s):
+        return [c for c in s if not cs[c].get("cover_crop")]
+
+    last = [cs[c] for c in mains(now_seasons[-1])] if now_seasons else []
+    L = len(seasons)
+
+    def clashes(k):
+        return any(cs[c]["family"] == p["family"] and (p["id"] == c if cs[c].get("repeat_by") == "crop" else True)
+                   for c in mains(seasons[k % L]) for p in last)
+
+    start = next((k for k in range(L) if not clashes(k)), 0)
+    out = []
+    for i in range(n):
+        season = seasons[(start + i) % L]
+        prev = seasons[(start + i - 1) % L] if i or L > 1 else []
+        steps = []
+        for c in season:
+            m = int(cs[c]["sow"].split("-")[0])
+            kept = cs[c]["kind"] == "perennial" and c in prev and i > 0
+            steps.append({"crop": c, "name": cs[c]["name"], "sow_month": None if kept else MONTHS[m - 1],
+                          "cover": bool(cs[c].get("cover_crop")), "kept": kept})
+        out.append({"steps": steps})
+    return out
 
 
 def custom(seasons: list[list[str]], name: str | None = None) -> dict:

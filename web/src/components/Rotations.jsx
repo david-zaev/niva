@@ -25,7 +25,7 @@ function Row({ label, value, cmp, hint }) {
   )
 }
 
-function Card({ r, now, chosen, onChoose }) {
+function Card({ r, now }) {
   const [open, setOpen] = useState(false)
   const c = r.card
   const isCurrent = r.kind === 'current'
@@ -33,7 +33,7 @@ function Card({ r, now, chosen, onChoose }) {
   const n = isCurrent ? null : now.metrics
   const inShort = isCurrent ? r.idea : (c.why[0] ?? r.idea)
   return (
-    <article className={`rot-card ${isCurrent ? 'is-current' : ''} ${chosen ? 'is-chosen' : ''}`}>
+    <article className={`rot-card ${isCurrent ? 'is-current' : ''}`}>
       <header>
         <p className="eyebrow">{isCurrent ? 'What you grow now' : r.option === 1 ? 'Option 1 · best match' : `Option ${r.option}`}</p>
         <h3>{r.name.replace(' (now)', '')}</h3>
@@ -62,24 +62,45 @@ function Card({ r, now, chosen, onChoose }) {
           <h4>What we do not know yet</h4><ul className="muted">{c.gaps.map((t, i) => <li key={i}>{t}</li>)}</ul>
         </div>
       )}
-      {!isCurrent && (
-        <button className={`btn ${chosen ? 'btn-ghost' : 'btn-volt'}`} onClick={() => onChoose(chosen ? null : r.id)}>
-          {chosen ? 'Chosen for the farm plan ✓' : 'Choose this rotation'}
-        </button>
-      )}
     </article>
   )
 }
 
-export default function Rotations({ data, onChoose }) {
+function step(s) {
+  if (s.kept) return `${s.name} stays: second year, no sowing`
+  return s.cover ? `${s.name} in ${s.sow_month}, as a winter cover` : `${s.name}, sown in ${s.sow_month}`
+}
+
+// The one answer most farmers want: what goes in the ground next, and after that
+function PlantNext({ r }) {
+  const [next, ...then] = r.plant_next
+  return (
+    <section className="card plant-next">
+      <p className="eyebrow">What to plant next · advice for this field</p>
+      <h2>{next.steps.filter((s) => !s.cover).map((s) => s.name).join(' + ') || next.steps[0].name}</h2>
+      <ol className="plan-steps">
+        <li><b>Next season</b><span>{next.steps.map(step).join('; then ')}</span></li>
+        {then.map((t, i) => (
+          <li key={i}><b>{i === 0 ? 'The season after' : 'Then'}</b><span>{t.steps.map(step).join('; then ')}</span></li>
+        ))}
+      </ol>
+      <p className="muted small">From the rotation “{r.name.replace(' (now)', '')}”, started so your next crop is not from the same plant family as your last one. {r.card.why[0]}</p>
+    </section>
+  )
+}
+
+export default function Rotations({ data }) {
   if (!data) return <section className="card"><p className="muted">Testing crop rotations against 25 years of NASA data for this field…</p></section>
   const [now, ...options] = data.rotations
   const cards = [now, ...options.map((r, i) => ({ ...r, option: i + 1 }))]
+  const best = options[0]
   return (
+    <>
+    {best && <PlantNext r={best} />}
     <section className="rotations">
       <div className="section-head">
         <p className="eyebrow">Crop rotation plans · from NASA data for this field</p>
-        <h2>{options.length ? `${options.length} rotations to consider for this field` : 'No other rotation fits this field'}</h2>
+        <h2>{options.length ? `How the ${options.length} best rotations compare with what you grow now` : 'No other rotation fits this field'}</h2>
         <p className="muted">
           We played every rotation through each season of {data.climate_years} at this field, day by day, with the
           real NASA weather, the field&apos;s slope and its soil. Only rotations for a {data.farm_type} farm
@@ -87,7 +108,7 @@ export default function Rotations({ data, onChoose }) {
         </p>
       </div>
       <div className="rot-grid">
-        {cards.map((r) => <Card key={r.id} r={r} now={now} chosen={data.chosen === r.id} onChoose={onChoose} />)}
+        {cards.map((r) => <Card key={r.id} r={r} now={now} />)}
       </div>
       {(data.others?.length > 0 || data.not_offered?.length > 0) && (
         <div className="rot-also muted small">
@@ -98,5 +119,6 @@ export default function Rotations({ data, onChoose }) {
         </div>
       )}
     </section>
+    </>
   )
 }

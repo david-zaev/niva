@@ -59,6 +59,55 @@ function NewFieldForm({ draft, crops, onSave, onCancel }) {
   )
 }
 
+// Place search on the map (OpenStreetMap Nominatim): only on submit, as its usage policy asks
+function PlaceSearch({ onPick }) {
+  const [q, setQ] = useState('')
+  const [hits, setHits] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const search = async (e) => {
+    e.preventDefault()
+    const text = q.trim()
+    if (text.length < 2) return
+    setBusy(true)
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&accept-language=en&q=${encodeURIComponent(text)}`
+      const res = await fetch(url, { headers: { Accept: 'application/json' } })
+      setHits(res.ok ? await res.json() : [])
+    } catch {
+      setHits([])
+    } finally {
+      setBusy(false)
+    }
+  }
+  const pick = (h) => {
+    const [s, n, w, e] = h.boundingbox.map(Number)
+    onPick([[s, w], [n, e]], [Number(h.lat), Number(h.lon)])
+    setHits(null)
+  }
+  return (
+    <div className="place-search">
+      <form role="search" onSubmit={search}>
+        <input type="search" value={q} onChange={(e) => { setQ(e.target.value); if (!e.target.value) setHits(null) }}
+          placeholder="Search a village or place, e.g. Murtino" aria-label="Search a place on the map" />
+        <button className="btn" disabled={busy}>{busy ? '…' : 'Search'}</button>
+      </form>
+      {hits && (
+        <ul className="place-hits">
+          {hits.length === 0 && <li className="muted small">No place found. Try another spelling or add the country.</li>}
+          {hits.map((h) => (
+            <li key={h.place_id}>
+              <button type="button" onClick={() => pick(h)}>
+                <b>{h.name || h.display_name.split(',')[0]}</b>
+                <small>{h.display_name}</small>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDelete, crops }) {
   const box = useRef(null)
   const map = useRef(null)
@@ -150,6 +199,14 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
       </div>
       {!fields.length && !drawing && !draft && <p className="muted small">No fields yet. Press "Draw a field" and click the corners of your field on the photo.</p>}
       {drawing && <p className="muted small">Click each corner of the field on the photo; click the first corner again to finish.</p>}
+      <PlaceSearch onPick={(bounds, center) => {
+        const m = map.current
+        if (!m) return
+        const [[s, w], [n, e]] = bounds
+        // villages come with a large box: never zoom out further than a view where fields are visible
+        if (Math.abs(n - s) > 0.05 || Math.abs(e - w) > 0.05) m.flyTo(center, 15)
+        else m.flyToBounds(bounds, { maxZoom: 17 })
+      }} />
       <div className="map-wrap">
         <div ref={box} className="farm-map" role="application" aria-label="Farm map" />
         {draft && (

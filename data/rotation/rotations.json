@@ -58,7 +58,7 @@
     },
     {
       "id": "pepper-wheat-chickpea-tomato",
-      "name": "Pepper → wheat → chickpea → tomato",
+      "name": "Pepper → wheat → chickpea → tomato, vetch before pepper and tomato",
       "kind": "suggested",
       "seasons": [
         [
@@ -80,7 +80,7 @@
     },
     {
       "id": "alfalfa-maize-pepper",
-      "name": "Alfalfa (2 years) → maize → pepper",
+      "name": "Alfalfa (2 years) → maize → pepper, vetch before pepper",
       "kind": "suggested",
       "seasons": [
         [
@@ -101,7 +101,7 @@
     },
     {
       "id": "tomato-wheat-sunflower",
-      "name": "Tomato → wheat → sunflower",
+      "name": "Tomato → wheat → sunflower, vetch before tomato",
       "kind": "suggested",
       "seasons": [
         [

@@ -219,7 +219,9 @@ def ranking(f: FieldRow, priorities: dict | None = None) -> dict:
     # options: the farmer's rotation with a winter cover, and library rotations for the same kind of farm
     kind = rotations.farm_type(cur["seasons"])
     cover = rotations.with_cover(cur)
-    cands = [cur] + ([cover] if cover and all(r["seasons"] != cover["seasons"] for r in lib) else [])
+    brk = rotations.keep_and_break({**cur, "_irrigated": f.irrigation not in (None, "none")})
+    cands = [cur] + [g for g in (cover, brk)
+                     if g and g["seasons"] != cur["seasons"] and all(r["seasons"] != g["seasons"] for r in lib)]
     cands += [r for r in lib if r["seasons"] != cur["seasons"] and rotations.farm_type(r["seasons"]) == kind]
     irrigation = None if f.irrigation in (None, "none") else f.irrigation
     key = hashlib.sha1(json.dumps([f.lat, f.lon, soil, irrigation, slope_factor, t_off, cur["seasons"],
@@ -231,13 +233,26 @@ def ranking(f: FieldRow, priorities: dict | None = None) -> dict:
         with _lock:
             _evals[key] = evs
     evs = [{k: v for k, v in e.items()} for e in evs]
+    now_repeats = len(evs[0]["metrics"]["family_breaks"])
     for e in evs[1:]:
         dry = e["metrics"]["dry_year_yield_pct"]
-        e["offered"] = dry >= rotations.MIN_DRY_YEAR_YIELD
-        e["not_offered_because"] = None if e["offered"] else (
-            f"only {dry}% of normal yield in a dry year with "
-            + ("no irrigation" if irrigation is None else f"{irrigation} irrigation"))
+        repeats = len(e["metrics"]["family_breaks"])
+        if dry < rotations.MIN_DRY_YEAR_YIELD:
+            why = (f"only {dry}% of normal yield in a dry year with "
+                   + ("no irrigation" if irrigation is None else f"{irrigation} irrigation"))
+        elif repeats > now_repeats:
+            why = "brings pests and soil diseases back sooner than what you grow now"
+        else:
+            why = None
+        e["offered"], e["not_offered_because"] = why is None, why
     rotations.score(evs, priorities if priorities is not None else f.priorities)
+    cs = simulate.crops()
+    now_crops = {c for s in cur["seasons"] for c in s if not cs[c].get("cover_crop")}
+    for e in evs[1:]:
+        kept = sorted({c for s in e["seasons"] for c in s} & now_crops)
+        e["keeps"] = [cs[c]["name"] for c in kept]
+        if kept:
+            e["score"] = min(100, e["score"] + rotations.KEEPS_CROP_BONUS)
     return {"evals": evs, "farm_type": kind, "current": evs[0], "soil": soil, "terrain": ter, "weather": w}
 
 
@@ -403,6 +418,10 @@ def field_rotations(field_id: int, show: int = Query(3, ge=2, le=10), s: Session
     for e in picked:
         o = {k: v for k, v in e.items() if not k.startswith("_")}
         o["card"] = rotations.card(e, cur, ctx)
+        o["plant_next"] = rotations.plant_next(e["seasons"], cur["seasons"])
+        if e.get("keeps"):
+            o["card"]["why"].append(f"Keeps {' and '.join(k.lower() for k in e['keeps'])}, which you already grow: "
+                                    "you know the methods, the buyers and have the machinery.")
         o["rank"] = 1 + sorted(evs, key=lambda x: -x["score"]).index(e)
         out.append(o)
     others = [{"id": e["id"], "name": e["name"], "score": e["score"], "scores": e["scores"]} for e in alts[show:]]

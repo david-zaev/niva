@@ -69,9 +69,6 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 
 /* ---------- soil health card ---------- */
 .health { border-width: 2px; }
-.health-healthy { border-color: var(--live); }
-.health-attention { border-color: var(--wait); }
-.health-poor { border-color: var(--down); }
 .health-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
 .health-label { font-size: clamp(2rem, 6vw, 2.8rem); line-height: 1; margin: 4px 0 8px; }
 .health-healthy .health-label { color: var(--live); }
@@ -240,3 +237,21 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .rot-card header { padding-right: 0; }
 .rot-also { margin-top: 12px; }
 .rot-also p { margin: 4px 0; max-width: 90ch; }
+
+/* place search above the map */
+.place-search { position: relative; margin: 0 0 10px; z-index: 1100; }
+.place-search form { display: flex; gap: 8px; }
+.place-search input { flex: 1; min-width: 0; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--mist); color: var(--ink); font: 400 0.95rem var(--font-body); }
+.place-search input:focus { outline: 2px solid var(--volt); outline-offset: 1px; border-color: transparent; }
+.place-hits { position: absolute; left: 0; right: 0; top: calc(100% + 6px); list-style: none; margin: 0; padding: 6px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: 0 8px 24px rgb(0 0 0 / 0.18); max-height: 320px; overflow-y: auto; }
+.place-hits li > button { display: block; width: 100%; text-align: left; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); cursor: pointer; font: inherit; }
+.place-hits li > button:hover, .place-hits li > button:focus-visible { background: var(--mist); }
+.place-hits small { display: block; color: var(--smoke); font-size: 0.76rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.place-hits li.muted { padding: 8px 10px; }
+
+/* what to plant next */
+.plant-next h2 { margin: 2px 0 12px; font: 700 1.7rem/1.15 var(--font-display); letter-spacing: -0.02em; }
+.plan-steps { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.plan-steps li { display: grid; grid-template-columns: 150px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.plan-steps b { font-weight: 600; color: var(--slate); font-size: 0.9rem; }
+@media (max-width: 520px) { .plan-steps li { grid-template-columns: 1fr; gap: 2px; } }

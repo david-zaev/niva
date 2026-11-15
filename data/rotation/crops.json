@@ -14,7 +14,7 @@
     {"id": "maize", "name": "Maize (grain)", "name_mk": "Пченка", "family": "Poaceae", "kind": "summer",
      "sow": "04-20", "stages": [30, 40, 50, 30], "kc": [0.3, 1.2, 0.35], "root_m": 1.5, "p": 0.55, "ky": 1.25,
      "irrigated": true, "frost_c": 0, "frost_stages": ["ini", "dev"], "heat_c": 35, "heat_stages": ["mid"],
-     "n_credit": 0, "residue_t": 6.0, "cover": 0.85, "min_return": 1,
+     "n_credit": 0, "residue_t": 6.0, "cover": 0.85, "min_return": 2, "repeat_by": "crop",
      "yield_kg_ha": 5000, "price_mkd_kg": 12.57, "price_source": "ZPIS buyout, national average"},
     {"id": "sunflower", "name": "Sunflower", "name_mk": "Сончоглед", "family": "Asteraceae", "kind": "summer",
      "sow": "04-10", "stages": [25, 35, 45, 25], "kc": [0.35, 1.1, 0.35], "root_m": 1.5, "p": 0.45, "ky": 0.95,

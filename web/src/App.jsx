@@ -7,7 +7,6 @@ import { useI18n } from './i18n/index.jsx'
 import HealthCard from './components/HealthCard.jsx'
 import FarmMap from './components/FarmMap.jsx'
 import Rotations from './components/Rotations.jsx'
-import { Evidence, FarmPlan } from './components/Evidence.jsx'
 
 // Follow the phone's light/dark setting (the brand theme switches on data-theme)
 function useTheme() {
@@ -28,8 +27,6 @@ export default function App() {
   const [crops, setCrops] = useState([])
   const [selected, setSelected] = useState(null)
   const [rot, setRot] = useState(null)
-  const [profile, setProfile] = useState(null)
-  const [plan, setPlan] = useState(null)
   const [err, setErr] = useState(null)
 
   const loadFarm = useCallback(async (keep) => {
@@ -37,7 +34,6 @@ export default function App() {
     const f = await api.farm(farm_id)
     setFarm(f)
     setSelected((cur) => keep ?? cur ?? f.fields[0]?.id ?? null)
-    api.plan(farm_id).then(setPlan).catch(() => {})
     return f
   }, [])
 
@@ -47,26 +43,14 @@ export default function App() {
   }, [loadFarm])
 
   useEffect(() => {
-    setRot(null); setProfile(null)
+    setRot(null)
     if (!selected) return undefined
     let alive = true
     api.rotations(selected).then((d) => alive && setRot(d)).catch((e) => alive && setErr(e.message))
-    const loadProfile = () => api.profile(selected).then((d) => {
-      if (!alive) return
-      setProfile(d)
-      if (d.ndvi_status === 'loading') setTimeout(loadProfile, 15000)
-    }).catch(() => {})
-    loadProfile()
     return () => { alive = false }
   }, [selected])
 
   const field = farm?.fields.find((f) => f.id === selected)
-
-  const choose = async (rotationId) => {
-    await api.updateField(selected, { chosen_rotation: rotationId })
-    setRot((r) => ({ ...r, chosen: rotationId }))
-    api.plan(farm.id).then(setPlan).catch(() => {})
-  }
 
   const create = async (body) => {
     const f = await api.createField(farm.id, body)
@@ -105,9 +89,7 @@ export default function App() {
                 </section>}
             <FarmMap fields={farm.fields} selectedId={selected} onSelect={setSelected} onCreate={create} onDelete={remove} crops={crops} />
             {field && <>
-              <Rotations data={rot} onChoose={choose} />
-              <Evidence profile={profile} />
-              <FarmPlan plan={plan} />
+              <Rotations data={rot} />
             </>}
             <footer className="foot muted small">
               Niva supports farmer judgement; it does not replace it. Check every plan with a local agronomist.
