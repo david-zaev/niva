@@ -18,8 +18,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      // a new version waits until the farmer taps "Update ready" (UpdateButton)
-      registerType: 'prompt',
+      // a new version takes over on the next load, so nobody is left on an old copy of the site
+      registerType: 'autoUpdate',
       includeAssets: ['icons/*.png', 'icons/*.svg', 'icons/favicon.ico'],
       manifest: {
         name: 'Niva',
@@ -39,6 +39,9 @@ export default defineConfig({
         ],
       },
       workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,svg,png,ico,json,woff2}'],
         navigateFallback: `${base}index.html`,
         runtimeCaching: [

@@ -112,19 +112,32 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .pill-watch { background: var(--wait); }
 .pill-poor { background: var(--down); }
 
-/* ---------- map ---------- */
-.map-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin-bottom: 12px; }
-.map-wrap { position: relative; }
-.farm-map { height: min(60vh, 460px); border-radius: 12px; overflow: hidden; z-index: 0; }
+/* ---------- map: the card is the map, controls float on it ---------- */
+.map-card { position: relative; height: min(72vh, 620px); min-height: 420px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: #1a1a1a; isolation: isolate; }
+.farm-map { position: absolute; inset: 0; z-index: 0; }
+.map-top { position: absolute; z-index: 1000; top: 0; left: 0; right: 0; display: flex; gap: 8px; align-items: flex-start; padding: 12px;
+  background: linear-gradient(rgb(0 0 0 / 0.45), transparent); pointer-events: none; }
+.map-top > * { pointer-events: auto; }
+.map-actions { display: flex; gap: 8px; flex: none; }
+.btn-map { background: rgb(18 18 18 / 0.78); color: #fff; border-color: rgb(255 255 255 / 0.14); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.btn-map:hover { background: rgb(18 18 18 / 0.92); border-color: rgb(255 255 255 / 0.3); }
+.btn-map.btn-danger:hover { color: #ff8a80; }
+.map-hint { position: absolute; z-index: 1000; left: 50%; top: 68px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); margin: 0;
+  padding: 8px 14px; border-radius: 999px; background: rgb(18 18 18 / 0.82); color: #fff; font-size: 0.85rem; text-align: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .field-label { background: rgb(0 0 0 / 0.6); color: #fff; border: 0; box-shadow: none; font-weight: 600; font-size: 0.78rem; }
 .field-label.is-sel { background: #fff100; color: #000; }
 .field-label::before { display: none; }
-.field-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 8px 14px; cursor: pointer; font-weight: 600; font-size: 0.88rem; }
-.chip small { color: var(--smoke); font-weight: 500; margin-left: 4px; }
+.field-chips { position: absolute; z-index: 1000; left: 12px; bottom: 28px; right: 64px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.field-chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; border: 1px solid rgb(255 255 255 / 0.14); background: rgb(18 18 18 / 0.78); color: #fff; border-radius: 999px; padding: 8px 14px; cursor: pointer; font-weight: 600; font-size: 0.88rem; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.chip small { color: rgb(255 255 255 / 0.6); font-weight: 500; margin-left: 4px; }
 .chip.is-sel { background: var(--volt); color: var(--on-volt); border-color: var(--volt); }
 .chip.is-sel small { color: #333; }
-.draw-form { position: absolute; top: 12px; right: 12px; z-index: 600; width: min(360px, calc(100% - 24px)); box-shadow: 0 12px 32px rgb(0 0 0 / 0.25); }
+.map-card .leaflet-control-zoom { border: 0; box-shadow: none; margin: 0 12px 12px 0; }
+.map-card .leaflet-control-zoom a { width: 36px; height: 36px; line-height: 36px; background: rgb(18 18 18 / 0.78); color: #fff; border-color: rgb(255 255 255 / 0.14); }
+.map-card .leaflet-control-attribution { font-size: 0.62rem; background: rgb(0 0 0 / 0.4); color: rgb(255 255 255 / 0.75); }
+.map-card .leaflet-control-attribution a { color: #fff; }
+.draw-form { position: absolute; top: 72px; right: 12px; max-height: calc(100% - 84px); z-index: 1001; width: min(360px, calc(100% - 24px)); overflow-y: auto; box-shadow: 0 12px 32px rgb(0 0 0 / 0.35); }
 .draw-form label { display: flex; flex-direction: column; gap: 4px; margin: 10px 0; font-size: 0.86rem; font-weight: 600; }
 .draw-form input, .draw-form select { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--canvas); color: var(--ink); }
 .draw-form fieldset { border: 0; padding: 0; margin: 10px 0; }
@@ -133,7 +146,7 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .season-pick select { flex: 1 1 100px; }
 
 /* ---------- rotations ---------- */
-.rot-grid { display: grid; gap: var(--gap); grid-template-columns: 1fr; }
+.rot-grid { display: grid; gap: var(--gap); grid-template-columns: 1fr; align-items: start; }
 @media (min-width: 760px) { .rot-grid { grid-template-columns: 1fr 1fr; } }
 .rot-card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .rot-card.is-current { background: var(--mist); }
@@ -203,7 +216,6 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .auth-watch { width: 100%; justify-content: space-between; }
 .logout { white-space: nowrap; min-height: 44px; padding: 0 12px; border: 0; border-radius: 6px; background: transparent; color: var(--slate); font: 500 0.82rem var(--font-body); cursor: pointer; }
 .logout:hover { background: var(--mist); color: var(--ink); }
-.map-head .row-actions { margin: 0; }
 
 /* rotation cards: plain comparison with what the farmer grows now */
 .in-short { margin: 0; font-size: 0.95rem; line-height: 1.45; }
@@ -224,9 +236,10 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .rot-also p { margin: 4px 0; max-width: 90ch; }
 
 /* place search above the map */
-.place-search { position: relative; margin: 0 0 10px; z-index: 1100; }
+.place-search { position: relative; flex: 1; min-width: 0; max-width: 460px; z-index: 1100; }
 .place-search form { display: flex; gap: 8px; }
-.place-search input { flex: 1; min-width: 0; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--mist); color: var(--ink); font: 400 0.95rem var(--font-body); }
+.place-search input { flex: 1; min-width: 0; min-height: 40px; padding: 0 14px; border: 1px solid rgb(255 255 255 / 0.14); border-radius: 10px; background: rgb(18 18 18 / 0.78); color: #fff; font: 400 0.95rem var(--font-body); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.place-search input::placeholder { color: rgb(255 255 255 / 0.6); }
 .place-search input:focus { outline: 2px solid var(--volt); outline-offset: 1px; border-color: transparent; }
 .place-hits { position: absolute; left: 0; right: 0; top: calc(100% + 6px); list-style: none; margin: 0; padding: 6px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: 0 8px 24px rgb(0 0 0 / 0.18); max-height: 320px; overflow-y: auto; }
 .place-hits li > button { display: block; width: 100%; text-align: left; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); cursor: pointer; font: inherit; }
@@ -243,28 +256,43 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 
 /* ---------- phones ---------- */
 @media (max-width: 600px) {
-  :root { --gap: 14px; --top-h: 56px; }
-  .content { padding: 12px 16px 40px; }
-  .topbar { padding: 0 12px 0 16px; }
+  :root { --gap: 12px; --top-h: 56px; }
+  body { font-size: 15px; }
+  .content { padding: 12px 12px 32px; gap: 12px; }
+  .topbar { padding: 0 12px; }
   .topbar .logo { height: 22px; width: auto; }
   .logout { padding: 0 8px; }
-  .health-head { gap: 8px; }
-  .health-label { font-size: 2rem; }
-  .readings { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-  .readings div:last-child:nth-child(odd) { grid-column: span 2; }
-  .readings b { font-size: 1.2rem; }
-  .alert { font-size: 0.92rem; }
-  .map-head { flex-wrap: wrap; align-items: flex-start; }
-  .map-head .row-actions { width: 100%; }
-  .map-head .row-actions .btn-volt, .map-head .row-actions .btn-ghost { flex: 1; }
-  .farm-map { height: 52vh; min-height: 300px; }
-  .draw-form { position: static; width: 100%; margin-top: 12px; box-shadow: none; }
-  .place-search .btn { padding: 0 12px; }
-  .rot-card { padding: 16px; border-radius: 14px; }
-  .plant-next h2 { font-size: 1.45rem; }
-  .plain-row { padding: 8px 0; }
-  .plain-row dt { font-size: 0.86rem; }
-  .delta { font-size: 0.75rem; }
-  .section-head { margin-top: 8px; }
+  .card { padding: 16px; }
+  h2 { font-size: 1.3rem; }
+  .health-head { gap: 6px; }
+  .health-label { font-size: 1.75rem; margin: 2px 0 6px; }
+  .health-summary { font-size: 0.92rem; }
+  .readings { grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 12px; }
+  .readings div { padding: 8px 10px; border-radius: 10px; }
+  .readings span { font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .readings b { font-size: 1.05rem; }
+  .alert { font-size: 0.88rem; }
+  .map-card { height: 64svh; min-height: 400px; max-height: 560px; border-radius: 16px; }
+  .map-top { flex-wrap: wrap; padding: 10px; }
+  .place-search { flex-basis: 100%; max-width: none; }
+  .map-actions { width: 100%; }
+  .map-actions .btn { flex: 1; }
+  .map-hint { top: 112px; font-size: 0.8rem; }
+  .field-chips { left: 10px; bottom: 26px; right: 56px; }
+  .chip { padding: 7px 12px; font-size: 0.82rem; }
+  .draw-form { top: auto; left: 0; right: 0; bottom: 0; width: auto; max-height: 78%; border-radius: 16px 16px 0 0; }
+  .section-head { margin-top: 4px; }
+  .section-head h2 { font-size: 1.3rem; }
+  .section-head p.muted { font-size: 0.88rem; }
+  /* options swipe sideways instead of stacking into one very tall page */
+  .rot-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin: 0 -12px; padding: 0 12px 6px; scroll-padding: 0 12px; scrollbar-width: none; align-items: flex-start; }
+  .rot-grid::-webkit-scrollbar { display: none; }
+  .rot-card { flex: 0 0 86%; scroll-snap-align: start; padding: 14px; gap: 10px; border-radius: 14px; }
+  .rot-card h3 { font-size: 1.05rem; }
+  .plant-next h2 { font-size: 1.35rem; margin-bottom: 8px; }
+  .plan-steps li { padding: 8px 0; }
+  .plain-row { padding: 7px 0; }
+  .plain-row dt { font-size: 0.84rem; }
+  .delta { font-size: 0.72rem; }
   .check-value { margin-left: 0; width: 100%; }
 }

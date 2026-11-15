@@ -91,7 +91,7 @@ function PlaceSearch({ onPick }) {
       <form role="search" onSubmit={search}>
         <input type="search" value={q} onChange={(e) => { setQ(e.target.value); if (!e.target.value) setHits(null) }}
           placeholder={t('app.map.searchPh')} aria-label={t('app.map.searchLabel')} />
-        <button className="btn" disabled={busy}>{busy ? '…' : t('app.map.search')}</button>
+        <button className="btn btn-map" disabled={busy}>{busy ? '…' : t('app.map.search')}</button>
       </form>
       {hits && (
         <ul className="place-hits">
@@ -127,8 +127,9 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
   }
 
   useEffect(() => {
-    const m = L.map(box.current, { zoomControl: true, scrollWheelZoom: false, maxZoom: 19 })
+    const m = L.map(box.current, { zoomControl: false, scrollWheelZoom: false, maxZoom: 19 })
     addBasemap(m, 'satellite')
+    L.control.zoom({ position: 'bottomright' }).addTo(m)
     m.setView([41.4145, 22.7274], 14)
     layer.current = L.layerGroup().addTo(m)
     m.pm.setGlobalOptions({ pathOptions: { color: '#fff100', weight: 2 } })
@@ -184,47 +185,43 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
     setDrawing(false)
   }
 
+  const hint = drawing ? t('app.map.drawHint') : !fields.length && !draft ? t('app.map.noFields') : null
   return (
-    <section className="card map-card">
-      <div className="map-head">
-        <div>
-          <p className="eyebrow">{t('app.map.eyebrow')}</p>
-          <h2>{fields.length ? t('app.map.select') : t('app.map.draw')}</h2>
-        </div>
-        <div className="row-actions">
+    <section className="map-card" aria-label={t('app.map.eyebrow')}>
+      <div ref={box} className="farm-map" role="application" aria-label={t('app.map.mapLabel')} />
+      <div className="map-top">
+        <PlaceSearch onPick={(bounds, center) => {
+          const m = map.current
+          if (!m) return
+          const [[s, w], [n, e]] = bounds
+          // villages come with a large box: never zoom out further than a view where fields are visible
+          if (Math.abs(n - s) > 0.05 || Math.abs(e - w) > 0.05) m.flyTo(center, 15)
+          else m.flyToBounds(bounds, { maxZoom: 17 })
+        }} />
+        <div className="map-actions">
           {selected && !drawing && (
-            <button className="btn btn-quiet btn-danger" disabled={deleting} onClick={removeSelected}>{deleting ? t('app.map.deleting') : t('app.map.delete')}</button>
+            <button className="btn btn-map btn-danger" disabled={deleting} onClick={removeSelected}>{deleting ? t('app.map.deleting') : t('app.map.delete')}</button>
           )}
           {drawing
-            ? <button className="btn btn-ghost" onClick={cancelDraw}>{t('app.map.cancelDraw')}</button>
+            ? <button className="btn btn-map" onClick={cancelDraw}>{t('app.map.cancelDraw')}</button>
             : <button className="btn btn-volt" onClick={startDraw}>{t('app.map.drawBtn')}</button>}
         </div>
       </div>
-      {!fields.length && !drawing && !draft && <p className="muted small">{t('app.map.noFields')}</p>}
-      {drawing && <p className="muted small">{t('app.map.drawHint')}</p>}
-      <PlaceSearch onPick={(bounds, center) => {
-        const m = map.current
-        if (!m) return
-        const [[s, w], [n, e]] = bounds
-        // villages come with a large box: never zoom out further than a view where fields are visible
-        if (Math.abs(n - s) > 0.05 || Math.abs(e - w) > 0.05) m.flyTo(center, 15)
-        else m.flyToBounds(bounds, { maxZoom: 17 })
-      }} />
-      <div className="map-wrap">
-        <div ref={box} className="farm-map" role="application" aria-label={t('app.map.mapLabel')} />
-        {draft && (
-          <NewFieldForm draft={draft} crops={crops}
-            onCancel={() => setDraft(null)}
-            onSave={async (body) => { await onCreate({ ...body, polygon: draft.polygon }); setDraft(null) }} />
-        )}
-      </div>
-      <div className="field-chips">
-        {fields.map((f) => (
-          <button key={f.id} className={`chip ${String(f.id) === String(selectedId) ? 'is-sel' : ''}`} onClick={() => onSelect(f.id)}>
-            {f.name} <small>{f.area_ha} ha</small>
-          </button>
-        ))}
-      </div>
+      {hint && <p className="map-hint">{hint}</p>}
+      {fields.length > 0 && !draft && (
+        <div className="field-chips">
+          {fields.map((f) => (
+            <button key={f.id} className={`chip ${String(f.id) === String(selectedId) ? 'is-sel' : ''}`} onClick={() => onSelect(f.id)}>
+              {f.name} <small>{f.area_ha} ha</small>
+            </button>
+          ))}
+        </div>
+      )}
+      {draft && (
+        <NewFieldForm draft={draft} crops={crops}
+          onCancel={() => setDraft(null)}
+          onSave={async (body) => { await onCreate({ ...body, polygon: draft.polygon }); setDraft(null) }} />
+      )}
     </section>
   )
 }

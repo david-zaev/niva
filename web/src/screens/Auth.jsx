@@ -91,7 +91,7 @@ export default function Auth({ onEnter }) {
 
   const watchDemo = () => {
     if (DEMO_URL) window.open(DEMO_URL, '_blank', 'noopener')
-    else onEnter({ guest: true })
+    else { const s = { guest: true }; write(SESSION, s); onEnter(s) }
   }
 
   return (
