@@ -32,6 +32,16 @@ _word_re = re.compile(r"(?<!\w)(" + "|".join(re.escape(w) for w in sorted(WORDS,
                       re.IGNORECASE)
 
 
+_SOIL_MK = {"heavy clay (smolnica)": "тешка глина (смолница)", "sandy soil": "песоклива почва", "loam": "иловица",
+            "alluvial soil": "алувијална почва", "terra rossa": "црвеница"}
+
+
+def _soil_mk(s: str) -> str:
+    for en in sorted(_SOIL_MK, key=len, reverse=True):
+        s = s.replace(en, _SOIL_MK[en])
+    return s.replace(", ", ", ")
+
+
 def words(s: str) -> str:
     """Crop names inside a sentence, keeping a capital first letter where the English had one."""
     def rep(m):
@@ -117,6 +127,20 @@ SENTENCES = [
     (r"Holds up in dry years: (\d+)% of normal yield in the driest years\.",
      r"Издржува во сушни години: \1% од нормалниот принос во најсушните години."),
     (r"Needs no irrigation\.", "Не бара наводнување."),
+    (r"Each step suits the crop that came before: (.+)\.",
+     lambda m: "Секој чекор одговара на културата пред него: " + _f(m[1]).replace(" after ", " по ") + "."),
+    (r"(.+) must not follow (.+): pests, diseases or nutrients carry over\.?",
+     lambda m: f"{_f(m[1])} не смее да доаѓа по {_f(m[2]).lower()}: се пренесуваат штетници, болести или исцрпеност на хранивата."),
+    (r"(.+) needs irrigation, and this field has none\.?",
+     lambda m: f"{_f(m[1])} бара наводнување, а оваа нива нема."),
+    (r"(.+) comes back after (\d+) year\(s\); it needs (\d+) years between crops on the same field\.?",
+     lambda m: f"{_f(m[1])} се враќа по {m[2]} години; потребни се {m[3]} години меѓу две сеидби на иста нива."),
+    (r"(.+) grows best on (.+); the soil map shows (.+) here\.",
+     lambda m: f"{_f(m[1])} најдобро успева на {_soil_mk(m[2])}; картата на почви покажува {_soil_mk(m[3])} тука."),
+    (r"(.+) wants a soil pH of ([\d.]+)–([\d.]+); the soil map shows ([\d.]+) here\.",
+     lambda m: f"{_f(m[1])} бара pH на почвата {m[2]}–{m[3]}; картата на почви покажува {m[4]} тука."),
+    (r"Which crop may follow which, how many years before a crop may return, which crops need irrigation, and the soils and pH each crop prefers\.",
+     "Која култура смее по која, колку години пред културата да се врати, кои култури бараат наводнување и кои почви и pH им одговараат."),
     (r"In the driest years this rotation keeps only (\d+)% of a normal harvest: keep a reserve or insure the crop\.",
      r"Во најсушните години овој плодоред дава само \1% од нормалниот род: чувајте резерва или осигурете ја културата."),
     (r"Needs about (\d+) mm of irrigation water a year\.", r"Бара околу \1 mm вода за наводнување годишно."),
@@ -161,6 +185,10 @@ SENTENCES = [
     (r"Familiar crops and markets\.", "Познати култури и пазари."),
     (r"(.+) follows (.+) \((\w+)\) after (\d+) season\(s\): needs (\d+) for soil-borne pests and diseases to die down\.",
      lambda m: f"{_f(m[1])} доаѓа по {_f(m[2]).lower()} ({FAMILIES.get(m[3], m[3])}) по {m[4]} сезона: потребни се {m[5]} за штетниците и болестите во почвата да згаснат."),
+    (r"Earns about (\d+)% less than what you grow now \((\d+) € vs (\d+) € per hectare a year\): worth it only if "
+     r"the savings in water, fertiliser and soil matter more to you than the income\.",
+     r"Заработува околу \1% помалку од она што го одгледувате сега (\2 € наспроти \3 € по хектар годишно): "
+     r"вреди само ако заштедата на вода, ѓубриво и почва ви значи повеќе од приходот."),
     (r"Gross income about (\d+)% lower than now: check whether lower costs and soil gains make up for it\.",
      r"Бруто приходот е околу \1% понизок од сега: проверете дали пониските трошоци и подобрата почва го надоместуваат."),
     (r"New crops for this farm \((.+)\): check buyers, seed and machinery locally\.",
@@ -251,6 +279,8 @@ def rotations(d: dict) -> dict:
         r["idea"] = sentence(r.get("idea") or "")
         r["season_names"] = [words(s) for s in r.get("season_names", [])]
         c = r.get("card", {})
+        if c.get("income_warning"):
+            c["income_warning"] = sentence(c["income_warning"])
         for k in ("why", "benefits", "risks", "gaps"):
             c[k] = [sentence(x) for x in c.get(k, [])]
         for e in c.get("evidence", []):
@@ -259,6 +289,8 @@ def rotations(d: dict) -> dict:
             for s in p["steps"]:
                 s["name"] = words(s["name"])
                 s["sow_month"] = MONTHS.get(s["sow_month"], s["sow_month"])
+                if s.get("end_month"):
+                    s["end_month"] = MONTHS.get(s["end_month"], s["end_month"])
     for o in d.get("others", []) + d.get("not_offered", []):
         o["name"] = rotation_name(o["name"])
         if o.get("because"):

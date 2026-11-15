@@ -115,6 +115,8 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 /* ---------- map: the card is the map, controls float on it ---------- */
 .map-card { position: relative; height: min(72vh, 620px); min-height: 420px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: #1a1a1a; isolation: isolate; }
 .farm-map { position: absolute; inset: 0; z-index: 0; }
+/* beyond the tiles at the widest zoom: same dark as the mask outside North Macedonia */
+.farm-map.leaflet-container { background: #0b0d0c; }
 .map-top { position: absolute; z-index: 1000; top: 0; left: 0; right: 0; display: flex; gap: 8px; align-items: flex-start; padding: 12px;
   background: linear-gradient(rgb(0 0 0 / 0.45), transparent); pointer-events: none; }
 .map-top > * { pointer-events: auto; }
@@ -127,6 +129,10 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .btn-map.btn-danger:hover { color: #ff8a80; }
 .map-hint { position: absolute; z-index: 1000; left: 50%; top: 68px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); margin: 0;
   padding: 8px 14px; border-radius: 999px; background: rgb(18 18 18 / 0.82); color: #fff; font-size: 0.85rem; text-align: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.confirm-bar { border-radius: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; white-space: normal; text-align: center; }
+.confirm-bar .row-actions { display: inline-flex; gap: 8px; }
+.btn-danger-solid { background: var(--down); color: #fff; border-color: transparent; }
+.btn-danger-solid:hover { filter: brightness(1.1); }
 .field-label { background: rgb(0 0 0 / 0.6); color: #fff; border: 0; box-shadow: none; font-weight: 600; font-size: 0.78rem; }
 .field-label.is-sel { background: #fff100; color: #000; }
 .field-label::before { display: none; }
@@ -234,6 +240,7 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 
 /* rotation cards: plain comparison with what the farmer grows now */
 .in-short { margin: 0; font-size: 0.95rem; line-height: 1.45; }
+.income-warn { margin: 8px 0 0; padding: 10px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--down) 45%, transparent); background: color-mix(in srgb, var(--down) 12%, transparent); color: var(--down); font-size: 0.9rem; line-height: 1.45; font-weight: 600; }
 .plain-rows { display: grid; gap: 0; margin: 0; border-top: 1px solid var(--line); }
 .plain-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
 .plain-row dt { font-weight: 600; font-size: 0.9rem; }
@@ -330,3 +337,14 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
   .delta { font-size: 0.72rem; }
   .check-value { margin-left: 0; width: 100%; }
 }
+
+/* drawing a field: the first corner "pulls in" the cursor once the shape can be closed (FarmMap startDraw) */
+.farm-map .marker-icon { transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
+.farm-map .marker-icon.is-magnet { background: #fff100; border: 2px solid #000; box-shadow: 0 0 0 4px rgb(255 241 0 / 0.45); }
+.farm-map .marker-icon.is-magnet::after {
+  content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 2px solid #fff100; pointer-events: none;
+  animation: magnet-pulse 0.9s ease-out infinite;
+}
+@keyframes magnet-pulse { from { transform: scale(1); opacity: 0.9; } to { transform: scale(2.8); opacity: 0; } }
+.farm-map.is-closing { cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .farm-map .marker-icon.is-magnet::after { animation: none; } }

@@ -40,7 +40,7 @@
     },
     {
       "id": "pepper-wheat-bean",
-      "name": "Pepper → wheat → bean, vetch before pepper",
+      "name": "Pepper → bean → wheat, vetch before pepper",
       "kind": "suggested",
       "seasons": [
         [
@@ -48,17 +48,17 @@
           "pepper"
         ],
         [
-          "wheat"
+          "bean"
         ],
         [
-          "bean"
+          "wheat"
         ]
       ],
       "idea": "Breaks the nightshade cycle with a cereal and a legume; the vetch adds nitrogen before the pepper."
     },
     {
       "id": "pepper-wheat-chickpea-tomato",
-      "name": "Pepper → wheat → chickpea → tomato, vetch before pepper and tomato",
+      "name": "Pepper → chickpea → wheat → tomato, vetch before pepper and tomato",
       "kind": "suggested",
       "seasons": [
         [
@@ -66,10 +66,10 @@
           "pepper"
         ],
         [
-          "wheat"
+          "chickpea"
         ],
         [
-          "chickpea"
+          "wheat"
         ],
         [
           "vetch_oat",

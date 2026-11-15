@@ -28,6 +28,7 @@ export default function App() {
   const [selected, setSelected] = useState(null)
   const [rot, setRot] = useState(null)
   const [err, setErr] = useState(null)
+  const [version, setVersion] = useState(0) // bumped after an edit, so the advice is fetched again
 
   const loadFarm = useCallback(async (keep) => {
     const { farm_id } = await api.demo()
@@ -48,7 +49,7 @@ export default function App() {
     let alive = true
     api.rotations(selected, lang).then((d) => alive && setRot(d)).catch((e) => alive && setErr(e.message))
     return () => { alive = false }
-  }, [selected, lang])
+  }, [selected, lang, version])
 
   const field = farm?.fields.find((f) => f.id === selected)
 
@@ -56,6 +57,12 @@ export default function App() {
     const f = await api.createField(farm.id, body)
     await loadFarm(f.id)
     setSelected(f.id)
+  }
+
+  const update = async (id, body) => {
+    await api.updateField(id, body)
+    await loadFarm(id)
+    setVersion((v) => v + 1)
   }
 
   const remove = async (id) => {
@@ -87,7 +94,7 @@ export default function App() {
                   <h2 className="health-label">{t('app.emptyTitle')}</h2>
                   <p className="health-summary">{t('app.emptyText')}</p>
                 </section>}
-            <FarmMap fields={farm.fields} selectedId={selected} onSelect={setSelected} onCreate={create} onDelete={remove} crops={crops} />
+            <FarmMap fields={farm.fields} selectedId={selected} onSelect={setSelected} onCreate={create} onUpdate={update} onDelete={remove} crops={crops} />
             {field && <>
               <Rotations data={rot} />
             </>}

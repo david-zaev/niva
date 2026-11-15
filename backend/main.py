@@ -24,6 +24,8 @@ import rotations
 import sensor
 import simulate
 import mk
+import plants
+import region
 import soil as soilmod
 import terrain
 from models import Device, Farm, FieldRow, Reading, SoilTest, engine, hash_key, init_db, utcnow
@@ -240,11 +242,15 @@ def ranking_current(f: FieldRow, priorities: dict | None = None) -> dict:
         with _lock:
             _evals[key] = evs
     evs = [{k: v for k, v in e.items()} for e in evs]
+    for e in evs:
+        e["plant_breaks"] = plants.rule_breaks(e["seasons"], irrigation is None)
     now_repeats = len(evs[0]["metrics"]["family_breaks"])
     for e in evs[1:]:
         dry = e["metrics"]["dry_year_yield_pct"]
         repeats = len(e["metrics"]["family_breaks"])
-        if dry < rotations.MIN_DRY_YEAR_YIELD:
+        if e["plant_breaks"]:
+            why = e["plant_breaks"][0].rstrip(".")
+        elif dry < rotations.MIN_DRY_YEAR_YIELD:
             why = (f"only {dry}% of normal yield in a dry year with "
                    + ("no irrigation" if irrigation is None else f"{irrigation} irrigation"))
         elif repeats > now_repeats:
@@ -284,12 +290,16 @@ def ranking_open(f: FieldRow, priorities: dict | None = None) -> dict:
     evs = [{k: v for k, v in e.items()} for e in evs]
     for e in evs:
         e["farm_type"] = rotations.farm_type(e["seasons"])
+        e["plant_breaks"] = plants.rule_breaks(e["seasons"], irrigation is None)
     # not offered: no harvest in a dry year with this field's water, or a plant family back sooner than needed
     fewest = min((len(e["metrics"]["family_breaks"]) for e in evs
-                  if e["metrics"]["dry_year_yield_pct"] >= rotations.MIN_DRY_YEAR_YIELD), default=0)
+                  if e["metrics"]["dry_year_yield_pct"] >= rotations.MIN_DRY_YEAR_YIELD and not e["plant_breaks"]),
+                 default=0)
     for e in evs:
         dry = e["metrics"]["dry_year_yield_pct"]
-        if dry < rotations.MIN_DRY_YEAR_YIELD:
+        if e["plant_breaks"]:
+            why = e["plant_breaks"][0].rstrip(".")
+        elif dry < rotations.MIN_DRY_YEAR_YIELD:
             why = (f"only {dry}% of normal yield in a dry year with "
                    + ("no irrigation" if irrigation is None else f"{irrigation} irrigation"))
         elif len(e["metrics"]["family_breaks"]) > fewest:
@@ -299,7 +309,7 @@ def ranking_open(f: FieldRow, priorities: dict | None = None) -> dict:
         e["offered"], e["not_offered_because"] = why is None, why
     # rain-fed fields: few rotations keep half a harvest in a dry year there. Rather than one lonely option, also
     # offer the next ones that keep at least 40% and never repeat a plant family; their card says so plainly.
-    spare = sorted([e for e in evs if not e["offered"] and not e["metrics"]["family_breaks"]
+    spare = sorted([e for e in evs if not e["offered"] and not e["metrics"]["family_breaks"] and not e["plant_breaks"]
                     and e["metrics"]["dry_year_yield_pct"] >= rotations.MIN_DRY_YEAR_YIELD_FALLBACK],
                    key=lambda e: -e["metrics"]["dry_year_yield_pct"])
     for e in spare[:max(0, 3 - sum(e["offered"] for e in evs))]:
@@ -386,6 +396,8 @@ def read_farm(farm_id: int, s: Session = Depends(db)):
 def create_field(farm_id: int, body: FieldIn, bg: BackgroundTasks, s: Session = Depends(db)):
     if not s.get(Farm, farm_id):
         raise HTTPException(404, "farm not found")
+    if not region.polygon_inside(body.polygon):
+        raise HTTPException(422, region.MESSAGE)
     lat, lon = centroid(body.polygon)
     cs = simulate.crops()
     rot = [[c for c in season if c in cs] for season in body.current_rotation]
@@ -419,8 +431,13 @@ def update_field(field_id: int, body: FieldPatch, bg: BackgroundTasks, s: Sessio
     f = get_field(s, field_id)
     data = body.model_dump(exclude_unset=True)
     if "polygon" in data and data["polygon"]:
+        if not region.polygon_inside(data["polygon"]):
+            raise HTTPException(422, region.MESSAGE)
         f.lat, f.lon = centroid(data["polygon"])
         f.area_ha = area_ha(data["polygon"])
+    if data.get("current_rotation") is not None:  # same cleaning as a new field: known crops, no empty seasons
+        cs = simulate.crops()
+        data["current_rotation"] = [r for r in ([c for c in season if c in cs] for season in data["current_rotation"]) if r]
     for k, v in data.items():
         setattr(f, k, v)
     s.add(f)
@@ -475,12 +492,15 @@ def rotations_compared(f: FieldRow, r: dict, show: int, lang: str) -> dict:
     ctx = {"climate": cl, "t_offset": f.t_offset or 0.0, "terrain": r["terrain"], "soil": r["soil"],
            "ndvi": ndvi.analyse(nd, cl["rain_apr_aug_pct"]) if nd else None,
            "smap_check": rotations.smap_check(cur["_runs"][0], f.lat, f.lon)}
-    alts = sorted([e for e in evs[1:] if e["offered"]], key=lambda e: -e["score"])
+    # an option that earns much less than now is never put first, however well it scores on water and soil
+    alts = sorted([e for e in evs[1:] if e["offered"]],
+                  key=lambda e: (rotations.income_drop(e, cur) > rotations.MAX_INCOME_DROP, -e["score"]))
     picked = [cur] + alts[:show]
     out = []
     for e in picked:
         o = {k: v for k, v in e.items() if not k.startswith("_")}
         o["card"] = rotations.card(e, cur, ctx)
+        o["low_income"] = "income_warning" in o["card"]
         o["plant_next"] = rotations.plant_next(e["seasons"], cur["seasons"])
         if e.get("keeps"):
             o["card"]["why"].append(f"Keeps {' and '.join(k.lower() for k in e['keeps'])}, which you already grow: "
@@ -502,6 +522,8 @@ def rotations_compared(f: FieldRow, r: dict, show: int, lang: str) -> dict:
 def field_rotations(field_id: int, show: int = Query(3, ge=2, le=10), lang: str = "en", s: Session = Depends(db)):
     """The best `show` rotations for this field, each with its card. Location data only."""
     f = get_field(s, field_id)
+    if not region.inside(f.lat, f.lon):
+        raise HTTPException(422, region.MESSAGE_MK if lang == "mk" else region.MESSAGE)
     r = ranking(f)
     if r["current"] is not None:
         return rotations_compared(f, r, show, lang)

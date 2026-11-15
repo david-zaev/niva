@@ -1,11 +1,13 @@
 """Compare rotations for one field: run each through the 25 NASA seasons, score it, and write its card
 (why it is suggested, evidence, benefits, information gaps, risks), as the challenge asks."""
 from collections import defaultdict
+from datetime import date, timedelta
 import hashlib
 import json
 
 import numpy as np
 
+import plants
 import simulate
 import smap
 
@@ -208,6 +210,10 @@ def card(e: dict, cur: dict | None, ctx: dict) -> dict:
     else:
         why.append("This is what the field grows now: the baseline every other option is compared with.")
 
+    pairs = plants.good_pairs(e["seasons"])
+    if pairs and not is_current:
+        why.append(f"Each step suits the crop that came before: {', '.join(pairs[:3])}.")
+
     # evidence, each with its data source
     evidence.append({"text": f"Replayed over all {nyears} seasons of real weather at this field, each crop in every season "
                              f"({climate['years']}): typical year {m['irrigation_mm']} mm irrigation, driest 1 in 10 "
@@ -239,6 +245,9 @@ def card(e: dict, cur: dict | None, ctx: dict) -> dict:
                                  f"field (correlation {sm['r']:.2f} over {sm['days']} days, {sm['period']}).",
                          "source": smap.DATASET})
     evidence.append({"text": ctx["soil"]["label"] + ".", "source": ctx["soil"]["source"]})
+    if pairs or e.get("plant_breaks") is not None:
+        evidence.append({"text": "Which crop may follow which, how many years before a crop may return, which crops "
+                                 "need irrigation, and the soils and pH each crop prefers.", "source": plants.source()})
 
     # benefits
     if m["n_credit_kg_ha"]:
@@ -257,10 +266,14 @@ def card(e: dict, cur: dict | None, ctx: dict) -> dict:
         benefits.append("Familiar crops and markets.")
 
     # risks for local review
+    risks.extend(e.get("plant_breaks") or [])
+    risks.extend(plants.site_warnings(e["seasons"], ctx["soil"]))
     for b in m["family_breaks"][:2]:
         risks.append(f"{b['crop']} follows {b['after']} ({b['family']}) after {b['gap']} season(s): needs "
                      f"{b['min_return']} for soil-borne pests and diseases to die down.")
-    if m["gross_mkd_ha"] < c["gross_mkd_ha"] * 0.9 and not is_current:
+    if cur is not None and not is_current and income_drop(e, cur) > MAX_INCOME_DROP:
+        pass  # said in the card's income warning, at the top
+    elif m["gross_mkd_ha"] < c["gross_mkd_ha"] * 0.9 and not is_current:
         risks.append(f"Gross income about {abs(_pct(m['gross_mkd_ha'], c['gross_mkd_ha']))}% lower than now: "
                      f"check whether lower costs and soil gains make up for it.")
     new = {x["name"] for x in e["crops"]} - {x["name"] for x in cur["crops"]} if cur else set()
@@ -296,7 +309,13 @@ def card(e: dict, cur: dict | None, ctx: dict) -> dict:
     if nd and nd.get("pixels", 0) <= 2:
         gaps.append("Satellite greenness is from a 250 m pixel, which also sees neighbouring fields.")
 
-    return {"why": why, "evidence": evidence, "benefits": benefits, "risks": risks, "gaps": gaps}
+    out = {"why": why, "evidence": evidence, "benefits": benefits, "risks": risks, "gaps": gaps}
+    drop = income_drop(e, cur) if cur is not None and not is_current else 0
+    if drop > MAX_INCOME_DROP:
+        out["income_warning"] = (f"Earns about {drop}% less than what you grow now ({m['gross_eur_ha']:.0f} € vs "
+                                 f"{c['gross_eur_ha']:.0f} € per hectare a year): worth it only if the savings in water, "
+                                 f"fertiliser and soil matter more to you than the income.")
+    return out
 
 
 _MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -324,6 +343,15 @@ def smap_check(run: simulate.Result, lat: float, lon: float) -> dict | None:
 
 
 VEGETABLES = {"pepper", "tomato"}
+MAX_INCOME_DROP = 30  # % below the current rotation's gross income: such an option is never ranked first
+
+
+def income_drop(e: dict, cur: dict) -> int:
+    """How many % less gross income than the current rotation (0 when it earns as much or more)."""
+    now = cur["metrics"]["gross_mkd_ha"]
+    return max(0, round(100 * (1 - e["metrics"]["gross_mkd_ha"] / now))) if now else 0
+
+
 MIN_DRY_YEAR_YIELD = 50  # % of normal yield: below this a rotation is not offered for the field's water
 MIN_DRY_YEAR_YIELD_FALLBACK = 40  # rain-fed fields with too few options: offered down to here, with a warning
 
@@ -338,9 +366,12 @@ def with_cover(rot: dict) -> dict | None:
     """The farmer's own rotation with a winter vetch + oat cover before every spring-sown crop."""
     cs = simulate.crops()
     seasons, added = [], False
-    for s in rot["seasons"]:
+    for k, s in enumerate(rot["seasons"]):
         main = [c for c in s if not cs[c].get("cover_crop")]
-        if main and len(main) == len(s) and all(cs[c].get("kind") != "winter" for c in main):
+        before = rot["seasons"][k - 1][-1]
+        # vetch is a legume: never next to a legume crop, whose root rots and pests it would carry on
+        legume = any(cs[c]["family"] == "Fabaceae" for c in (*main, before))
+        if main and len(main) == len(s) and not legume and all(cs[c].get("kind") != "winter" for c in main):
             seasons.append(["vetch_oat", *s]); added = True
         else:
             seasons.append(list(s))
@@ -362,11 +393,19 @@ def keep_and_break(rot: dict) -> dict | None:
     if cs[top]["family"] in ("Poaceae", "Fabaceae") or cs[top]["kind"] == "perennial":
         return None  # cereal and legume farms are served by the field-crop rotations
     legume = "bean" if rot.get("_irrigated", True) else "chickpea"
-    seasons = [["vetch_oat", top], ["wheat"], [legume]]
-    return {"id": f"keep-{top}-wheat-{legume}", "kind": "suggested", "seasons": seasons,
-            "name": f"{cs[top]['name']} → wheat → {cs[legume]['name'].lower()}, vetch before {cs[top]['name'].lower()}",
+    # the legume goes before the wheat (nitrogen for the wheat), so the vetch cover follows wheat, not a legume
+    seasons = [["vetch_oat", top], [legume], ["wheat"]]
+    return {"id": f"keep-{top}-{legume}-wheat", "kind": "suggested", "seasons": seasons,
+            "name": f"{cs[top]['name']} → {cs[legume]['name'].lower()} → wheat, vetch before {cs[top]['name'].lower()}",
             "idea": f"Keeps your {cs[top]['name'].lower()}, then two years of other families so its pests and soil "
-                    f"diseases die down; the legume adds nitrogen."}
+                    f"diseases die down; the legume leaves nitrogen for the wheat."}
+
+
+TRANSPLANTED = {"pepper", "tomato", "tobacco"}  # raised as seedlings, planted out in the field
+
+
+def _part(d) -> str:
+    return "early" if d.day <= 10 else "mid" if d.day <= 20 else "late"
 
 
 MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
@@ -395,10 +434,15 @@ def plant_next(seasons: list[list[str]], now_seasons: list[list[str]], n: int = 
         prev = seasons[(start + i - 1) % L] if i or L > 1 else []
         steps = []
         for c in season:
-            m = int(cs[c]["sow"].split("-")[0])
+            m, d = (int(x) for x in cs[c]["sow"].split("-"))
             kept = cs[c]["kind"] == "perennial" and c in prev and i > 0
-            steps.append({"crop": c, "name": cs[c]["name"], "sow_month": None if kept else MONTHS[m - 1],
-                          "cover": bool(cs[c].get("cover_crop")), "kept": kept})
+            step = {"crop": c, "name": cs[c]["name"], "sow_month": None if kept else MONTHS[m - 1],
+                    "cover": bool(cs[c].get("cover_crop")), "kept": kept, "transplanted": c in TRANSPLANTED}
+            if step["cover"]:
+                # the simulation ends the cover after its growing days: plough it in then, before the next crop
+                end = date(2001, m, d) + timedelta(days=sum(cs[c]["stages"]))
+                step["end_month"], step["end_part"] = MONTHS[end.month - 1], _part(end)
+            steps.append(step)
         out.append({"steps": steps})
     return out
 

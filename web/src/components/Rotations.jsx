@@ -38,7 +38,7 @@ function Card({ r, now }) {
   const m = r.metrics
   const n = isCurrent || !now ? null : now.metrics
   const inShort = isCurrent ? r.idea : (c.why[0] ?? r.idea)
-  const label = isCurrent ? t('app.rot.now') : r.option === 1 ? t('app.rot.best') : t('app.rot.option', { n: r.option })
+  const label = isCurrent ? t('app.rot.now') : r.option === 1 && !r.low_income ? t('app.rot.best') : t('app.rot.option', { n: r.option })
   return (
     <article className={`rot-card ${isCurrent ? 'is-current' : ''}`}>
       <header>
@@ -49,6 +49,7 @@ function Card({ r, now }) {
         </ol>
       </header>
       {inShort && <p className="in-short">{inShort}</p>}
+      {c.income_warning && <p className="income-warn" role="note">{c.income_warning}</p>}
       <dl className="plain-rows">
         <Row label={t('app.rot.water')} hint={t('app.rot.waterHint')} value={m.irrigation_mm ? `${m.irrigation_mm} mm` : t('app.rot.noneWater')}
           cmp={n && change(t, m.irrigation_mm, n.irrigation_mm, false, 'mm')} />
@@ -82,7 +83,9 @@ function PlantNext({ r, compared }) {
   const step = (s, i) => {
     const crop = i > 0 ? s.name.charAt(0).toLowerCase() + s.name.slice(1) : s.name
     if (s.kept) return t('app.rot.stays', { crop })
-    return t(s.cover ? 'app.rot.coverStep' : 'app.rot.sown', { crop, month: s.sow_month })
+    if (s.cover && s.end_part) return t('app.rot.coverStepEnd', { crop, month: s.sow_month, end: t(`app.rot.part_${s.end_part}`, { month: s.end_month }) })
+    if (s.cover) return t('app.rot.coverStep', { crop, month: s.sow_month })
+    return t(s.transplanted ? 'app.rot.planted' : 'app.rot.sown', { crop, month: s.sow_month })
   }
   const [next, ...then] = r.plant_next
   return (
@@ -118,7 +121,7 @@ export default function Rotations({ data }) {
   const cards = [...(hasNow ? [now] : []), ...options.map((r, i) => ({ ...r, option: i + 1 }))]
   const best = options[0]
   const shown = cards.find((r) => r.id === tab) ?? cards[hasNow && best ? 1 : 0]
-  const tabName = (r) => r.kind === 'current' ? t('app.rot.tabNow') : r.option === 1 ? t('app.rot.tabBest') : t('app.rot.option', { n: r.option })
+  const tabName = (r) => r.kind === 'current' ? t('app.rot.tabNow') : r.option === 1 && !r.low_income ? t('app.rot.tabBest') : t('app.rot.option', { n: r.option })
   const kind = { vegetable: 'farm_vegetable', tobacco: 'farm_tobacco', 'field crop': 'farm_field crop' }[data.farm_type]
   const water = data.irrigation === 'none' || !data.irrigation
     ? t('app.rot.noIrr')
