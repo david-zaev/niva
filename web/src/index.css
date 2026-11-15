@@ -145,6 +145,9 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .draw-form input, .draw-form select { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--canvas); color: var(--ink); }
 .draw-form fieldset { border: 0; padding: 0; margin: 10px 0; }
 .draw-form legend { font-size: 0.86rem; font-weight: 600; margin-bottom: 4px; }
+.check-line { flex-direction: row !important; align-items: flex-start; gap: 10px !important; cursor: pointer; }
+.check-line input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--volt); flex: none; }
+.check-line small { display: block; margin-top: 2px; font-weight: 400; color: var(--smoke); font-size: 0.78rem; line-height: 1.4; }
 .season-pick { display: flex; flex-wrap: wrap; gap: 6px; }
 .season-pick select { flex: 1 1 100px; }
 
@@ -266,6 +269,26 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .plan-steps b { font-weight: 600; color: var(--slate); font-size: 0.9rem; }
 @media (max-width: 520px) { .plan-steps li { grid-template-columns: 1fr; gap: 2px; } }
 
+/* ---------- loading ---------- */
+.loading-head { display: flex; align-items: center; gap: 12px; }
+.loading-head p { margin: 0; color: var(--slate); }
+.spinner { width: 20px; height: 20px; flex: none; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--volt); animation: spin 0.8s linear infinite; }
+.loading-bar { position: relative; height: 3px; margin: 16px 0; overflow: hidden; border-radius: 3px; background: var(--mist); }
+.loading-bar span { position: absolute; inset: 0 auto 0 0; width: 35%; border-radius: 3px; background: var(--volt); animation: slide 1.4s ease-in-out infinite; }
+.skeleton { display: grid; gap: 10px; }
+.skeleton i { display: block; height: 14px; border-radius: 6px; background: linear-gradient(90deg, var(--mist) 25%, color-mix(in srgb, var(--ink) 9%, var(--mist)) 50%, var(--mist) 75%); background-size: 200% 100%; animation: shimmer 1.6s linear infinite; }
+.skeleton i:nth-child(1) { width: 45%; height: 22px; }
+.skeleton i:nth-child(2) { width: 90%; }
+.skeleton i:nth-child(3) { width: 75%; }
+.skeleton i:nth-child(4) { width: 60%; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes slide { 0% { left: -35%; } 100% { left: 100%; } }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 2.4s; }
+  .loading-bar span, .skeleton i { animation: none; }
+}
+
 /* ---------- phones ---------- */
 @media (max-width: 600px) {
   :root { --gap: 12px; --top-h: 56px; }
@@ -292,7 +315,7 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
   .map-hint { top: 112px; font-size: 0.8rem; }
   .field-chips { left: 10px; bottom: 26px; right: 56px; }
   .chip { padding: 7px 12px; font-size: 0.82rem; }
-  .draw-form { top: auto; left: 0; right: 0; bottom: 0; width: auto; max-height: 78%; border-radius: 16px 16px 0 0; }
+  .draw-form { top: auto; left: 0; right: 0; bottom: 0; width: auto; max-height: 55%; border-radius: 16px 16px 0 0; }
   .section-head { margin-top: 4px; }
   .section-head h2 { font-size: 1.3rem; }
   .section-head p.muted { font-size: 0.88rem; }

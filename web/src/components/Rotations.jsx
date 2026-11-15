@@ -36,7 +36,7 @@ function Card({ r, now }) {
   const c = r.card
   const isCurrent = r.kind === 'current'
   const m = r.metrics
-  const n = isCurrent ? null : now.metrics
+  const n = isCurrent || !now ? null : now.metrics
   const inShort = isCurrent ? r.idea : (c.why[0] ?? r.idea)
   const label = isCurrent ? t('app.rot.now') : r.option === 1 ? t('app.rot.best') : t('app.rot.option', { n: r.option })
   return (
@@ -76,7 +76,7 @@ function Card({ r, now }) {
 }
 
 // The one answer most farmers want: what goes in the ground next, and after that
-function PlantNext({ r }) {
+function PlantNext({ r, compared }) {
   const { t } = useI18n()
   // the second crop in a season sits mid-sentence ("…; then pepper"), so it starts in lower case
   const step = (s, i) => {
@@ -95,7 +95,7 @@ function PlantNext({ r }) {
           <li key={i}><b>{i === 0 ? t('app.rot.after') : t('app.rot.then')}</b><span>{x.steps.map(step).join(t('app.rot.join'))}</span></li>
         ))}
       </ol>
-      <p className="muted small">{t('app.rot.from', { name: r.name })} {r.card.why[0]}</p>
+      <p className="muted small">{t(compared ? 'app.rot.from' : 'app.rot.fromOpen', { name: r.name })} {r.card.why[0]}</p>
     </section>
   )
 }
@@ -103,11 +103,21 @@ function PlantNext({ r }) {
 export default function Rotations({ data }) {
   const { t } = useI18n()
   const [tab, setTab] = useState(null)
-  if (!data) return <section className="card"><p className="muted">{t('app.rot.loading')}</p></section>
-  const [now, ...options] = data.rotations
-  const cards = [now, ...options.map((r, i) => ({ ...r, option: i + 1 }))]
+  if (!data) {
+    return (
+      <section className="card loading-card" aria-busy="true">
+        <div className="loading-head"><span className="spinner" aria-hidden="true" /><p>{t('app.rot.loading')}</p></div>
+        <div className="loading-bar" aria-hidden="true"><span /></div>
+        <div className="skeleton" aria-hidden="true"><i /><i /><i /><i /></div>
+      </section>
+    )
+  }
+  // with no current crops entered there is nothing to compare with: options only
+  const hasNow = data.rotations[0]?.kind === 'current'
+  const [now, ...options] = hasNow ? data.rotations : [null, ...data.rotations]
+  const cards = [...(hasNow ? [now] : []), ...options.map((r, i) => ({ ...r, option: i + 1 }))]
   const best = options[0]
-  const shown = cards.find((r) => r.id === tab) ?? cards[best ? 1 : 0]
+  const shown = cards.find((r) => r.id === tab) ?? cards[hasNow && best ? 1 : 0]
   const tabName = (r) => r.kind === 'current' ? t('app.rot.tabNow') : r.option === 1 ? t('app.rot.tabBest') : t('app.rot.option', { n: r.option })
   const kind = { vegetable: 'farm_vegetable', tobacco: 'farm_tobacco', 'field crop': 'farm_field crop' }[data.farm_type]
   const water = data.irrigation === 'none' || !data.irrigation
@@ -115,13 +125,15 @@ export default function Rotations({ data }) {
     : t('app.rot.withIrr', { kind: t(`app.map.${data.irrigation}`).toLowerCase() })
   return (
     <>
-      {best && <PlantNext r={best} />}
+      {best && <PlantNext r={best} compared={hasNow} />}
       <section className="rotations">
         <div className="section-head">
           <p className="eyebrow">{t('app.rot.eyebrow')}</p>
-          <h2>{options.length ? t('app.rot.title', { n: options.length }) : t('app.rot.noneFit')}</h2>
+          <h2>{!options.length ? t('app.rot.noneFit') : t(hasNow ? 'app.rot.title' : 'app.rot.titleOpen', { n: options.length })}</h2>
           <p className="muted">
-            {t('app.rot.intro', { years: data.climate_years, farm: kind ? t(`app.rot.${kind}`) : data.farm_type, water })}
+            {hasNow
+              ? t('app.rot.intro', { years: data.climate_years, farm: kind ? t(`app.rot.${kind}`) : data.farm_type, water })
+              : t('app.rot.introOpen', { years: data.climate_years, water })}
           </p>
         </div>
         <div className="rot-tabs" role="tablist" aria-label={t('app.rot.tabsLabel')}>

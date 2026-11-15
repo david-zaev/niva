@@ -137,7 +137,9 @@
       "saving": "Saving…",
       "cancel": "Cancel",
       "fullscreen": "Full screen",
-      "exitFullscreen": "Exit full screen"
+      "exitFullscreen": "Exit full screen",
+      "growsOptional": "Add what it grows now (optional)",
+      "growsHelp": "Skip it and the advice comes from the field's location, soil and NASA weather alone. Add it to compare every option with what you grow now."
     },
     "rot": {
       "loading": "Testing crop rotations against 25 years of NASA data for this field…",
@@ -188,7 +190,10 @@
       "notOffered": "Not offered for this field: {list}.",
       "tabNow": "Now",
       "tabBest": "Best",
-      "tabsLabel": "Rotation options"
+      "tabsLabel": "Rotation options",
+      "titleOpen": "The {n} best rotations for this field",
+      "introOpen": "We played every rotation through each season of {years} at this field, day by day, with the real NASA weather, the field's slope and its soil. Only rotations that still give a harvest in dry years with {water} are shown. Add what the field grows now to see how each one compares with it.",
+      "fromOpen": "From the rotation “{name}”."
     }
   }
 }

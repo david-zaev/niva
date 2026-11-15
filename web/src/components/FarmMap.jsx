@@ -23,6 +23,7 @@ function areaHa(latlngs) {
 function NewFieldForm({ draft, crops, onSave, onCancel }) {
   const { t, lang } = useI18n()
   const [name, setName] = useState(() => t('app.map.defaultName'))
+  const [known, setKnown] = useState(false)
   const [seasons, setSeasons] = useState([['pepper'], ['pepper'], ['tomato']])
   const [irrigation, setIrrigation] = useState('drip')
   const [busy, setBusy] = useState(false)
@@ -31,11 +32,15 @@ function NewFieldForm({ draft, crops, onSave, onCancel }) {
   return (
     <form className="draw-form card" onSubmit={async (e) => {
       e.preventDefault(); setBusy(true)
-      try { await onSave({ name, current_rotation: seasons, irrigation }) } finally { setBusy(false) }
+      try { await onSave({ name, current_rotation: known ? seasons : [], irrigation }) } finally { setBusy(false) }
     }}>
       <h3>{t('app.map.newField', { ha: draft.area.toFixed(2) })}</h3>
       <label>{t('app.map.name')}<input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} required /></label>
-      <fieldset>
+      <label className="check-line">
+        <input type="checkbox" checked={known} onChange={(e) => setKnown(e.target.checked)} />
+        <span>{t('app.map.growsOptional')}<small>{t('app.map.growsHelp')}</small></span>
+      </label>
+      {known && <fieldset>
         <legend>{t('app.map.grows')}</legend>
         <div className="season-pick">
           {seasons.map((s, i) => (
@@ -46,7 +51,7 @@ function NewFieldForm({ draft, crops, onSave, onCancel }) {
           {seasons.length < 5 && <button type="button" className="btn btn-ghost" onClick={() => setSeasons([...seasons, [seasons[0][0]]])}>{t('app.map.addSeason')}</button>}
           {seasons.length > 1 && <button type="button" className="btn btn-ghost" onClick={() => setSeasons(seasons.slice(0, -1))} aria-label={t('app.map.removeSeason')}>−</button>}
         </div>
-      </fieldset>
+      </fieldset>}
       <label>{t('app.map.irrigation')}
         <select value={irrigation} onChange={(e) => setIrrigation(e.target.value)}>
           {['drip', 'sprinkler', 'furrow', 'none'].map((k) => <option key={k} value={k}>{t(`app.map.${k}`)}</option>)}
@@ -118,6 +123,7 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
   const fitted = useRef(false) // id of the field the map last zoomed to
   const [drawing, setDrawing] = useState(false)
   const [draft, setDraft] = useState(null)
+  const draftLayer = useRef(null) // the outline just drawn, shown until it is saved or cancelled
   const [deleting, setDeleting] = useState(false)
   const card = useRef(null)
   const [full, setFull] = useState(false)
@@ -148,7 +154,17 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
     m.pm.setGlobalOptions({ pathOptions: { color: '#fff100', weight: 2 } })
     m.on('pm:create', (e) => {
       const ll = e.layer.getLatLngs()[0]
-      e.layer.remove()
+      draftLayer.current?.remove()
+      e.layer.setStyle({ color: '#fff100', weight: 3, dashArray: '6 6', fillColor: '#fff100', fillOpacity: 0.25 })
+      draftLayer.current = e.layer
+      // keep the outline in view beside the form (right on a wide screen, above the sheet on a phone)
+      const narrow = m.getContainer().clientWidth < 600
+      const h = m.getContainer().clientHeight
+      m.fitBounds(e.layer.getBounds(), {
+        paddingTopLeft: [24, narrow ? 120 : 80],
+        paddingBottomRight: narrow ? [24, Math.round(h * 0.55)] : [400, 24],
+        maxZoom: 18,
+      })
       setDrawing(false)
       setDraft({ polygon: ll.map((p) => [+p.lat.toFixed(6), +p.lng.toFixed(6)]), area: areaHa(ll) })
     })
@@ -170,7 +186,7 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
     el.addEventListener('wheel', onWheel, { passive: false })
     map.current = m
     fitted.current = false // a new map (React may mount twice in development) must zoom again
-    return () => { el.removeEventListener('wheel', onWheel); m.remove(); map.current = null }
+    return () => { el.removeEventListener('wheel', onWheel); draftLayer.current = null; m.remove(); map.current = null }
   }, [])
 
   useEffect(() => {
@@ -203,6 +219,13 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
       }
     }
   }, [fields, selectedId, onSelect])
+
+  useEffect(() => {
+    if (!draft && draftLayer.current) {
+      draftLayer.current.remove()
+      draftLayer.current = null
+    }
+  }, [draft])
 
   const startDraw = () => {
     setDraft(null)

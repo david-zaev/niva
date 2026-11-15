@@ -163,16 +163,29 @@ def _pct(a, b):
     return round(100 * (a - b) / b) if b else 0
 
 
-def card(e: dict, cur: dict, ctx: dict) -> dict:
-    """Why, evidence, benefits, gaps and risks, in plain words, against the farmer's current rotation."""
-    m, c = e["metrics"], cur["metrics"]
-    is_current = e["id"] == cur["id"]
+def card(e: dict, cur: dict | None, ctx: dict) -> dict:
+    """Why, evidence, benefits, gaps and risks, in plain words. With `cur` the reasons compare against the farmer's
+    current rotation; without it they describe the rotation on this field on its own."""
+    m = e["metrics"]
+    c = cur["metrics"] if cur else m
+    is_current = cur is not None and e["id"] == cur["id"]
     why, benefits, risks, gaps, evidence = [], [], [], [], []
     climate = ctx["climate"]
     nyears = climate["n_years"]
     src_power = "NASA POWER daily, " + climate["years"]
 
-    if not is_current:
+    if cur is None:
+        if not m["family_breaks"]:
+            why.append("No plant family comes back too soon: pests and soil diseases lose their host.")
+        if m["n_credit_kg_ha"]:
+            why.append(f"Legumes add about {m['n_credit_kg_ha']} kg of nitrogen per hectare a year.")
+        if m["living_cover_pct"] >= 45:
+            why.append(f"Living roots cover the soil {m['living_cover_pct']}% of the year.")
+        if m["dry_year_yield_pct"] >= 75:
+            why.append(f"Holds up in dry years: {m['dry_year_yield_pct']}% of normal yield in the driest years.")
+        why.append("Needs no irrigation." if not m["irrigation_mm"]
+                   else f"Needs about {m['irrigation_mm']} mm of irrigation water a year.")
+    elif not is_current:
         if m["irrigation_mm"] < c["irrigation_mm"] * 0.9:
             why.append(f"Needs {abs(_pct(m['irrigation_mm'], c['irrigation_mm']))}% less irrigation water than your "
                        f"current rotation ({m['irrigation_mm']} vs {c['irrigation_mm']} mm a year).")
@@ -238,7 +251,7 @@ def card(e: dict, cur: dict, ctx: dict) -> dict:
         benefits.append("No plant family repeats too soon: pests and soil diseases lose their host.")
     if m["irrigation_mm"] < 300:
         benefits.append("Low irrigation need: safer when wells or canals run short.")
-    if m["gross_mkd_ha"] >= c["gross_mkd_ha"]:
+    if cur is None or m["gross_mkd_ha"] >= c["gross_mkd_ha"]:
         benefits.append(f"Gross income about {m['gross_eur_ha']:.0f} € per hectare a year.")
     if not benefits:
         benefits.append("Familiar crops and markets.")
@@ -250,12 +263,15 @@ def card(e: dict, cur: dict, ctx: dict) -> dict:
     if m["gross_mkd_ha"] < c["gross_mkd_ha"] * 0.9 and not is_current:
         risks.append(f"Gross income about {abs(_pct(m['gross_mkd_ha'], c['gross_mkd_ha']))}% lower than now: "
                      f"check whether lower costs and soil gains make up for it.")
-    new = {x["name"] for x in e["crops"]} - {x["name"] for x in cur["crops"]}
+    new = {x["name"] for x in e["crops"]} - {x["name"] for x in cur["crops"]} if cur else set()
     if new and not is_current:
         risks.append(f"New crops for this farm ({', '.join(sorted(new))}): check buyers, seed and machinery locally.")
     if m["frost_risk_pct"] >= 15:
         risks.append(f"Late frost hits a sensitive crop in {m['frost_risk_pct']}% of seasons: transplant later or "
                      f"protect seedlings.")
+    if m["dry_year_yield_pct"] < MIN_DRY_YEAR_YIELD:
+        risks.append(f"In the driest years this rotation keeps only {m['dry_year_yield_pct']}% of a normal harvest: "
+                     f"keep a reserve or insure the crop.")
     if m["waterlog_days"] >= 3:
         risks.append(f"About {m['waterlog_days']} waterlogged days a year on this soil: check drainage.")
     if any(x["id"] == "alfalfa" for x in e["crops"]):
@@ -309,6 +325,7 @@ def smap_check(run: simulate.Result, lat: float, lon: float) -> dict | None:
 
 VEGETABLES = {"pepper", "tomato"}
 MIN_DRY_YEAR_YIELD = 50  # % of normal yield: below this a rotation is not offered for the field's water
+MIN_DRY_YEAR_YIELD_FALLBACK = 40  # rain-fed fields with too few options: offered down to here, with a warning
 
 
 def farm_type(seasons: list[list[str]]) -> str:

@@ -27,7 +27,8 @@ SOILS = {"sandy loam": "песоклива иловица", "clay loam": "гли
          "silty clay": "тињеста глина", "sandy clay": "песоклива глина", "loam": "иловица", "clay": "глина",
          "sand": "песок", "silt": "тиња"}
 
-_word_re = re.compile(r"\b(" + "|".join(re.escape(w) for w in sorted(WORDS, key=len, reverse=True)) + r")\b",
+# (?<!\w) / (?!\w) rather than \b: "Maize (grain)" ends in a bracket, where \b never matches
+_word_re = re.compile(r"(?<!\w)(" + "|".join(re.escape(w) for w in sorted(WORDS, key=len, reverse=True)) + r")(?!\w)",
                       re.IGNORECASE)
 
 
@@ -110,6 +111,17 @@ SENTENCES = [
     # rotation cards
     (r"Needs (\d+)% less irrigation water than your current rotation \((\d+) vs (\d+) mm a year\)\.",
      r"Бара \1% помалку вода за наводнување од сегашниот плодоред (\2 наспроти \3 mm годишно)."),
+    (r"No plant family comes back too soon: pests and soil diseases lose their host\.",
+     "Ниедно растително семејство не се враќа прерано: штетниците и болестите во почвата остануваат без домаќин."),
+    (r"Living roots cover the soil (\d+)% of the year\.", r"Живи корени ја покриваат почвата \1% од годината."),
+    (r"Holds up in dry years: (\d+)% of normal yield in the driest years\.",
+     r"Издржува во сушни години: \1% од нормалниот принос во најсушните години."),
+    (r"Needs no irrigation\.", "Не бара наводнување."),
+    (r"In the driest years this rotation keeps only (\d+)% of a normal harvest: keep a reserve or insure the crop\.",
+     r"Во најсушните години овој плодоред дава само \1% од нормалниот род: чувајте резерва или осигурете ја културата."),
+    (r"Needs about (\d+) mm of irrigation water a year\.", r"Бара околу \1 mm вода за наводнување годишно."),
+    (r"a plant family comes back before its pests and soil diseases have died down",
+     "растително семејство се враќа пред да згаснат неговите штетници и болести во почвата"),
     (r"Living roots cover the soil (\d+)% of the year instead of (\d+)%\.", r"Живи корени ја покриваат почвата \1% од годината наместо \2%."),
     (r"Breaks the pest and disease cycle: the same plant family does not come back too soon\.",
      "Го прекинува циклусот на штетници и болести: истото растително семејство не се враќа прерано."),
@@ -253,5 +265,6 @@ def rotations(d: dict) -> dict:
             o["because"] = sentence(o["because"])
     if d.get("soil", {}).get("name"):
         d["soil"]["name"] = soil_name(d["soil"]["name"])
-    d["farm_type"] = {"vegetable": "зеленчук", "tobacco": "тутун", "field crop": "полски култури"}.get(d.get("farm_type"), d.get("farm_type"))
+    if "farm_type" in d:
+        d["farm_type"] = {"vegetable": "зеленчук", "tobacco": "тутун", "field crop": "полски култури"}.get(d["farm_type"], d["farm_type"])
     return d

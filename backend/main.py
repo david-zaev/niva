@@ -207,7 +207,12 @@ def health_soil(f: FieldRow) -> dict:
 
 
 def ranking(f: FieldRow, priorities: dict | None = None) -> dict:
-    """All library rotations plus the current one, simulated and scored for this field."""
+    """Compared with what the farmer grows now when they said so; otherwise from the field's location alone."""
+    return ranking_current(f, priorities) if f.current_rotation else ranking_open(f, priorities)
+
+
+def ranking_current(f: FieldRow, priorities: dict | None = None) -> dict:
+    """All library rotations plus the one the farmer grows now, simulated and scored for this field."""
     w = power.frame(f.lat, f.lon)
     soil = soil_for(f)
     ter = field_terrain(f)
@@ -256,6 +261,64 @@ def ranking(f: FieldRow, priorities: dict | None = None) -> dict:
         if kept:
             e["score"] = min(100, e["score"] + rotations.KEEPS_CROP_BONUS)
     return {"evals": evs, "farm_type": kind, "current": evs[0], "soil": soil, "terrain": ter, "weather": w}
+
+
+def ranking_open(f: FieldRow, priorities: dict | None = None) -> dict:
+    """Every library rotation, simulated and scored for this field from its location alone (NASA weather, soil,
+    slope, irrigation). The farmer does not have to say what they grow now."""
+    w = power.frame(f.lat, f.lon)
+    soil = soil_for(f)
+    ter = field_terrain(f)
+    slope_factor = ter["erosion_factor"] if ter else 1.0
+    t_off = f.t_offset or 0.0
+    cands = simulate.library()
+    irrigation = None if f.irrigation in (None, "none") else f.irrigation
+    key = hashlib.sha1(json.dumps([f.lat, f.lon, soil, irrigation, slope_factor, t_off, "open",
+                                   str(w.index[-1])], sort_keys=True, default=str).encode()).hexdigest()
+    with _lock:
+        evs = _evals.get(key)
+    if evs is None:
+        evs = [rotations.evaluate(r, w, soil, irrigation, slope_factor, t_off) for r in cands]
+        with _lock:
+            _evals[key] = evs
+    evs = [{k: v for k, v in e.items()} for e in evs]
+    for e in evs:
+        e["farm_type"] = rotations.farm_type(e["seasons"])
+    # not offered: no harvest in a dry year with this field's water, or a plant family back sooner than needed
+    fewest = min((len(e["metrics"]["family_breaks"]) for e in evs
+                  if e["metrics"]["dry_year_yield_pct"] >= rotations.MIN_DRY_YEAR_YIELD), default=0)
+    for e in evs:
+        dry = e["metrics"]["dry_year_yield_pct"]
+        if dry < rotations.MIN_DRY_YEAR_YIELD:
+            why = (f"only {dry}% of normal yield in a dry year with "
+                   + ("no irrigation" if irrigation is None else f"{irrigation} irrigation"))
+        elif len(e["metrics"]["family_breaks"]) > fewest:
+            why = "a plant family comes back before its pests and soil diseases have died down"
+        else:
+            why = None
+        e["offered"], e["not_offered_because"] = why is None, why
+    # rain-fed fields: few rotations keep half a harvest in a dry year there. Rather than one lonely option, also
+    # offer the next ones that keep at least 40% and never repeat a plant family; their card says so plainly.
+    spare = sorted([e for e in evs if not e["offered"] and not e["metrics"]["family_breaks"]
+                    and e["metrics"]["dry_year_yield_pct"] >= rotations.MIN_DRY_YEAR_YIELD_FALLBACK],
+                   key=lambda e: -e["metrics"]["dry_year_yield_pct"])
+    for e in spare[:max(0, 3 - sum(e["offered"] for e in evs))]:
+        e["offered"], e["not_offered_because"] = True, None
+    rotations.score(evs, priorities if priorities is not None else f.priorities)
+    return {"evals": evs, "current": None, "soil": soil, "terrain": ter, "weather": w}
+
+
+def pick_options(evs: list[dict], n: int) -> list[dict]:
+    """The best n offered rotations, the best of each kind of farm first so the advice is not n variations of one
+    idea, then the rest by score."""
+    ok = sorted([e for e in evs if e["offered"]], key=lambda e: -e["score"])
+    first, seen = [], set()
+    for e in ok:
+        if e["farm_type"] not in seen:
+            seen.add(e["farm_type"])
+            first.append(e)
+    rest = [e for e in ok if e not in first]
+    return sorted(first[:n], key=lambda e: -e["score"]) + rest[:max(0, n - len(first))]
 
 
 def warm(f: FieldRow) -> None:
@@ -402,11 +465,9 @@ def profile(field_id: int, s: Session = Depends(db)):
     }
 
 
-@app.get("/fields/{field_id}/rotations")
-def field_rotations(field_id: int, show: int = Query(3, ge=2, le=10), lang: str = "en", s: Session = Depends(db)):
-    """The current rotation and the best `show` alternatives, each with its card. Location data only."""
-    f = get_field(s, field_id)
-    r = ranking(f)
+def rotations_compared(f: FieldRow, r: dict, show: int, lang: str) -> dict:
+    """The current rotation and the best `show` alternatives, each compared with it."""
+    field_id = f.id
     evs, cur = r["evals"], r["current"]
     w = r["weather"]
     nd, _ = field_ndvi(f, fetch_bg=False)
@@ -434,6 +495,38 @@ def field_rotations(field_id: int, show: int = Query(3, ge=2, le=10), lang: str 
             "not_offered": dropped, "farm_type": r["farm_type"],
             "smap_check": ctx["smap_check"], "chosen": f.chosen_rotation,
             "climate_years": cl["years"]}
+    return mk.rotations(copy.deepcopy(out)) if lang == "mk" else out
+
+
+@app.get("/fields/{field_id}/rotations")
+def field_rotations(field_id: int, show: int = Query(3, ge=2, le=10), lang: str = "en", s: Session = Depends(db)):
+    """The best `show` rotations for this field, each with its card. Location data only."""
+    f = get_field(s, field_id)
+    r = ranking(f)
+    if r["current"] is not None:
+        return rotations_compared(f, r, show, lang)
+    evs = r["evals"]
+    w = r["weather"]
+    nd, _ = field_ndvi(f, fetch_bg=False)
+    cl = climate.profile(w, f.t_offset or 0.0)
+    picked = pick_options(evs, show)
+    ctx = {"climate": cl, "t_offset": f.t_offset or 0.0, "terrain": r["terrain"], "soil": r["soil"],
+           "ndvi": ndvi.analyse(nd, cl["rain_apr_aug_pct"]) if nd else None,
+           "smap_check": rotations.smap_check(picked[0]["_runs"][0], f.lat, f.lon) if picked else None}
+    ranked = sorted(evs, key=lambda x: -x["score"])
+    out = []
+    for e in picked:
+        o = {k: v for k, v in e.items() if not k.startswith("_")}
+        o["card"] = rotations.card(e, None, ctx)
+        o["plant_next"] = rotations.plant_next(e["seasons"], None)
+        o["rank"] = 1 + ranked.index(e)
+        out.append(o)
+    others = [{"id": e["id"], "name": e["name"], "score": e["score"], "scores": e["scores"]}
+              for e in ranked if e["offered"] and e not in picked]
+    dropped = [{"id": e["id"], "name": e["name"], "because": e["not_offered_because"]} for e in evs if not e["offered"]]
+    out = {"field_id": field_id, "soil": r["soil"], "terrain": r["terrain"], "irrigation": f.irrigation,
+           "priorities": {**rotations.WEIGHTS, **(f.priorities or {})}, "rotations": out, "others": others,
+           "not_offered": dropped, "smap_check": ctx["smap_check"], "climate_years": cl["years"]}
     return mk.rotations(copy.deepcopy(out)) if lang == "mk" else out
 
 
@@ -683,7 +776,7 @@ def farm_plan(farm_id: int, s: Session = Depends(db)):
     for f in fields:
         r = ranking(f)
         evs = r["evals"]
-        chosen = next((e for e in evs if e["id"] == f.chosen_rotation), None) or r["current"]
+        chosen = next((e for e in evs if e["id"] == f.chosen_rotation), None) or r["current"] or pick_options(evs, 1)[0]
         L = len(chosen["seasons"])
         seasons = []
         for k in range(3):
@@ -694,7 +787,7 @@ def farm_plan(farm_id: int, s: Session = Depends(db)):
         for m, v in chosen["monthly_irrigation_mm"].items():
             water[int(m)] += v * 10 * (f.area_ha or 0)
         rows.append({"field_id": f.id, "name": f.name, "area_ha": f.area_ha, "rotation": chosen["name"],
-                     "rotation_id": chosen["id"], "is_current": chosen["id"] == r["current"]["id"],
+                     "rotation_id": chosen["id"], "is_current": chosen is r["current"],
                      "irrigation_m3": round(chosen["metrics"]["irrigation_mm"] * 10 * (f.area_ha or 0)),
                      "gross_eur": round(chosen["metrics"]["gross_eur_ha"] * (f.area_ha or 0)),
                      "seasons": seasons, "centre": [f.lat, f.lon], "polygon": f.polygon,

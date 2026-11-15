@@ -129,11 +129,8 @@ def series(lat: float, lon: float, polygon: list | None, max_age_days: int = 20,
         except Exception as e:
             log.warning("MODIS NDVI download failed: %s", e)
             return c.data if c else None
-        if c:
-            c.data, c.fetched_at = data, datetime.now(timezone.utc)
-        else:
-            c = Cache(key=key, data=data)
-        s.add(c)
+        # merge, not add: two requests for the same field may both have fetched it
+        s.merge(Cache(key=key, data=data, fetched_at=datetime.now(timezone.utc)))
         s.commit()
         return data
 

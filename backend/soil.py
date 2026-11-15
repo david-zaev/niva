@@ -162,7 +162,7 @@ def _for_point(lat: float, lon: float) -> dict | None:
                 r = httpx.get(SOILGRIDS, params=q, timeout=60)
                 r.raise_for_status()
                 data = r.json()
-                s.add(Cache(key=key, data=data))
+                s.merge(Cache(key=key, data=data))
                 s.commit()
             except Exception:
                 data = None
