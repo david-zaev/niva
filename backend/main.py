@@ -366,7 +366,7 @@ def rotation_library():
 
 @app.get("/demo")
 def demo(s: Session = Depends(db)):
-    farm = s.exec(select(Farm).order_by(Farm.id)).first()
+    farm = s.exec(select(Farm).where(Farm.key == None).order_by(Farm.id)).first()  # noqa: E711
     if not farm:
         raise HTTPException(404, "no demo farm: run python seed.py")
     last = s.exec(select(Reading).where(Reading.simulated == False).order_by(Reading.time.desc()).limit(1)).first()  # noqa: E712
@@ -375,11 +375,26 @@ def demo(s: Session = Depends(db)):
 
 @app.post("/farms", status_code=201)
 def create_farm(body: FarmIn, s: Session = Depends(db)):
-    farm = Farm(**body.model_dump())
+    """A visitor's own farm. The key comes back once: the browser keeps it and sends it as X-Farm-Key."""
+    farm = Farm(**body.model_dump(), key=secrets.token_urlsafe(24))
     s.add(farm)
     s.commit()
     s.refresh(farm)
     return farm.model_dump()
+
+
+LOCKED = "This is the shared demo farm: draw your own field to try Niva."
+LOCKED_MK = "Ова е заедничката демо фарма: нацртајте своја нива за да го пробате Niva."
+
+
+def own_farm(s: Session, farm_id: int, key: Optional[str]) -> Farm:
+    """The farm, if the caller holds its key. The demo farm has no key, so nobody changes it from the app."""
+    farm = s.get(Farm, farm_id)
+    if not farm:
+        raise HTTPException(404, "farm not found")
+    if not farm.key or not key or not secrets.compare_digest(farm.key, key):
+        raise HTTPException(403, LOCKED)
+    return farm
 
 
 @app.get("/farms/{farm_id}")
@@ -388,14 +403,14 @@ def read_farm(farm_id: int, s: Session = Depends(db)):
     if not farm:
         raise HTTPException(404, "farm not found")
     fields = s.exec(select(FieldRow).where(FieldRow.farm_id == farm_id).order_by(FieldRow.id)).all()
-    return {**farm.model_dump(), "fields": [field_out(f, s) for f in fields],
+    return {**farm.model_dump(exclude={"key"}), "demo": farm.key is None, "fields": [field_out(f, s) for f in fields],
             "area_ha": round(sum(f.area_ha or 0 for f in fields), 2)}
 
 
 @app.post("/farms/{farm_id}/fields", status_code=201)
-def create_field(farm_id: int, body: FieldIn, bg: BackgroundTasks, s: Session = Depends(db)):
-    if not s.get(Farm, farm_id):
-        raise HTTPException(404, "farm not found")
+def create_field(farm_id: int, body: FieldIn, bg: BackgroundTasks, s: Session = Depends(db),
+                 x_farm_key: Optional[str] = Header(None)):
+    own_farm(s, farm_id, x_farm_key)
     if not region.polygon_inside(body.polygon):
         raise HTTPException(422, region.MESSAGE)
     lat, lon = centroid(body.polygon)
@@ -407,16 +422,7 @@ def create_field(farm_id: int, body: FieldIn, bg: BackgroundTasks, s: Session = 
     s.add(f)
     s.commit()
     s.refresh(f)
-    # the farm's ESP32 goes with the field just drawn: a sensor without a field joins it, together with the
-    # readings it sent while it had no field, so the soil health card fills straight away
-    for d in s.exec(select(Device).where(Device.field_id == None, ~Device.id.startswith("SIM-"))).all():  # noqa: E711
-        d.field_id = f.id
-        s.add(d)
-        for r in s.exec(select(Reading).where(Reading.device_id == d.id, Reading.field_id == None)).all():  # noqa: E711
-            r.field_id = f.id
-            s.add(r)
-    s.commit()
-    s.refresh(f)
+    # visitors' fields never take the ESP32: it is paired to the demo field with manage.py
     bg.add_task(warm, f)
     return field_out(f, s)
 
@@ -427,8 +433,10 @@ def read_field(field_id: int, s: Session = Depends(db)):
 
 
 @app.patch("/fields/{field_id}")
-def update_field(field_id: int, body: FieldPatch, bg: BackgroundTasks, s: Session = Depends(db)):
+def update_field(field_id: int, body: FieldPatch, bg: BackgroundTasks, s: Session = Depends(db),
+                 x_farm_key: Optional[str] = Header(None)):
     f = get_field(s, field_id)
+    own_farm(s, f.farm_id, x_farm_key)
     data = body.model_dump(exclude_unset=True)
     if "polygon" in data and data["polygon"]:
         if not region.polygon_inside(data["polygon"]):
@@ -448,8 +456,9 @@ def update_field(field_id: int, body: FieldPatch, bg: BackgroundTasks, s: Sessio
 
 
 @app.delete("/fields/{field_id}", status_code=204)
-def delete_field(field_id: int, s: Session = Depends(db)):
+def delete_field(field_id: int, s: Session = Depends(db), x_farm_key: Optional[str] = Header(None)):
     f = get_field(s, field_id)
+    own_farm(s, f.farm_id, x_farm_key)
     for d in s.exec(select(Device).where(Device.field_id == field_id)).all():
         d.field_id = None
         s.add(d)

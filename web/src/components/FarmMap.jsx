@@ -362,7 +362,10 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onUpda
           else m.flyToBounds(bounds, { maxZoom: 17 })
         }} />
         <div className="map-actions">
-          {selected && !drawing && !editing && !draft && !askDelete && (<>
+          {selected?.demo && !drawing && !draft && (
+            <span className="map-tag" title={t('app.map.demoHint')}>{t('app.map.demoField')}</span>
+          )}
+          {selected && !selected.demo && !drawing && !editing && !draft && !askDelete && (<>
             <button className="btn btn-map btn-danger" onClick={() => setAskDelete(true)}>{t('app.map.delete')}</button>
             <button className="btn btn-map" onClick={startEdit}>{t('app.map.edit')}</button>
           </>)}

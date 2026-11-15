@@ -348,3 +348,20 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 @keyframes magnet-pulse { from { transform: scale(1); opacity: 0.9; } to { transform: scale(2.8); opacity: 0; } }
 .farm-map.is-closing { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .farm-map .marker-icon.is-magnet::after { animation: none; } }
+
+/* label on the shared demo field, where Edit and Delete would be */
+.map-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  min-height: 36px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: rgb(18 18 18 / 0.78);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  white-space: nowrap;
+}

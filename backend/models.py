@@ -32,6 +32,9 @@ class Farm(SQLModel, table=True):
     name: str
     village: Optional[str] = None
     created: datetime = Field(default_factory=utcnow)
+    # a visitor's own farm: only the browser holding this key may change its fields.
+    # None = the shared demo farm, which nobody changes from the app
+    key: Optional[str] = None
 
 
 class FieldRow(SQLModel, table=True):
@@ -98,3 +101,7 @@ class Cache(SQLModel, table=True):
 
 def init_db() -> None:
     SQLModel.metadata.create_all(engine)
+    with engine.begin() as c:  # databases made before farms had a key
+        cols = [r[1] for r in c.exec_driver_sql("PRAGMA table_info(farms)")]
+        if "key" not in cols:
+            c.exec_driver_sql("ALTER TABLE farms ADD COLUMN key VARCHAR")

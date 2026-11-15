@@ -111,6 +111,8 @@
       "draw": "Draw your field",
       "drawBtn": "Draw a field",
       "cancelDraw": "Cancel",
+      "demoField": "Demo field · shared",
+      "demoHint": "Everyone sees this field and it cannot be changed. Draw your own field: only you will see it.",
       "edit": "Edit",
       "editField": "Edit field · {ha} ha",
       "editHint": "Drag the corners on the map to change the outline.",
