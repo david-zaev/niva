@@ -1,7 +1,8 @@
 """Admin commands, run on the server inside the venv:
 
     python manage.py add-device NIVA-A1F3        # prints the device key once (goes in firmware secrets.h)
-    python manage.py pair NIVA-A1F3 1            # link a device to a field without the app
+    python manage.py add-field "Field by the river" 41.44 22.64   # prints the field id and its owner token
+    python manage.py pair NIVA-A1F3 1            # link a device to a field
     python manage.py fields                      # list fields with their owner tokens
     python manage.py devices                     # list devices
 """
@@ -12,9 +13,6 @@ import sys
 from sqlmodel import Session, select
 
 from models import Device, FieldRow, engine, hash_key, init_db
-
-APP_URL = "https://david-zaev.github.io/niva"
-
 
 def pair_code() -> str:
     alphabet = string.ascii_uppercase + string.digits
@@ -34,8 +32,14 @@ def main(argv: list[str]) -> None:
             s.add(dev)
             s.commit()
             print(f"device_id  {dev_id}\ndevice_key {key}\npair_code  {dev.pair_code}")
-            print(f"pair_link  {APP_URL}/pair?d={dev_id}&c={dev.pair_code}   (make this the QR sticker)")
             print("Save the key now: the server keeps only its hash.")
+        elif cmd == "add-field" and len(argv) == 4:
+            f = FieldRow(name=argv[1], lat=float(argv[2]), lon=float(argv[3]))
+            s.add(f)
+            s.commit()
+            s.refresh(f)
+            print(f"field_id    {f.id}")
+            print(f"owner_token {f.owner_token}")
         elif cmd == "pair" and len(argv) == 3:
             dev = s.get(Device, argv[1].strip().upper())
             field = s.get(FieldRow, int(argv[2]))
