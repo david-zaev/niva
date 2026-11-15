@@ -3,7 +3,7 @@
 set -euxo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
-# 1. 2 GB swap: the VM has only 1 GB RAM
+# 1. 2 GB swap: the VM has only 1 GB RAM (pandas / scikit-learn need headroom)
 if [ ! -f /swapfile ]; then
   sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile
   sudo mkswap /swapfile && sudo swapon /swapfile
@@ -29,7 +29,7 @@ sudo apt-get install -y python3.12 python3.12-venv caddy
 # 4. App + venv
 sudo mkdir -p /opt/niva && sudo chown ubuntu:ubuntu /opt/niva
 cp -r ~/niva-deploy/backend /opt/niva/
-[ -f /opt/niva/.env ] || touch /opt/niva/.env
+[ -f /opt/niva/.env ] || echo 'ALLOWED_ORIGINS=http://localhost:5173' > /opt/niva/.env
 python3.12 -m venv /opt/niva/venv
 /opt/niva/venv/bin/pip install --upgrade pip
 /opt/niva/venv/bin/pip install -r /opt/niva/backend/requirements.txt

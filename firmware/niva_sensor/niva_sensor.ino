@@ -43,6 +43,7 @@ Adafruit_BME280 bme;
 Adafruit_BMP280 bmp;
 WiFiManager wm;
 WiFiClientSecure tls;
+WiFiClient plain;  // for an http:// SERVER_URL (laptop on the same WiFi)
 
 enum BaroType { BARO_NONE, BARO_BMP280, BARO_BME280 };
 BaroType baro = BARO_NONE;
@@ -97,12 +98,21 @@ void detectBaro() {
 
 // Average 16 samples; returns -1 if the pin looks unconnected (stuck at 0). 4095 is a valid reading:
 // some capacitive sensors sit at the ADC's top in dry air, which means 0 %.
-int readSoilRaw() {
-  if (!SOIL_ENABLED) return -1;
+int readSoilRawPin(int pin) {
   long sum = 0;
-  for (int i = 0; i < 16; i++) { sum += analogRead(PIN_SOIL); delay(2); }
+  for (int i = 0; i < 16; i++) { sum += analogRead(pin); delay(2); }
   int raw = sum / 16;
   return raw <= 5 ? -1 : raw;
+}
+
+int readSoilRaw() {
+  if (!SOIL_ENABLED) return -1;
+  return readSoilRawPin(PIN_SOIL);
+}
+
+int readSoil2Raw() {
+  if (!SOIL2_ENABLED) return -1;
+  return readSoilRawPin(PIN_SOIL2);
 }
 
 // Lower raw = wetter on capacitive sensors
@@ -120,6 +130,7 @@ void setOrNull(JsonDocument &doc, const char *key, float v, bool ok) {
 
 String readSensorsJson() {
   int soilRaw = readSoilRaw();
+  int soil2Raw = readSoil2Raw();
 
   float soilTemp = NAN;
   if (ds18b20.getDeviceCount() == 0) ds18b20.begin();   // probe plugged in later
@@ -148,6 +159,7 @@ String readSensorsJson() {
 
   JsonDocument doc;
   setOrNull(doc, "soil_pct", soilRaw >= 0 ? soilPercent(soilRaw) : NAN, soilRaw >= 0);
+  if (SOIL2_ENABLED) setOrNull(doc, "soil2_pct", soil2Raw >= 0 ? soilPercent(soil2Raw) : NAN, soil2Raw >= 0);
   setOrNull(doc, "soil_temp_c", soilTemp, !isnan(soilTemp));
   setOrNull(doc, "air_temp_c", airTemp, !isnan(airTemp));
   setOrNull(doc, "humidity_pct", humidity, !isnan(humidity) && humidity >= 0 && humidity <= 100);
@@ -174,7 +186,9 @@ int postReading(const String &body, unsigned long takenAt) {
   HTTPClient http;
   http.setConnectTimeout(4000);
   http.setTimeout(4000);
-  if (!http.begin(tls, String(SERVER_URL) + "/readings")) return -100;
+  String url = String(SERVER_URL) + "/readings";
+  bool ok = url.startsWith("https://") ? http.begin(tls, url) : http.begin(plain, url);
+  if (!ok) return -100;
   http.addHeader("Content-Type", "application/json");
   http.addHeader("X-Device-Id", deviceId);
   http.addHeader("X-Device-Key", DEVICE_KEY);
@@ -261,6 +275,7 @@ void setup() {
   delay(1500);  // the DHT22 needs about a second after power-up
   analogReadResolution(12);
   analogSetPinAttenuation(PIN_SOIL, ADC_11db);   // full 0..3.3 V range
+  if (SOIL2_ENABLED) analogSetPinAttenuation(PIN_SOIL2, ADC_11db);
 
   Wire.begin(PIN_SDA, PIN_SCL);
   ds18b20.begin();
@@ -289,6 +304,9 @@ void setup() {
   WiFi.setAutoReconnect(true);
   wm.setConfigPortalBlocking(false);   // keep reading sensors and printing over USB while in setup
   wm.setConnectTimeout(20);
+#ifdef WIFI_SSID
+  wm.preloadWiFi(WIFI_SSID, WIFI_PASS);   // from secrets.h: join this WiFi without the setup network
+#endif
   if (wm.autoConnect("Niva-Setup")) {
     Serial.printf("{\"event\":\"wifi\",\"ssid\":\"%s\",\"ip\":\"%s\"}\n",
                   WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());

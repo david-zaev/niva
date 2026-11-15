@@ -1,0 +1,186 @@
+{
+ "note": "Pest and disease catalogue for the Niva crops. 'rule' names the weather rule in backend/pests.py; thresholds come from the published models named in 'model'. Solutions are general integrated pest management (IPM) steps, not product advice: always use a product registered in North Macedonia for that crop, follow the label and the pre-harvest interval, and ask the local agricultural extension office (АПРЗ / Агенција за поттикнување на развојот на земјоделството) when unsure.",
+ "pests": [
+  {
+   "id": "late_blight", "kind": "disease", "crops": ["tomato"], "rule": "late_blight",
+   "name": "Late blight", "name_mk": "Пламеница (Phytophthora infestans)",
+   "model": "Hutton criteria (2 days with Tmin ≥ 10 °C and long humid hours), approximated with daily data",
+   "signs": "Dark, wet-looking spots on leaves, white mould under the leaf in the morning, brown patches on fruit.",
+   "signs_mk": "Темни, влажни дамки на листовите, бела мувла под листот наутро, кафеави дамки на плодот.",
+   "steps": [
+    {"type": "now", "en": "Stop sprinkler irrigation; water at the root (drip) in the morning so leaves stay dry.", "mk": "Прекинете го наводнувањето со прскалки; полевајте во коренот (капка по капка) наутро за листовите да останат суви."},
+    {"type": "now", "en": "Remove and bag infected leaves and plants; do not leave them in the field or compost.", "mk": "Отстранете ги и спакувајте ги заразените листови и растенија; не оставајте ги на нива или во компост."},
+    {"type": "bio", "en": "In greenhouses open vents in the morning to lower humidity below 85%.", "mk": "Во пластеници отворете ги прозорците наутро за влажноста да падне под 85%."},
+    {"type": "spray", "en": "Protective fungicide (e.g. copper-based) registered for tomato, before rain, on a calm dry day.", "mk": "Заштитен фунгицид (на пр. на база на бакар) регистриран за домат, пред дожд, во мирен и сув ден."}
+   ]
+  },
+  {
+   "id": "tuta_absoluta", "kind": "pest", "crops": ["tomato"], "rule": "tuta",
+   "name": "Tomato leaf miner", "name_mk": "Доматен молец (Tuta absoluta)",
+   "model": "Development above ~10 °C; activity rises fast in warm, dry spells",
+   "signs": "Pale tunnels (mines) in leaves, small holes in fruit, tiny grey moths at dusk.",
+   "signs_mk": "Бледи тунели во листовите, мали дупки на плодот, ситни сиви молци во самрак.",
+   "steps": [
+    {"type": "now", "en": "Hang pheromone traps (2–4 per greenhouse, more in the open field) to see how many moths there are.", "mk": "Поставете феромонски стапици (2–4 во пластеник, повеќе на отворено) за да видите колку молци има."},
+    {"type": "now", "en": "Pick and destroy mined leaves and holed fruit; close the greenhouse doors with insect net.", "mk": "Откинете ги и уништете ги минираните листови и дупнатите плодови; ставете мрежа против инсекти на вратите."},
+    {"type": "bio", "en": "Biological control: Bacillus thuringiensis on young larvae, or the predator bug Macrolophus.", "mk": "Биолошка заштита: Bacillus thuringiensis на младите ларви или предаторската бубачка Macrolophus."},
+    {"type": "spray", "en": "If traps catch many moths, a registered insecticide in the evening, rotating active ingredients.", "mk": "Ако стапиците фаќаат многу молци, регистриран инсектицид навечер, со менување на активните материи."}
+   ]
+  },
+  {
+   "id": "spider_mite", "kind": "pest", "crops": ["tomato", "pepper", "bean", "maize"], "rule": "spider_mite",
+   "name": "Spider mites", "name_mk": "Црвен пајак (Tetranychus urticae)",
+   "model": "Outbreaks in hot (Tmax ≥ 30 °C), dry air (RH < 50%) and dry soil",
+   "signs": "Fine yellow speckles on leaves, fine webbing under leaves, leaves turn bronze.",
+   "signs_mk": "Ситни жолти точки на листовите, фина пајажина под листот, листовите стануваат бронзени.",
+   "steps": [
+    {"type": "now", "en": "Water regularly: drought-stressed plants are hit hardest. Raise humidity in greenhouses.", "mk": "Полевајте редовно: растенијата под суша најмногу страдаат. Зголемете ја влажноста во пластеници."},
+    {"type": "now", "en": "Check the underside of 20 leaves; act when most leaves have mites.", "mk": "Проверете ја долната страна на 20 листа; дејствувајте кога повеќето листови имаат пајаче."},
+    {"type": "bio", "en": "Release predatory mites (Phytoseiulus persimilis); avoid broad insecticides that kill them.", "mk": "Пуштете предаторски грини (Phytoseiulus persimilis); избегнувајте широки инсектициди што ги убиваат."},
+    {"type": "spray", "en": "A registered acaricide if needed, spraying the underside of leaves, in the cool evening.", "mk": "Регистриран акарицид ако е потребно, прскајќи ја долната страна на листот, во ладна вечер."}
+   ]
+  },
+  {
+   "id": "powdery_mildew", "kind": "disease", "crops": ["pepper", "tomato", "wheat", "barley"], "rule": "powdery_mildew",
+   "name": "Powdery mildew", "name_mk": "Пепелница",
+   "model": "Favoured by 15–28 °C with humid nights and dry leaves (no heavy rain)",
+   "signs": "White, flour-like patches on leaves; yellow spots on the upper side (pepper).",
+   "signs_mk": "Бели дамки како брашно на листовите; жолти дамки на горната страна (пиперка).",
+   "steps": [
+    {"type": "now", "en": "Do not over-fertilise with nitrogen; keep plant spacing so air can move.", "mk": "Не претерувајте со азотно ѓубриво; оставете растојание меѓу растенијата за проветрување."},
+    {"type": "bio", "en": "Sulphur or potassium bicarbonate products are allowed in organic farming; use before 28 °C.", "mk": "Сулфур или калиум бикарбонат се дозволени во органско производство; користете под 28 °C."},
+    {"type": "spray", "en": "A registered fungicide at the first spots, on a calm dry day.", "mk": "Регистриран фунгицид при првите дамки, во мирен и сув ден."}
+   ]
+  },
+  {
+   "id": "cereal_rust", "kind": "disease", "crops": ["wheat", "barley"], "rule": "rust",
+   "name": "Cereal rusts", "name_mk": "'Рѓа кај житата",
+   "model": "Yellow rust 10–15 °C, brown rust 15–25 °C, both need wet leaves (dew or rain)",
+   "signs": "Yellow or orange-brown powdery stripes or pustules on leaves.",
+   "signs_mk": "Жолти или портокаловокафеави прашкасти ленти или пустули на листовите.",
+   "steps": [
+    {"type": "now", "en": "Walk the field weekly from tillering; check the top three leaves.", "mk": "Обиколувајте ја нивата неделно од братење; проверете ги горните три листа."},
+    {"type": "now", "en": "Next season choose a resistant variety and avoid very early sowing.", "mk": "Следната сезона изберете отпорна сорта и избегнувајте премногу рана сеидба."},
+    {"type": "spray", "en": "A registered fungicide when pustules appear on the upper leaves before flowering.", "mk": "Регистриран фунгицид кога ќе се појават пустули на горните листови пред цветање."}
+   ]
+  },
+  {
+   "id": "fusarium_head_blight", "kind": "disease", "crops": ["wheat", "barley"], "rule": "fusarium",
+   "name": "Fusarium head blight", "name_mk": "Фузариоза на класот",
+   "model": "Rain or high humidity with 20–30 °C around flowering (May–June)",
+   "signs": "Bleached parts of the ear, pink-orange mould on the glumes.",
+   "signs_mk": "Избледени делови од класот, розово-портокалова мувла на плевите.",
+   "steps": [
+    {"type": "now", "en": "Do not sow wheat after maize without ploughing in the maize stalks.", "mk": "Не сејте пченица по пченка без заорување на стеблата од пченката."},
+    {"type": "spray", "en": "A registered fungicide at early flowering if rain is forecast.", "mk": "Регистриран фунгицид на почеток на цветање ако се најавува дожд."},
+    {"type": "now", "en": "Harvest on time and dry the grain fast to stop toxins forming.", "mk": "Жнејте навреме и брзо исушете го зрното за да не се создаваат токсини."}
+   ]
+  },
+  {
+   "id": "corn_borer", "kind": "pest", "crops": ["maize", "pepper"], "rule": "corn_borer",
+   "name": "European corn borer", "name_mk": "Пченкарен пламенец (Ostrinia nubilalis)",
+   "model": "Moths fly June–August when nights stay above ~15 °C",
+   "signs": "Holes in stalks with sawdust-like frass, broken tassels, larvae inside stems or pepper fruit.",
+   "signs_mk": "Дупки на стеблото со пилевина, скршени метлици, ларви во стеблото или во плодот на пиперката.",
+   "steps": [
+    {"type": "now", "en": "Chop and plough in maize stalks after harvest: larvae overwinter in them.", "mk": "Иситнете ги и заорете ги стеблата од пченката по бербата: ларвите презимуваат во нив."},
+    {"type": "bio", "en": "Trichogramma wasps released at the start of egg laying, or Bacillus thuringiensis.", "mk": "Трихограма осилки пуштени на почеток на несењето јајца, или Bacillus thuringiensis."},
+    {"type": "spray", "en": "If many egg masses are found, a registered insecticide on a calm evening.", "mk": "Ако се најдат многу јајца, регистриран инсектицид во мирна вечер."}
+   ]
+  },
+  {
+   "id": "sunflower_downy_mildew", "kind": "disease", "crops": ["sunflower"], "rule": "downy_mildew",
+   "name": "Sunflower downy mildew", "name_mk": "Пламеница кај сончоглед (Plasmopara halstedii)",
+   "model": "Wet soil and 15–20 °C in the first weeks after sowing",
+   "signs": "Stunted plants, pale yellow leaves with white down underneath.",
+   "signs_mk": "Закржлавени растенија, бледожолти листови со бела превлака одоздола.",
+   "steps": [
+    {"type": "now", "en": "Use treated seed of a resistant hybrid; do not grow sunflower on the same field more often than every 4–5 years.", "mk": "Користете третирано семе од отпорен хибрид; не сејте сончоглед на иста нива почесто од 4–5 години."},
+    {"type": "now", "en": "Avoid sowing into cold, waterlogged soil.", "mk": "Не сејте во студена, преводнета почва."},
+    {"type": "now", "en": "Pull and remove infected plants early.", "mk": "Рано извадете ги и отстранете ги заразените растенија."}
+   ]
+  },
+  {
+   "id": "tobacco_blue_mould", "kind": "disease", "crops": ["tobacco"], "rule": "downy_mildew",
+   "name": "Tobacco blue mould", "name_mk": "Пламеница кај тутун (Peronospora tabacina)",
+   "model": "Cool, humid weather (15–23 °C, RH ≥ 85%), especially in seedbeds",
+   "signs": "Yellow spots on leaves with blue-grey mould underneath.",
+   "signs_mk": "Жолти дамки на листовите со синкаво-сива мувла одоздола.",
+   "steps": [
+    {"type": "now", "en": "Ventilate seedbeds and do not over-water them.", "mk": "Проветрувајте ги леите и не ги преполевајте."},
+    {"type": "now", "en": "Remove infected seedlings; keep seedbeds away from last year's tobacco fields.", "mk": "Отстранете ги заразените расади; леите да се подалеку од лањските тутунски ниви."},
+    {"type": "spray", "en": "A registered fungicide before humid, cool spells.", "mk": "Регистриран фунгицид пред влажни, ладни периоди."}
+   ]
+  },
+  {
+   "id": "aphids", "kind": "pest", "crops": ["pepper", "tomato", "bean", "tobacco", "wheat", "barley", "rapeseed", "alfalfa"], "rule": "aphids",
+   "name": "Aphids", "name_mk": "Лисни вошки",
+   "model": "Build up fast in mild (18–25 °C), dry, calm weather",
+   "signs": "Clusters of small green or black insects on young shoots, curled leaves, sticky honeydew.",
+   "signs_mk": "Групи ситни зелени или црни инсекти на младите ластари, свиткани листови, леплива медена роса.",
+   "steps": [
+    {"type": "now", "en": "Check young shoots twice a week; ladybirds and lacewings often keep aphids down.", "mk": "Проверувајте ги младите ластари двапати неделно; бубамарите и златооките често ги држат вошките под контрола."},
+    {"type": "bio", "en": "Potassium soap or neem products on colonies; avoid broad insecticides that kill ladybirds.", "mk": "Калиум сапун или нем производи на колониите; избегнувајте широки инсектициди што ги убиваат бубамарите."},
+    {"type": "spray", "en": "A registered selective insecticide only if colonies spread, on a calm evening.", "mk": "Регистриран селективен инсектицид само ако колониите се шират, во мирна вечер."}
+   ]
+  },
+  {
+   "id": "thrips", "kind": "pest", "crops": ["pepper", "tomato", "tobacco"], "rule": "thrips",
+   "name": "Thrips (and spotted wilt virus)", "name_mk": "Трипси (и вирус на бронзеност)",
+   "model": "Warm (≥ 20 °C), dry weather; they carry tomato spotted wilt virus",
+   "signs": "Silvery streaks on leaves, rings on fruit, bronzed young leaves.",
+   "signs_mk": "Сребрени линии на листовите, прстени на плодот, бронзени млади листови.",
+   "steps": [
+    {"type": "now", "en": "Hang blue sticky traps to see when thrips arrive; remove weeds around the field.", "mk": "Поставете сини лепливи стапици за да видите кога доаѓаат трипсите; отстранете ги плевелите околу нивата."},
+    {"type": "now", "en": "Pull plants with spotted wilt symptoms: the virus cannot be cured.", "mk": "Извадете ги растенијата со симптоми на бронзеност: вирусот не се лечи."},
+    {"type": "bio", "en": "Predatory mites (Amblyseius) or bugs (Orius) in greenhouses.", "mk": "Предаторски грини (Amblyseius) или бубачки (Orius) во пластеници."}
+   ]
+  },
+  {
+   "id": "bean_anthracnose", "kind": "disease", "crops": ["bean", "chickpea"], "rule": "wet_leaf",
+   "name": "Anthracnose / Ascochyta blight", "name_mk": "Антракноза / Аскохита",
+   "model": "Spread by rain splash at 15–25 °C",
+   "signs": "Dark sunken spots on pods and stems, brown veins under the leaves.",
+   "signs_mk": "Темни вдлабнати дамки на мешунките и стеблата, кафеави нерви под листовите.",
+   "steps": [
+    {"type": "now", "en": "Use certified healthy seed; do not work in the crop while the leaves are wet.", "mk": "Користете сертифицирано здраво семе; не работете во културата додека листовите се влажни."},
+    {"type": "now", "en": "Rotate: no beans or chickpea on the same field for 3 years.", "mk": "Плодоред: без грав или наут на истата нива 3 години."},
+    {"type": "spray", "en": "A registered fungicide before rain if spots appear.", "mk": "Регистриран фунгицид пред дожд ако се појават дамки."}
+   ]
+  },
+  {
+   "id": "sclerotinia", "kind": "disease", "crops": ["sunflower", "rapeseed", "bean"], "rule": "wet_leaf",
+   "name": "White mould (Sclerotinia)", "name_mk": "Бело гниење (Sclerotinia)",
+   "model": "Wet soil and rain at flowering, 15–25 °C",
+   "signs": "White cottony mould on stems or heads, black hard bodies inside.",
+   "signs_mk": "Бела памуклива мувла на стеблата или главите, црни тврди тела внатре.",
+   "steps": [
+    {"type": "now", "en": "Long rotation with cereals (4+ years without sunflower, rapeseed or beans).", "mk": "Долг плодоред со жита (4+ години без сончоглед, репка или грав)."},
+    {"type": "bio", "en": "Coniothyrium minitans soil treatment kills the black resting bodies.", "mk": "Третман на почвата со Coniothyrium minitans ги уништува црните тела."},
+    {"type": "now", "en": "Do not sow too densely; avoid excess nitrogen.", "mk": "Не сејте прегусто; избегнувајте вишок азот."}
+   ]
+  },
+  {
+   "id": "alfalfa_weevil", "kind": "pest", "crops": ["alfalfa"], "rule": "alfalfa_weevil",
+   "name": "Alfalfa weevil", "name_mk": "Луцеркина пипа (Hypera postica)",
+   "model": "Larvae feed in spring once warmth builds (April–May)",
+   "signs": "Holes and skeletonised leaf tips, green larvae in the shoot tips.",
+   "signs_mk": "Дупки и скелетирани врвови на листовите, зелени ларви во врвовите.",
+   "steps": [
+    {"type": "now", "en": "If damage is high, cut the first cut a few days early: it removes most larvae.", "mk": "Ако штетата е голема, покосете го првиот откос неколку дена порано: така се отстрануваат повеќето ларви."},
+    {"type": "now", "en": "Sweep-net 10 places; act only if larvae counts are high.", "mk": "Мрежа на 10 места; дејствувајте само ако бројот на ларви е висок."}
+   ]
+  },
+  {
+   "id": "pollen_beetle", "kind": "pest", "crops": ["rapeseed", "mustard"], "rule": "pollen_beetle",
+   "name": "Pollen beetle", "name_mk": "Репкин сјајник (Brassicogethes aeneus)",
+   "model": "Fly into crops once days reach ~15 °C, at green-bud stage",
+   "signs": "Small shiny black beetles on buds, buds that fall without flowering.",
+   "signs_mk": "Мали сјајни црни бубачки на пупките, пупки што паѓаат без да процветаат.",
+   "steps": [
+    {"type": "now", "en": "Count beetles on 25 plants at green-bud stage; once flowers open the beetles no longer harm.", "mk": "Избројте ги бубачките на 25 растенија во фаза на зелен пупок; откако ќе процвета, повеќе не штетат."},
+    {"type": "spray", "en": "A registered insecticide only above the threshold, never on open flowers (bees).", "mk": "Регистриран инсектицид само над прагот, никогаш на отворени цветови (пчели)."}
+   ]
+  }
+ ]
+}

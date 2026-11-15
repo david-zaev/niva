@@ -1,0 +1,27 @@
+{
+ "note": "Rotation library. Each planting is {crop, year}: year = the rotation year (1..N) in which that crop is harvested or, for a cover crop, ended. Winter crops are sown in the autumn before. The rotation repeats, so year N is followed by year 1. 'common' = what many farms in the region grow today.",
+ "rotations": [
+  {"id": "wheat-wheat-sunflower", "name": "Wheat → wheat → sunflower", "kind": "common", "regions": ["ovche-pole", "pelagonija"],
+   "plantings": [{"crop": "wheat", "year": 1}, {"crop": "wheat", "year": 2}, {"crop": "sunflower", "year": 3}]},
+  {"id": "wheat-maize", "name": "Wheat → maize", "kind": "common", "regions": ["pelagonija", "ovche-pole"],
+   "plantings": [{"crop": "wheat", "year": 1}, {"crop": "maize", "year": 2}]},
+  {"id": "pepper-pepper-tomato", "name": "Pepper → pepper → tomato", "kind": "common", "regions": ["strumica"],
+   "plantings": [{"crop": "pepper", "year": 1}, {"crop": "pepper", "year": 2}, {"crop": "tomato", "year": 3}]},
+  {"id": "wheat-sunflower-chickpea-barley", "name": "Wheat + mustard cover → sunflower → chickpea → barley", "kind": "suggested", "regions": ["ovche-pole", "pelagonija"],
+   "plantings": [{"crop": "wheat", "year": 1}, {"crop": "mustard", "year": 1}, {"crop": "sunflower", "year": 2}, {"crop": "chickpea", "year": 3}, {"crop": "barley", "year": 4}]},
+  {"id": "wheat-cover-maize-bean", "name": "Wheat → vetch–oat cover → maize → bean", "kind": "suggested", "regions": ["pelagonija", "strumica", "ovche-pole"],
+   "plantings": [{"crop": "wheat", "year": 1}, {"crop": "vetch_oat", "year": 2}, {"crop": "maize", "year": 2}, {"crop": "bean", "year": 3}]},
+  {"id": "wheat-sorghum-chickpea-barley", "name": "Wheat → sorghum → chickpea → barley", "kind": "suggested", "regions": ["ovche-pole"],
+   "plantings": [{"crop": "wheat", "year": 1}, {"crop": "sorghum", "year": 2}, {"crop": "chickpea", "year": 3}, {"crop": "barley", "year": 4}]},
+  {"id": "alfalfa-maize-wheat", "name": "Alfalfa (3 years) → maize → wheat", "kind": "suggested", "regions": ["pelagonija", "strumica"],
+   "plantings": [{"crop": "alfalfa", "year": 1}, {"crop": "maize", "year": 4}, {"crop": "wheat", "year": 5}]},
+  {"id": "rapeseed-wheat-sunflower-chickpea", "name": "Rapeseed → wheat → sunflower → chickpea", "kind": "suggested", "regions": ["ovche-pole", "pelagonija"],
+   "plantings": [{"crop": "rapeseed", "year": 1}, {"crop": "wheat", "year": 2}, {"crop": "sunflower", "year": 3}, {"crop": "chickpea", "year": 4}]},
+  {"id": "tomato-wheat-pepper-bean", "name": "Tomato → wheat + mustard cover → pepper → bean", "kind": "suggested", "regions": ["strumica"],
+   "plantings": [{"crop": "tomato", "year": 1}, {"crop": "wheat", "year": 2}, {"crop": "mustard", "year": 2}, {"crop": "pepper", "year": 3}, {"crop": "bean", "year": 4}]},
+  {"id": "tobacco-wheat-bean-barley", "name": "Tobacco → wheat → bean → barley", "kind": "suggested", "regions": ["pelagonija"],
+   "plantings": [{"crop": "tobacco", "year": 1}, {"crop": "wheat", "year": 2}, {"crop": "bean", "year": 3}, {"crop": "barley", "year": 4}]},
+  {"id": "barley-sunflower-wheat-chickpea", "name": "Barley → sunflower → wheat → chickpea", "kind": "suggested", "regions": ["ovche-pole", "pelagonija"],
+   "plantings": [{"crop": "barley", "year": 1}, {"crop": "sunflower", "year": 2}, {"crop": "wheat", "year": 3}, {"crop": "chickpea", "year": 4}]}
+ ]
+}

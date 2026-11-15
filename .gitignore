@@ -15,8 +15,23 @@ venv/
 *.sqlite
 *.sqlite3
 
+# Node / web
+node_modules/
+web/dist/
+web/dev-dist/
+
+# Jupyter
+.ipynb_checkpoints/
+
 # OS / editors
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
+# trained models: rebuild with data/scripts/train_model.py (7 s), copy to the server
+data/model/*.joblib
+
+# NASA downloads: re-created by data/scripts/download_dem.py and download_smap.py
+data/dem/
+data/smap/

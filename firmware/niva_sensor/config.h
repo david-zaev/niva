@@ -4,10 +4,12 @@
 // ---- Pins (ESP32-32D DevKit, all sensors on 3V3) ----
 #define SOIL_ENABLED   1   // 1 = a capacitive soil moisture sensor is wired (AOUT on PIN_SOIL); 0 = sends null
 #define PIN_SOIL      34   // capacitive soil sensor AOUT (analog input only)
+#define SOIL2_ENABLED  0   // 1 = a second capacitive probe is wired (demo: probe 1 in the bare pot, probe 2 in the covered pot)
+#define PIN_SOIL2     35   // second probe AOUT (analog input only); uses the same dry/wet calibration
 #define PIN_DS18B20   14   // DS18B20 yellow wire; 4.7k resistor between yellow and the 3.3 V (+) line
-#define PIN_DHT       27   // DHT22 / AM2302 DAT
-#define PIN_SDA       25   // BME280 / BMP280 SDA
-#define PIN_SCL       26   // BME280 / BMP280 SCL
+#define PIN_DHT        4   // DHT22 / AM2302 DAT
+#define PIN_SDA       21   // BME280 / BMP280 SDA
+#define PIN_SCL       22   // BME280 / BMP280 SCL
 #define PIN_LED        2   // blue on-board LED
 #define PIN_BOOT       0   // BOOT button: hold 5 s to forget WiFi (M2)
 
@@ -34,3 +36,5 @@
 
 // ---- Server ----
 #define SERVER_URL "https://niva-api.92-5-133-111.sslip.io"
+// Hackathon laptop instead of the server: the laptop's WiFi address and the API port, plain http, e.g.
+// #define SERVER_URL "http://192.168.1.50:8000"

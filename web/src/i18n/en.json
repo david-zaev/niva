@@ -1,0 +1,68 @@
+{
+  "field": {
+    "title": "My field",
+    "loading": "Loading…",
+    "agoSeconds": "{n} s ago",
+    "agoMinutes": "{n} min ago",
+    "agoHours": "{n} h ago",
+    "agoDays": "{n} days ago",
+    "soilMoisture": "Soil moisture",
+    "soilTemp": "Soil temperature",
+    "airTemp": "Air temperature",
+    "humidity": "Air humidity",
+    "pressure": "Air pressure",
+    "soil_dry": "Dry",
+    "soil_good": "Good",
+    "soil_wet": "Very wet",
+    "eyebrow": "Ovče Pole · demo plant",
+    "sub": "What is happening on your field today, and what to do about it.",
+    "liveShort": "Live"
+  },
+  "more": {
+    "language": "Language"
+  },
+  "setup": {
+    "demoBtn": "Try the demo farm"
+  },
+  "offline": {
+    "offline": "Offline.",
+    "noServer": "Cannot reach the server.",
+    "showing": "Showing data from {when}.",
+    "nothing": "No saved data yet.",
+    "update": "Update ready"
+  },
+  "switcher": {
+    "label": "Choose field",
+    "title": "Your fields",
+    "demo": "Demo field (Ovče Pole)",
+    "noCrop": "no crop entered",
+    "viewOnly": "view only"
+  },
+  "map": {
+    "title": "Map"
+  },
+  "auth": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "loginTitle": "Welcome back",
+    "signupTitle": "Create your account",
+    "loginSub": "Log in to see your field.",
+    "signupSub": "Sign up to follow your field live.",
+    "name": "Your name",
+    "email": "Email",
+    "password": "Password",
+    "loginBtn": "Log in",
+    "signupBtn": "Create account",
+    "errEmail": "Enter a valid email address.",
+    "errShort": "The password needs at least 6 characters.",
+    "errName": "Enter your name.",
+    "errTaken": "An account with this email already exists. Log in instead.",
+    "errWrong": "Wrong email or password.",
+    "eventSub": "A field sensor and NASA satellite data, shown live as we present Niva.",
+    "watchDemo": "Open demo",
+    "logout": "Log out",
+    "or": "or",
+    "eventTitle": "Watch the live demo",
+    "live": "Live"
+  }
+}

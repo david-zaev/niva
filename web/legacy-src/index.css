@@ -1,0 +1,228 @@
+/* Layout and components. Colours and fonts come only from brand/niva-theme.css.
+   Look: calm console style. One big number per card, short labels, quiet borders, a flat page colour. */
+:root {
+  --top-h: 64px;
+  --gap: 20px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+}
+[data-theme='dark'] { color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--canvas); color: var(--ink); }
+/* nothing may push the page sideways on a phone: grid and flex children may shrink below their content */
+html, body { overflow-x: clip; }
+.content, .page, .screen, .card, .screen-head > div { min-width: 0; }
+canvas { max-width: 100%; }
+img, video { max-width: 100%; }
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--volt); outline-offset: 2px; }
+.muted { color: var(--slate); }
+.small { font-size: 0.85rem; }
+
+.app { position: relative; min-height: 100dvh; isolation: isolate; }
+
+/* ---------- top bar ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  height: calc(var(--top-h) + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) 16px 0;
+  background: var(--canvas); border-bottom: 1px solid var(--line);
+}
+.brand { display: inline-flex; align-items: center; color: var(--ink); text-decoration: none; }
+.logo { display: block; width: auto; }
+.logo-pin { fill: var(--volt); stroke: var(--ink); stroke-width: 7; paint-order: stroke; }
+[data-theme='dark'] .logo-pin { stroke: none; }
+.top-right { display: flex; align-items: center; gap: 8px; }
+.language-picker { position: relative; font-size: 0.82rem; }
+.language-picker summary { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 10px; border-radius: 6px; cursor: pointer; list-style: none; color: var(--slate); }
+.language-picker summary::-webkit-details-marker { display: none; }
+.language-picker summary:hover, .language-picker[open] summary { background: var(--mist); color: var(--ink); }
+.language-picker summary span { font-weight: 500; }
+.language-chevron { margin-left: 4px; }
+.language-options { position: absolute; top: calc(100% + 6px); right: 0; width: 188px; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); box-shadow: 0 8px 24px rgb(0 0 0 / 0.12); }
+.language-options button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 0 10px; border: 0; border-radius: 4px; background: transparent; text-align: left; font-size: 0.85rem; cursor: pointer; }
+.language-options button:hover, .language-options button[aria-pressed='true'] { background: var(--mist); }
+@media (max-width: 400px) {
+  .topbar { gap: 6px; padding-left: 12px; padding-right: 8px; }
+  .topbar .logo { height: 24px; }
+  .top-right { gap: 2px; min-width: 0; }
+  .language-picker summary { padding: 0 8px; gap: 4px; }
+  .language-chevron { display: none; }
+}
+.update-btn { min-height: 34px !important; padding: 0 12px !important; font-size: 0.8rem !important; }
+
+/* pages fade up gently instead of blinking */
+.page { animation: page-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes page-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .page { animation: none; } }
+
+/* one centred column on every screen size */
+.content { max-width: 1160px; margin: 0 auto; padding: 8px 16px calc(32px + env(safe-area-inset-bottom)); }
+@media (min-width: 900px) {
+  .topbar { padding: 0 28px; }
+  .content { padding: 40px 40px 72px; }
+}
+
+/* ---------- page head ---------- */
+.screen-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px 24px;
+  margin: 8px 0 28px;
+}
+.crumb { margin: 0 0 4px; font-size: 0.85rem; font-weight: 500; color: var(--smoke); }
+.screen h1 {
+  font-family: var(--font-display); font-weight: 650; margin: 0;
+  font-size: clamp(1.9rem, 5vw, 2.6rem); line-height: 1.05; letter-spacing: -0.03em;
+}
+.screen-sub { margin: 10px 0 0; color: var(--slate); max-width: 60ch; font-size: 1.02rem; }
+.head-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+@media (max-width: 600px) {
+  .screen-head { margin: 4px 0 18px; gap: 12px; }
+  .screen-sub { font-size: 0.95rem; margin-top: 6px; }
+  .card { padding: 18px; border-radius: 16px; }
+  .stats { gap: 12px; }
+  .stat { min-height: 120px; }
+}
+
+/* ---------- basics ---------- */
+.card {
+  position: relative;
+  background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+  padding: 24px; margin: 0 0 var(--gap);
+}
+
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--smoke); flex: none; }
+.is-live .dot { background: var(--live); animation: ping 1.8s ease-out infinite; }
+
+@keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--live) 60%, transparent); } 100% { box-shadow: 0 0 0 8px transparent; } }
+@media (prefers-reduced-motion: reduce) { .is-live .dot { animation: none; } }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap;
+  min-height: 44px; padding: 0 18px; border: 0; border-radius: 12px; cursor: pointer;
+  background: var(--ink); color: var(--canvas); text-decoration: none; font: 600 0.92rem/1 var(--font-body);
+}
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-volt { background: var(--volt); color: var(--on-volt); }
+.btn-ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.btn-ghost:hover { background: var(--mist); }
+
+/* ---------- stat cards (one big number) ---------- */
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); margin-bottom: var(--gap); }
+.stats .card { margin: 0; }
+.stat { display: flex; flex-direction: column; gap: 8px; min-height: 148px; }
+.stat-label { font-size: 1rem; font-weight: 500; color: var(--ink); }
+.stat-empty { margin-top: auto; font-size: 0.92rem; color: var(--smoke); }
+.stat.is-empty { background: transparent; border-style: dashed; }
+.stat-value {
+  margin-top: auto; font-family: var(--font-display); font-weight: 650; letter-spacing: -0.03em;
+  font-size: clamp(2rem, 7vw, 2.6rem); line-height: 1; font-variant-numeric: tabular-nums;
+}
+.stat-unit { font-size: 0.5em; font-weight: 600; letter-spacing: 0; margin-left: 4px; color: var(--smoke); }
+.stat-note { font-size: 1rem; color: var(--ink); }
+.stat-status { display: inline-flex; align-items: center; gap: 6px; font-size: 1.05rem; font-weight: 700; color: var(--slate); }
+.stat .bar { height: 6px; border-radius: 999px; background: var(--mist); overflow: hidden; }
+.stat .bar span { display: block; height: 100%; border-radius: inherit; background: var(--ink); transition: width 0.6s ease; }
+.level-good .dot, .level-good .bar span { background: var(--live); }
+.level-dry .dot, .level-dry .bar span { background: var(--wait); }
+.level-wet .dot, .level-wet .bar span { background: var(--viz-rain); }
+@media (min-width: 1200px) { .stats { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); } }
+/* a last tile left alone in the two-column grid takes the whole row instead of leaving a hole beside it */
+@media (max-width: 1199px) { .stats > :last-child:nth-child(odd) { grid-column: 1 / -1; } }
+
+:root { --viz-rain: #2a78d6; }
+[data-theme='dark'] { --viz-rain: #3987e5; }
+
+/* offline banner */
+.banner-offline {
+  position: sticky; top: var(--top-h); z-index: 9; display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; background: var(--wait); color: #000; font-size: 0.88rem; font-weight: 600;
+}
+.banner-offline .dot { background: #000; }
+
+/* ---------- field switcher (top bar) ---------- */
+.field-switcher { position: relative; font-size: 0.85rem; }
+.field-switcher summary {
+  display: flex; align-items: center; gap: 8px; min-height: 40px; max-width: 46vw; padding: 0 12px;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--card); cursor: pointer; list-style: none; color: var(--ink);
+}
+.field-switcher summary::-webkit-details-marker { display: none; }
+.field-switcher summary:hover, .field-switcher[open] summary { background: var(--mist); }
+.switcher-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.switcher-menu {
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 30; width: min(320px, 92vw); padding: 8px;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: 0 12px 32px rgb(0 0 0 / 0.16);
+  animation: page-in 0.18s ease both;
+}
+.switcher-title { margin: 4px 8px 6px; font-size: 0.75rem; font-weight: 600; color: var(--smoke); text-transform: uppercase; letter-spacing: 0.06em; }
+.switcher-menu > button {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 52px;
+  padding: 6px 10px; border: 0; border-radius: 8px; background: transparent; text-align: left; cursor: pointer; color: var(--ink);
+}
+.switcher-menu > button:hover, .switcher-menu > button[aria-pressed="true"] { background: var(--mist); }
+.switcher-row { display: grid; gap: 1px; }
+.switcher-actions { display: flex; gap: 8px; padding: 8px 4px 2px; border-top: 1px solid var(--line); margin-top: 6px; }
+.switcher-actions .btn { flex: 1; min-height: 40px; padding: 0 10px; font-size: 0.82rem; }
+@media (max-width: 520px) { .language-picker summary span { display: none; } .field-switcher summary { max-width: 44vw; } }
+
+.btn { transition: transform 0.12s ease, background 0.15s ease; }
+.btn:active { transform: scale(0.97); }
+
+/* stat tile header: label on the left, "Live" badge on the right for numbers from the farmer's own sensor */
+.stat-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }
+.stat-badge {
+  display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 999px;
+  font-size: 0.7rem; font-weight: 700; color: var(--slate); background: var(--mist); white-space: nowrap;
+}
+.stat-badge.is-live { color: var(--live); background: color-mix(in srgb, var(--live) 14%, transparent); }
+.stat-badge .dot { width: 6px; height: 6px; }
+
+/* Leaflet sizes its own canvas; the page-wide canvas rule would squeeze it to nothing */
+.leaflet-container canvas { max-width: none; }
+
+/* top bar: the controls share one height */
+.field-switcher summary { min-height: 44px; }
+
+/* Login / sign-up: the first screen */
+.auth { min-height: 100dvh; background: var(--canvas); color: var(--ink); display: flex; flex-direction: column; }
+.auth-top { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; } /* above the cards, so the language menu opens on top */
+.auth-main { flex: 1; width: 100%; max-width: 440px; margin: 0 auto; padding: 24px 16px 40px; display: flex; flex-direction: column; gap: 16px; }
+.auth-main .card { margin: 0; }
+.auth-card h1 { margin: 0 0 6px; font: 700 1.9rem/1.1 var(--font-display); letter-spacing: -0.02em; }
+.auth-card > p { margin: 0 0 20px; }
+.auth-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin-bottom: 20px; border-radius: 12px; background: var(--mist); }
+.auth-switch button { min-height: 40px; border: 0; border-radius: 9px; background: transparent; color: var(--slate); font: 600 0.92rem var(--font-body); cursor: pointer; }
+.auth-switch button[aria-selected='true'] { background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.auth-form label { display: flex; flex-direction: column; gap: 6px; font-size: 0.88rem; font-weight: 600; }
+.auth-form input { min-height: 46px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--mist); color: var(--ink); font: 400 1rem var(--font-body); }
+.auth-form input:focus { outline: 2px solid var(--volt); outline-offset: 1px; border-color: transparent; }
+.auth-error { margin: 0; color: var(--down); font-size: 0.88rem; font-weight: 600; }
+.auth-submit { width: 100%; margin-top: 4px; }
+.auth-or { display: flex; align-items: center; gap: 12px; margin: 4px 0; color: var(--smoke); font: 500 0.78rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+.auth-or::before, .auth-or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.auth-event { padding: 24px; border-radius: 20px; border: 1px solid var(--line); background: var(--card); }
+.auth-event-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 10px; }
+.auth-live { display: inline-flex; align-items: center; gap: 6px; flex: none; color: var(--live); font: 600 0.78rem var(--font-body); }
+.auth-live .dot { background: var(--live); animation: ping 1.8s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) { .auth-live .dot { animation: none; } }
+.auth-event-label { margin: 0; color: var(--smoke); font: 500 0.78rem var(--font-body); letter-spacing: 0.02em; }
+.auth-event h2 { margin: 0 0 6px; font: 600 1.15rem/1.3 var(--font-display); letter-spacing: -0.01em; }
+.auth-event-sub { margin: 0 0 20px; color: var(--slate); font-size: 0.92rem; line-height: 1.5; }
+.auth-watch { width: 100%; justify-content: space-between; }
+.logout { white-space: nowrap; min-height: 44px; padding: 0 12px; border: 0; border-radius: 6px; background: transparent; color: var(--slate); font: 500 0.82rem var(--font-body); cursor: pointer; }
+.logout:hover { background: var(--mist); color: var(--ink); }
+
+/* The field map: satellite photo with place names, nothing on top */
+.field-map-card { padding: 20px; }
+.field-map-card h2 { margin: 0 0 14px; font: 700 1.1rem var(--font-display); }
+.field-map-view { height: clamp(300px, 50vh, 480px); border-radius: 14px; overflow: hidden; z-index: 0; background: #1d1d1b; }
+.field-map-view .leaflet-control-zoom { border: 0; box-shadow: 0 2px 8px rgb(0 0 0 / 0.35); border-radius: 10px; overflow: hidden; }
+.field-map-view .leaflet-control-zoom a { width: 36px; height: 36px; line-height: 36px; background: var(--card); color: var(--ink); border-color: var(--line); }
+.field-map-view .leaflet-control-zoom a:hover { background: var(--mist); }
+@media (max-width: 600px) { .field-map-card { padding: 14px; } }

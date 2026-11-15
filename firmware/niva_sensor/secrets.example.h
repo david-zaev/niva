@@ -8,3 +8,7 @@
 
 // Optional: use a fixed ID instead of the one made from the MAC address
 // #define DEVICE_ID_OVERRIDE "NIVA-DEMO"
+
+// Optional: WiFi to join at start-up. Without these, pick the WiFi through the "Niva-Setup" network.
+// #define WIFI_SSID "your-wifi-name"
+// #define WIFI_PASS "your-wifi-password"

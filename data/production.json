@@ -1,0 +1,4201 @@
+{
+ "source": "MakStat (State Statistical Office of North Macedonia), table 475_RastPr_Op_GlPosevNtes13",
+ "url": "https://makstat.stat.gov.mk/PXWeb/api/v1/en/MakStat/Zemjodelstvo/RastitelnoProizvodstvo/475_RastPr_Op_GlPosevNtes13_ml.px",
+ "measures": [
+  "Sown area, ha",
+  "Total production in tonnes"
+ ],
+ "retrieved": "2026-11-14",
+ "years": [
+  "2014",
+  "2015",
+  "2016",
+  "2017",
+  "2018",
+  "2019",
+  "2020",
+  "2021",
+  "2022",
+  "2023",
+  "2024",
+  "2025"
+ ],
+ "sold_note": "Bought-out (sold) volumes per region are not published (MakStat, ZPIS). Left empty on purpose.",
+ "regions": {
+  "strumica": {
+   "name": "Strumica valley",
+   "name_mk": "Струмичко Поле",
+   "municipalities": [
+    "Strumitsa",
+    "Novo Selo",
+    "Bosilovo",
+    "Vasilevo"
+   ],
+   "crops": {
+    "wheat": [
+     {
+      "year": "2014",
+      "area_ha": 3520.0,
+      "production_t": 13295.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 3351.0,
+      "production_t": 8962.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2969.0,
+      "production_t": 11703.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 2372.0,
+      "production_t": 8566.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 2280.0,
+      "production_t": 8099.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 2070.0,
+      "production_t": 8284.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 2022.0,
+      "production_t": 7889.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1976.0,
+      "production_t": 7740.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 2002.0,
+      "production_t": 7217.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 1985.0,
+      "production_t": 7867.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 1985.0,
+      "production_t": 6745.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 1981.0,
+      "production_t": 6954.0
+     }
+    ],
+    "barley": [
+     {
+      "year": "2014",
+      "area_ha": 1071.0,
+      "production_t": 3378.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 1084.0,
+      "production_t": 2663.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 1028.0,
+      "production_t": 3707.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 974.0,
+      "production_t": 3118.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1060.0,
+      "production_t": 3017.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 1050.0,
+      "production_t": 3232.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 1013.0,
+      "production_t": 3108.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1037.0,
+      "production_t": 3031.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 876.0,
+      "production_t": 2480.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 847.0,
+      "production_t": 2287.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 866.0,
+      "production_t": 1563.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 847.0,
+      "production_t": 1832.0
+     }
+    ],
+    "maize": [
+     {
+      "year": "2014",
+      "area_ha": 2925.0,
+      "production_t": 16561.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 2818.0,
+      "production_t": 17192.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2502.0,
+      "production_t": 15995.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 2346.0,
+      "production_t": 13838.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 2211.0,
+      "production_t": 13374.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 2255.0,
+      "production_t": 14167.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 2233.0,
+      "production_t": 14308.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 2173.0,
+      "production_t": 14369.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 2194.0,
+      "production_t": 14028.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 2107.0,
+      "production_t": 13921.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 2068.0,
+      "production_t": 10620.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 2022.0,
+      "production_t": 11509.0
+     }
+    ],
+    "sunflower": [
+     {
+      "year": "2023",
+      "area_ha": 2.0,
+      "production_t": 10.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 2.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 1.0,
+      "production_t": 1.0
+     }
+    ],
+    "tobacco": [
+     {
+      "year": "2014",
+      "area_ha": 2546.0,
+      "production_t": 4443.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 2174.0,
+      "production_t": 2913.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2078.0,
+      "production_t": 2855.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 1777.0,
+      "production_t": 2422.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1807.0,
+      "production_t": 2792.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 1801.0,
+      "production_t": 3281.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 1815.0,
+      "production_t": 3155.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1741.0,
+      "production_t": 3110.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 1813.0,
+      "production_t": 3207.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 1827.0,
+      "production_t": 3235.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 1827.0,
+      "production_t": 2927.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 1824.0,
+      "production_t": 3660.0
+     }
+    ],
+    "bean": [
+     {
+      "year": "2014",
+      "area_ha": 873.0,
+      "production_t": 1646.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 758.0,
+      "production_t": 1266.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 729.0,
+      "production_t": 1220.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 619.0,
+      "production_t": 945.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 619.0,
+      "production_t": 974.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 600.0,
+      "production_t": 960.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 601.0,
+      "production_t": 1019.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 562.0,
+      "production_t": 948.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 600.0,
+      "production_t": 935.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 581.0,
+      "production_t": 1095.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 575.0,
+      "production_t": 1086.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 552.0,
+      "production_t": 1139.0
+     }
+    ],
+    "tomato": [
+     {
+      "year": "2014",
+      "area_ha": 1155.0,
+      "production_t": 83750.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 1056.0,
+      "production_t": 86910.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 942.0,
+      "production_t": 76483.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 948.0,
+      "production_t": 80503.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 952.0,
+      "production_t": 80938.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 883.0,
+      "production_t": 75691.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 892.0,
+      "production_t": 78507.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 880.0,
+      "production_t": 77709.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 933.0,
+      "production_t": 76759.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 895.0,
+      "production_t": 47127.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 877.0,
+      "production_t": 48122.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 905.0,
+      "production_t": 50450.0
+     }
+    ],
+    "pepper": [
+     {
+      "year": "2014",
+      "area_ha": 2154.0,
+      "production_t": 82212.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 2157.0,
+      "production_t": 85154.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2233.0,
+      "production_t": 83522.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 2195.0,
+      "production_t": 79219.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 2374.0,
+      "production_t": 82800.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 2391.0,
+      "production_t": 89755.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 2385.0,
+      "production_t": 87937.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 2461.0,
+      "production_t": 93053.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 2393.0,
+      "production_t": 88067.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 2297.0,
+      "production_t": 88103.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 2279.0,
+      "production_t": 88365.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 2254.0,
+      "production_t": 97113.0
+     }
+    ],
+    "alfalfa": [
+     {
+      "year": "2014",
+      "area_ha": 2391.0,
+      "production_t": 34588.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 2429.0,
+      "production_t": 16399.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2379.0,
+      "production_t": 17935.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 2485.0,
+      "production_t": 19641.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 2576.0,
+      "production_t": 19193.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 2576.0,
+      "production_t": 19203.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 2591.0,
+      "production_t": 20467.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 2583.0,
+      "production_t": 20462.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 2546.0,
+      "production_t": 20267.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 2511.0,
+      "production_t": 20100.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 2511.0,
+      "production_t": 18513.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 2513.0,
+      "production_t": 15173.0
+     }
+    ],
+    "vetch_oat": [
+     {
+      "year": "2014",
+      "area_ha": 81.0,
+      "production_t": 431.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 79.0,
+      "production_t": 306.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 70.0,
+      "production_t": 303.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 58.0,
+      "production_t": 254.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 55.0,
+      "production_t": 239.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 57.0,
+      "production_t": 251.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 57.0,
+      "production_t": 271.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 57.0,
+      "production_t": 321.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 58.0,
+      "production_t": 307.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 51.0,
+      "production_t": 255.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 49.0,
+      "production_t": 280.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 50.0,
+      "production_t": 243.0
+     }
+    ]
+   }
+  },
+  "pelagonija": {
+   "name": "Pelagonija",
+   "name_mk": "Пелагонија",
+   "municipalities": [
+    "Bitola",
+    "Prilep",
+    "Mogila",
+    "Novatsi"
+   ],
+   "crops": {
+    "wheat": [
+     {
+      "year": "2014",
+      "area_ha": 14900.0,
+      "production_t": 74861.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 11442.0,
+      "production_t": 29500.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 16383.0,
+      "production_t": 85038.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 13315.0,
+      "production_t": 52774.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 11818.0,
+      "production_t": 49395.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 10210.0,
+      "production_t": 41311.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 12620.0,
+      "production_t": 58611.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 13937.0,
+      "production_t": 58454.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 12787.0,
+      "production_t": 45590.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 12806.0,
+      "production_t": 40030.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 12555.0,
+      "production_t": 47021.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 13756.0,
+      "production_t": 64528.0
+     }
+    ],
+    "barley": [
+     {
+      "year": "2014",
+      "area_ha": 6908.0,
+      "production_t": 30341.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 6125.0,
+      "production_t": 12898.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 5787.0,
+      "production_t": 23452.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 6554.0,
+      "production_t": 21165.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 6582.0,
+      "production_t": 20913.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 5098.0,
+      "production_t": 17014.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 6284.0,
+      "production_t": 24646.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 6294.0,
+      "production_t": 23590.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 5820.0,
+      "production_t": 17845.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 5653.0,
+      "production_t": 15585.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 5349.0,
+      "production_t": 17756.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 5564.0,
+      "production_t": 21281.0
+     }
+    ],
+    "maize": [
+     {
+      "year": "2014",
+      "area_ha": 2505.0,
+      "production_t": 14564.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 3837.0,
+      "production_t": 17808.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2814.0,
+      "production_t": 17322.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 2553.0,
+      "production_t": 12105.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 8786.0,
+      "production_t": 69603.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 5967.0,
+      "production_t": 28009.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 4389.0,
+      "production_t": 26200.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 3124.0,
+      "production_t": 15910.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 3087.0,
+      "production_t": 23335.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 3310.0,
+      "production_t": 18010.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 2900.0,
+      "production_t": 14372.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 3701.0,
+      "production_t": 15712.0
+     }
+    ],
+    "sunflower": [
+     {
+      "year": "2014",
+      "area_ha": 3945.0,
+      "production_t": 7561.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 4130.0,
+      "production_t": 7177.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2445.0,
+      "production_t": 4552.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 2525.0,
+      "production_t": 4978.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 756.0,
+      "production_t": 1355.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 2753.0,
+      "production_t": 4562.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 2977.0,
+      "production_t": 4367.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 3669.0,
+      "production_t": 4088.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 4299.0,
+      "production_t": 7079.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 3100.0,
+      "production_t": 3813.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 3198.0,
+      "production_t": 3207.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 4166.0,
+      "production_t": 3804.0
+     }
+    ],
+    "tobacco": [
+     {
+      "year": "2014",
+      "area_ha": 4233.0,
+      "production_t": 6440.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 3812.0,
+      "production_t": 6009.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 4138.0,
+      "production_t": 6647.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 4137.0,
+      "production_t": 6093.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 4199.0,
+      "production_t": 6318.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 4285.0,
+      "production_t": 6707.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 4173.0,
+      "production_t": 6693.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 3816.0,
+      "production_t": 6371.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 3779.0,
+      "production_t": 6602.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 3867.0,
+      "production_t": 6522.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 3953.0,
+      "production_t": 7250.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 4261.0,
+      "production_t": 7443.0
+     }
+    ],
+    "bean": [
+     {
+      "year": "2014",
+      "area_ha": 256.0,
+      "production_t": 317.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 260.0,
+      "production_t": 281.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 266.0,
+      "production_t": 265.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 224.0,
+      "production_t": 187.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 212.0,
+      "production_t": 204.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 211.0,
+      "production_t": 204.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 199.0,
+      "production_t": 199.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 169.0,
+      "production_t": 161.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 171.0,
+      "production_t": 216.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 173.0,
+      "production_t": 667.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 166.0,
+      "production_t": 157.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 164.0,
+      "production_t": 151.0
+     }
+    ],
+    "tomato": [
+     {
+      "year": "2014",
+      "area_ha": 371.0,
+      "production_t": 4994.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 362.0,
+      "production_t": 5629.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 396.0,
+      "production_t": 5542.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 412.0,
+      "production_t": 5267.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 383.0,
+      "production_t": 4080.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 409.0,
+      "production_t": 4978.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 358.0,
+      "production_t": 4450.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 353.0,
+      "production_t": 5190.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 338.0,
+      "production_t": 4741.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 349.0,
+      "production_t": 4099.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 359.0,
+      "production_t": 5165.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 356.0,
+      "production_t": 5454.0
+     }
+    ],
+    "pepper": [
+     {
+      "year": "2014",
+      "area_ha": 1255.0,
+      "production_t": 21027.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 1254.0,
+      "production_t": 20923.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 1269.0,
+      "production_t": 17988.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 1276.0,
+      "production_t": 18233.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1293.0,
+      "production_t": 19034.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 1387.0,
+      "production_t": 20243.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 1369.0,
+      "production_t": 23597.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1517.0,
+      "production_t": 30708.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 1522.0,
+      "production_t": 41796.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 1549.0,
+      "production_t": 50250.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 1548.0,
+      "production_t": 51623.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 1401.0,
+      "production_t": 45941.0
+     }
+    ],
+    "alfalfa": [
+     {
+      "year": "2014",
+      "area_ha": 2694.0,
+      "production_t": 14905.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 2447.0,
+      "production_t": 13916.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2637.0,
+      "production_t": 14567.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 2498.0,
+      "production_t": 12004.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 2545.0,
+      "production_t": 15121.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 2600.0,
+      "production_t": 9979.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 2359.0,
+      "production_t": 10425.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 2331.0,
+      "production_t": 10204.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 2244.0,
+      "production_t": 11956.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 2164.0,
+      "production_t": 9005.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 2142.0,
+      "production_t": 8465.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 2163.0,
+      "production_t": 8026.0
+     }
+    ],
+    "vetch_oat": [
+     {
+      "year": "2014",
+      "area_ha": 130.0,
+      "production_t": 445.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 135.0,
+      "production_t": 480.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 126.0,
+      "production_t": 400.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 134.0,
+      "production_t": 411.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 154.0,
+      "production_t": 582.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 176.0,
+      "production_t": 526.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 191.0,
+      "production_t": 527.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 181.0,
+      "production_t": 448.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 185.0,
+      "production_t": 470.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 167.0,
+      "production_t": 339.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 169.0,
+      "production_t": 399.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 155.0,
+      "production_t": 367.0
+     }
+    ]
+   }
+  },
+  "ovche-pole": {
+   "name": "Ovče Pole",
+   "name_mk": "Овче Поле",
+   "municipalities": [
+    "Sveti Nikole",
+    "Lozovo"
+   ],
+   "crops": {
+    "wheat": [
+     {
+      "year": "2014",
+      "area_ha": 3624.0,
+      "production_t": 9720.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 3788.0,
+      "production_t": 7781.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 4069.0,
+      "production_t": 12342.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 3785.0,
+      "production_t": 6113.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 4040.0,
+      "production_t": 8405.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 3889.0,
+      "production_t": 12354.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 3614.0,
+      "production_t": 10621.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 3682.0,
+      "production_t": 9935.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 4226.0,
+      "production_t": 9912.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 4354.0,
+      "production_t": 11073.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 4396.0,
+      "production_t": 12217.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 3915.0,
+      "production_t": 12503.0
+     }
+    ],
+    "barley": [
+     {
+      "year": "2014",
+      "area_ha": 2537.0,
+      "production_t": 7536.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 2774.0,
+      "production_t": 4625.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2906.0,
+      "production_t": 8284.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 3717.0,
+      "production_t": 4347.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 3902.0,
+      "production_t": 5919.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 4050.0,
+      "production_t": 12585.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 4507.0,
+      "production_t": 15237.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 5479.0,
+      "production_t": 17381.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 5062.0,
+      "production_t": 13598.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 4819.0,
+      "production_t": 16090.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 5007.0,
+      "production_t": 16081.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 4345.0,
+      "production_t": 14565.0
+     }
+    ],
+    "maize": [
+     {
+      "year": "2014",
+      "area_ha": 285.0,
+      "production_t": 603.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 656.0,
+      "production_t": 853.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 444.0,
+      "production_t": 1180.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 499.0,
+      "production_t": 413.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 402.0,
+      "production_t": 749.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 351.0,
+      "production_t": 451.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 424.0,
+      "production_t": 715.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 514.0,
+      "production_t": 612.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 447.0,
+      "production_t": 1005.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 532.0,
+      "production_t": 733.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 506.0,
+      "production_t": 505.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 426.0,
+      "production_t": 685.0
+     }
+    ],
+    "sunflower": [
+     {
+      "year": "2014",
+      "area_ha": 135.0,
+      "production_t": 137.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 269.0,
+      "production_t": 202.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 258.0,
+      "production_t": 344.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 239.0,
+      "production_t": 183.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 333.0,
+      "production_t": 686.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 394.0,
+      "production_t": 499.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 463.0,
+      "production_t": 217.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 440.0,
+      "production_t": 228.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 377.0,
+      "production_t": 552.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 378.0,
+      "production_t": 285.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 24.0,
+      "production_t": 16.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 179.0,
+      "production_t": 66.0
+     }
+    ],
+    "tobacco": [
+     {
+      "year": "2014",
+      "area_ha": 161.0,
+      "production_t": 240.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 166.0,
+      "production_t": 236.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 150.0,
+      "production_t": 231.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 72.0,
+      "production_t": 87.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 94.0,
+      "production_t": 154.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 82.0,
+      "production_t": 82.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 40.0,
+      "production_t": 86.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 73.0,
+      "production_t": 131.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 63.0,
+      "production_t": 166.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 25.0,
+      "production_t": 47.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 24.0,
+      "production_t": 17.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 19.0,
+      "production_t": 39.0
+     }
+    ],
+    "bean": [
+     {
+      "year": "2014",
+      "area_ha": 106.0,
+      "production_t": 89.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 142.0,
+      "production_t": 271.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 126.0,
+      "production_t": 106.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 101.0,
+      "production_t": 69.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 96.0,
+      "production_t": 93.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 90.0,
+      "production_t": 84.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 84.0,
+      "production_t": 85.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 79.0,
+      "production_t": 74.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 53.0,
+      "production_t": 42.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 54.0,
+      "production_t": 37.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 57.0,
+      "production_t": 31.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 58.0,
+      "production_t": 49.0
+     }
+    ],
+    "tomato": [
+     {
+      "year": "2014",
+      "area_ha": 67.0,
+      "production_t": 181.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 78.0,
+      "production_t": 219.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 68.0,
+      "production_t": 194.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 69.0,
+      "production_t": 347.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 50.0,
+      "production_t": 988.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 43.0,
+      "production_t": 442.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 47.0,
+      "production_t": 272.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 31.0,
+      "production_t": 668.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 19.0,
+      "production_t": 40.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 21.0,
+      "production_t": 40.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 22.0,
+      "production_t": 79.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 23.0,
+      "production_t": 93.0
+     }
+    ],
+    "pepper": [
+     {
+      "year": "2014",
+      "area_ha": 70.0,
+      "production_t": 163.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 80.0,
+      "production_t": 185.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 64.0,
+      "production_t": 154.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 60.0,
+      "production_t": 213.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 48.0,
+      "production_t": 928.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 32.0,
+      "production_t": 437.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 16.0,
+      "production_t": 99.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 28.0,
+      "production_t": 508.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 20.0,
+      "production_t": 75.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 20.0,
+      "production_t": 38.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 23.0,
+      "production_t": 73.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 23.0,
+      "production_t": 32.0
+     }
+    ],
+    "alfalfa": [
+     {
+      "year": "2014",
+      "area_ha": 679.0,
+      "production_t": 3391.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 623.0,
+      "production_t": 1198.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 659.0,
+      "production_t": 2191.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 637.0,
+      "production_t": 1163.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 672.0,
+      "production_t": 1792.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 773.0,
+      "production_t": 4635.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 703.0,
+      "production_t": 2355.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 721.0,
+      "production_t": 2028.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 758.0,
+      "production_t": 1769.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 724.0,
+      "production_t": 2014.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 697.0,
+      "production_t": 505.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 699.0,
+      "production_t": 1182.0
+     }
+    ],
+    "vetch_oat": [
+     {
+      "year": "2014",
+      "area_ha": 79.0,
+      "production_t": 132.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 63.0,
+      "production_t": 65.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 61.0,
+      "production_t": 92.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 59.0,
+      "production_t": 47.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 55.0,
+      "production_t": 72.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 5.0,
+      "production_t": 16.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 6.0,
+      "production_t": 5.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 6.0,
+      "production_t": 5.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 2.0,
+      "production_t": 2.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 4.0,
+      "production_t": 4.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 5.0,
+      "production_t": 4.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 5.0,
+      "production_t": 3.0
+     }
+    ]
+   }
+  },
+  "polog": {
+   "name": "Polog",
+   "name_mk": "Полог",
+   "municipalities": [
+    "Tetovo",
+    "Gostivar",
+    "Teartse",
+    "Bogovinje"
+   ],
+   "crops": {
+    "wheat": [
+     {
+      "year": "2014",
+      "area_ha": 2747.0,
+      "production_t": 8978.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 2755.0,
+      "production_t": 9758.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2708.0,
+      "production_t": 10218.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 2732.0,
+      "production_t": 9005.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 2711.0,
+      "production_t": 10243.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 2679.0,
+      "production_t": 10029.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 2649.0,
+      "production_t": 9503.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 2654.0,
+      "production_t": 9796.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 2691.0,
+      "production_t": 10180.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 2662.0,
+      "production_t": 9470.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 2510.0,
+      "production_t": 8377.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 2348.0,
+      "production_t": 8466.0
+     }
+    ],
+    "barley": [
+     {
+      "year": "2014",
+      "area_ha": 183.0,
+      "production_t": 297.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 229.0,
+      "production_t": 415.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 205.0,
+      "production_t": 361.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 212.0,
+      "production_t": 277.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 215.0,
+      "production_t": 395.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 242.0,
+      "production_t": 425.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 270.0,
+      "production_t": 439.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 272.0,
+      "production_t": 406.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 258.0,
+      "production_t": 376.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 261.0,
+      "production_t": 307.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 313.0,
+      "production_t": 356.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 280.0,
+      "production_t": 380.0
+     }
+    ],
+    "maize": [
+     {
+      "year": "2014",
+      "area_ha": 4121.0,
+      "production_t": 20661.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 4079.0,
+      "production_t": 20760.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 4083.0,
+      "production_t": 22182.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 3970.0,
+      "production_t": 20822.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 4016.0,
+      "production_t": 20945.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 3991.0,
+      "production_t": 20534.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 4004.0,
+      "production_t": 20520.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 4008.0,
+      "production_t": 18145.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 4020.0,
+      "production_t": 19925.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 4008.0,
+      "production_t": 19114.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 3930.0,
+      "production_t": 17860.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 3721.0,
+      "production_t": 14922.0
+     }
+    ],
+    "sunflower": [],
+    "tobacco": [],
+    "bean": [
+     {
+      "year": "2014",
+      "area_ha": 8.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 8.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 8.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 8.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 8.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 8.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 8.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 8.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 93.0,
+      "production_t": 52.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 53.0,
+      "production_t": 27.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 8.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 21.0,
+      "production_t": 8.0
+     }
+    ],
+    "tomato": [
+     {
+      "year": "2014",
+      "area_ha": 453.0,
+      "production_t": 7120.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 450.0,
+      "production_t": 7441.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 451.0,
+      "production_t": 7229.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 454.0,
+      "production_t": 7089.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 448.0,
+      "production_t": 6403.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 451.0,
+      "production_t": 6369.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 461.0,
+      "production_t": 6481.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 457.0,
+      "production_t": 6164.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 453.0,
+      "production_t": 5678.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 437.0,
+      "production_t": 5696.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 446.0,
+      "production_t": 5329.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 354.0,
+      "production_t": 2654.0
+     }
+    ],
+    "pepper": [
+     {
+      "year": "2014",
+      "area_ha": 526.0,
+      "production_t": 8115.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 542.0,
+      "production_t": 8446.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 531.0,
+      "production_t": 8633.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 539.0,
+      "production_t": 8425.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 525.0,
+      "production_t": 6941.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 526.0,
+      "production_t": 7068.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 517.0,
+      "production_t": 6348.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 525.0,
+      "production_t": 6381.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 514.0,
+      "production_t": 6065.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 500.0,
+      "production_t": 6089.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 494.0,
+      "production_t": 5260.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 417.0,
+      "production_t": 2811.0
+     }
+    ],
+    "alfalfa": [
+     {
+      "year": "2014",
+      "area_ha": 1875.0,
+      "production_t": 7739.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 1856.0,
+      "production_t": 7320.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 1836.0,
+      "production_t": 8109.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 1794.0,
+      "production_t": 7138.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1808.0,
+      "production_t": 8282.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 1811.0,
+      "production_t": 8174.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 1756.0,
+      "production_t": 7552.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1741.0,
+      "production_t": 6638.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 1735.0,
+      "production_t": 7419.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 1741.0,
+      "production_t": 6989.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 1681.0,
+      "production_t": 5631.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 1995.0,
+      "production_t": 7635.0
+     }
+    ],
+    "vetch_oat": [
+     {
+      "year": "2014",
+      "area_ha": 136.0,
+      "production_t": 720.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 125.0,
+      "production_t": 645.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 136.0,
+      "production_t": 687.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 137.0,
+      "production_t": 673.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 142.0,
+      "production_t": 803.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 134.0,
+      "production_t": 701.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 124.0,
+      "production_t": 651.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 118.0,
+      "production_t": 489.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 120.0,
+      "production_t": 616.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 120.0,
+      "production_t": 470.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 129.0,
+      "production_t": 485.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 124.0,
+      "production_t": 357.0
+     }
+    ]
+   }
+  },
+  "tikvesh": {
+   "name": "Tikveš",
+   "name_mk": "Тиквеш",
+   "municipalities": [
+    "Kavadartsi",
+    "Negotino",
+    "Rosoman"
+   ],
+   "crops": {
+    "wheat": [
+     {
+      "year": "2014",
+      "area_ha": 1380.0,
+      "production_t": 4424.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 1371.0,
+      "production_t": 3541.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 1441.0,
+      "production_t": 5005.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 1289.0,
+      "production_t": 2426.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1589.0,
+      "production_t": 5025.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 1332.0,
+      "production_t": 4181.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 1472.0,
+      "production_t": 4085.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1133.0,
+      "production_t": 2745.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 877.0,
+      "production_t": 2387.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 913.0,
+      "production_t": 1909.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 885.0,
+      "production_t": 1953.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 877.0,
+      "production_t": 2504.0
+     }
+    ],
+    "barley": [
+     {
+      "year": "2014",
+      "area_ha": 1804.0,
+      "production_t": 5725.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 1712.0,
+      "production_t": 4245.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 1517.0,
+      "production_t": 4664.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 1341.0,
+      "production_t": 2418.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1757.0,
+      "production_t": 4446.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 1878.0,
+      "production_t": 5178.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 1641.0,
+      "production_t": 5031.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1872.0,
+      "production_t": 4747.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 1571.0,
+      "production_t": 4189.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 1526.0,
+      "production_t": 4098.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 2255.0,
+      "production_t": 4689.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 1765.0,
+      "production_t": 4424.0
+     }
+    ],
+    "maize": [
+     {
+      "year": "2014",
+      "area_ha": 456.0,
+      "production_t": 1922.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 382.0,
+      "production_t": 1563.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 398.0,
+      "production_t": 1966.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 401.0,
+      "production_t": 1583.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 392.0,
+      "production_t": 1654.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 397.0,
+      "production_t": 1894.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 373.0,
+      "production_t": 1808.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 357.0,
+      "production_t": 1601.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 422.0,
+      "production_t": 1688.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 492.0,
+      "production_t": 1772.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 537.0,
+      "production_t": 1294.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 545.0,
+      "production_t": 1224.0
+     }
+    ],
+    "sunflower": [
+     {
+      "year": "2017",
+      "area_ha": 42.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 44.0,
+      "production_t": 1.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 38.0,
+      "production_t": 2.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 39.0,
+      "production_t": 3.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 40.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 43.0,
+      "production_t": 13.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 6.0,
+      "production_t": 2.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 14.0,
+      "production_t": 4.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 15.0,
+      "production_t": 8.0
+     }
+    ],
+    "tobacco": [
+     {
+      "year": "2014",
+      "area_ha": 254.0,
+      "production_t": 403.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 263.0,
+      "production_t": 356.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 240.0,
+      "production_t": 398.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 151.0,
+      "production_t": 293.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 220.0,
+      "production_t": 410.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 209.0,
+      "production_t": 380.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 216.0,
+      "production_t": 408.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 213.0,
+      "production_t": 379.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 185.0,
+      "production_t": 339.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 186.0,
+      "production_t": 261.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 215.0,
+      "production_t": 308.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 207.0,
+      "production_t": 225.0
+     }
+    ],
+    "bean": [
+     {
+      "year": "2014",
+      "area_ha": 108.0,
+      "production_t": 145.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 116.0,
+      "production_t": 113.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 106.0,
+      "production_t": 262.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 114.0,
+      "production_t": 187.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 88.0,
+      "production_t": 121.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 90.0,
+      "production_t": 190.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 110.0,
+      "production_t": 175.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 88.0,
+      "production_t": 85.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 112.0,
+      "production_t": 168.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 114.0,
+      "production_t": 188.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 123.0,
+      "production_t": 157.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 119.0,
+      "production_t": 179.0
+     }
+    ],
+    "tomato": [
+     {
+      "year": "2014",
+      "area_ha": 532.0,
+      "production_t": 13496.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 530.0,
+      "production_t": 17016.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 495.0,
+      "production_t": 11767.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 489.0,
+      "production_t": 16057.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 508.0,
+      "production_t": 14382.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 481.0,
+      "production_t": 12199.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 483.0,
+      "production_t": 12156.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 522.0,
+      "production_t": 12458.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 514.0,
+      "production_t": 13380.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 584.0,
+      "production_t": 10433.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 554.0,
+      "production_t": 6413.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 551.0,
+      "production_t": 7137.0
+     }
+    ],
+    "pepper": [
+     {
+      "year": "2014",
+      "area_ha": 506.0,
+      "production_t": 6308.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 493.0,
+      "production_t": 12978.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 434.0,
+      "production_t": 7037.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 424.0,
+      "production_t": 5829.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 449.0,
+      "production_t": 6355.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 518.0,
+      "production_t": 11305.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 462.0,
+      "production_t": 10252.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 521.0,
+      "production_t": 11276.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 520.0,
+      "production_t": 7713.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 524.0,
+      "production_t": 6148.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 527.0,
+      "production_t": 6058.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 523.0,
+      "production_t": 6630.0
+     }
+    ],
+    "alfalfa": [
+     {
+      "year": "2014",
+      "area_ha": 564.0,
+      "production_t": 5875.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 478.0,
+      "production_t": 4832.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 316.0,
+      "production_t": 3083.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 407.0,
+      "production_t": 4297.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 475.0,
+      "production_t": 4885.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 479.0,
+      "production_t": 5213.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 459.0,
+      "production_t": 5208.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 441.0,
+      "production_t": 2914.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 392.0,
+      "production_t": 2579.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 362.0,
+      "production_t": 1094.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 284.0,
+      "production_t": 873.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 303.0,
+      "production_t": 1028.0
+     }
+    ],
+    "vetch_oat": [
+     {
+      "year": "2014",
+      "area_ha": 67.0,
+      "production_t": 201.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 70.0,
+      "production_t": 304.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 13.0,
+      "production_t": 65.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 60.0,
+      "production_t": 171.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 76.0,
+      "production_t": 228.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 69.0,
+      "production_t": 300.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 72.0,
+      "production_t": 227.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 83.0,
+      "production_t": 265.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 89.0,
+      "production_t": 267.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 86.0,
+      "production_t": 341.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 53.0,
+      "production_t": 155.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 46.0,
+      "production_t": 129.0
+     }
+    ]
+   }
+  },
+  "kochani": {
+   "name": "Kočani",
+   "name_mk": "Кочанско Поле",
+   "municipalities": [
+    "Kochani",
+    "Cheshinovo-Obleshevo",
+    "Zrnovtsi"
+   ],
+   "crops": {
+    "wheat": [
+     {
+      "year": "2014",
+      "area_ha": 1596.0,
+      "production_t": 7623.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 1756.0,
+      "production_t": 6729.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 1738.0,
+      "production_t": 8455.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 1686.0,
+      "production_t": 4367.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1474.0,
+      "production_t": 5204.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 1476.0,
+      "production_t": 6057.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 1474.0,
+      "production_t": 6025.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1451.0,
+      "production_t": 5890.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 1455.0,
+      "production_t": 5925.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 1404.0,
+      "production_t": 5935.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 1458.0,
+      "production_t": 5953.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 1394.0,
+      "production_t": 5975.0
+     }
+    ],
+    "barley": [
+     {
+      "year": "2014",
+      "area_ha": 1716.0,
+      "production_t": 7453.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 1778.0,
+      "production_t": 5596.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 1790.0,
+      "production_t": 7268.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 1989.0,
+      "production_t": 3795.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1733.0,
+      "production_t": 6156.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 1708.0,
+      "production_t": 6491.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 1684.0,
+      "production_t": 6447.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1703.0,
+      "production_t": 6227.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 1704.0,
+      "production_t": 6550.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 1622.0,
+      "production_t": 6335.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 1687.0,
+      "production_t": 6497.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 1545.0,
+      "production_t": 5780.0
+     }
+    ],
+    "maize": [
+     {
+      "year": "2014",
+      "area_ha": 926.0,
+      "production_t": 7563.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 996.0,
+      "production_t": 8020.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 1061.0,
+      "production_t": 8394.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 1547.0,
+      "production_t": 12009.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1231.0,
+      "production_t": 11172.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 1252.0,
+      "production_t": 11197.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 1236.0,
+      "production_t": 11137.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1215.0,
+      "production_t": 11056.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 1229.0,
+      "production_t": 11064.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 1022.0,
+      "production_t": 8600.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 1223.0,
+      "production_t": 11069.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 1029.0,
+      "production_t": 8557.0
+     }
+    ],
+    "sunflower": [],
+    "tobacco": [
+     {
+      "year": "2014",
+      "area_ha": 28.0,
+      "production_t": 33.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 41.0,
+      "production_t": 59.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 41.0,
+      "production_t": 57.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 46.0,
+      "production_t": 72.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 6.0,
+      "production_t": 9.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 6.0,
+      "production_t": 9.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 6.0,
+      "production_t": 9.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 6.0,
+      "production_t": 9.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 6.0,
+      "production_t": 9.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 5.0,
+      "production_t": 20.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 6.0,
+      "production_t": 9.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 6.0,
+      "production_t": 9.0
+     }
+    ],
+    "bean": [
+     {
+      "year": "2014",
+      "area_ha": 377.0,
+      "production_t": 363.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 393.0,
+      "production_t": 391.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 393.0,
+      "production_t": 413.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 444.0,
+      "production_t": 488.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 387.0,
+      "production_t": 385.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 387.0,
+      "production_t": 365.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 387.0,
+      "production_t": 359.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 394.0,
+      "production_t": 365.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 394.0,
+      "production_t": 365.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 357.0,
+      "production_t": 709.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 394.0,
+      "production_t": 365.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 348.0,
+      "production_t": 387.0
+     }
+    ],
+    "tomato": [
+     {
+      "year": "2014",
+      "area_ha": 132.0,
+      "production_t": 2432.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 136.0,
+      "production_t": 3464.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 132.0,
+      "production_t": 2690.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 158.0,
+      "production_t": 3469.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 130.0,
+      "production_t": 2600.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 128.0,
+      "production_t": 2378.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 125.0,
+      "production_t": 1995.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 128.0,
+      "production_t": 2343.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 128.0,
+      "production_t": 2271.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 134.0,
+      "production_t": 2042.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 123.0,
+      "production_t": 1995.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 126.0,
+      "production_t": 1846.0
+     }
+    ],
+    "pepper": [
+     {
+      "year": "2014",
+      "area_ha": 210.0,
+      "production_t": 2351.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 165.0,
+      "production_t": 3135.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 165.0,
+      "production_t": 2933.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 216.0,
+      "production_t": 4237.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 188.0,
+      "production_t": 3652.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 188.0,
+      "production_t": 3714.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 187.0,
+      "production_t": 3606.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 184.0,
+      "production_t": 3602.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 182.0,
+      "production_t": 3618.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 191.0,
+      "production_t": 3256.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 181.0,
+      "production_t": 3568.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 171.0,
+      "production_t": 2807.0
+     }
+    ],
+    "alfalfa": [
+     {
+      "year": "2014",
+      "area_ha": 771.0,
+      "production_t": 5172.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 667.0,
+      "production_t": 4688.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 648.0,
+      "production_t": 5124.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 680.0,
+      "production_t": 5405.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 608.0,
+      "production_t": 4937.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 606.0,
+      "production_t": 4961.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 595.0,
+      "production_t": 4933.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 594.0,
+      "production_t": 4937.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 591.0,
+      "production_t": 5107.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 447.0,
+      "production_t": 3913.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 582.0,
+      "production_t": 4874.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 550.0,
+      "production_t": 4614.0
+     }
+    ],
+    "vetch_oat": [
+     {
+      "year": "2014",
+      "area_ha": 297.0,
+      "production_t": 1077.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 145.0,
+      "production_t": 793.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 140.0,
+      "production_t": 724.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 382.0,
+      "production_t": 1481.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 265.0,
+      "production_t": 982.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 265.0,
+      "production_t": 937.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 265.0,
+      "production_t": 937.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 265.0,
+      "production_t": 942.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 265.0,
+      "production_t": 937.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 157.0,
+      "production_t": 580.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 265.0,
+      "production_t": 937.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 245.0,
+      "production_t": 1002.0
+     }
+    ]
+   }
+  },
+  "skopje": {
+   "name": "Skopje area",
+   "name_mk": "Скопско",
+   "municipalities": [
+    "Petrovets",
+    "Ilinden",
+    "Studenichani",
+    "Arachinovo"
+   ],
+   "crops": {
+    "wheat": [
+     {
+      "year": "2014",
+      "area_ha": 2457.0,
+      "production_t": 9399.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 2412.0,
+      "production_t": 8066.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 2972.0,
+      "production_t": 11471.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 2793.0,
+      "production_t": 6482.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 2737.0,
+      "production_t": 9019.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 2515.0,
+      "production_t": 9543.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 2561.0,
+      "production_t": 9235.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 2724.0,
+      "production_t": 10020.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 2890.0,
+      "production_t": 9771.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 2939.0,
+      "production_t": 10137.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 2808.0,
+      "production_t": 9563.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 2592.0,
+      "production_t": 10687.0
+     }
+    ],
+    "barley": [
+     {
+      "year": "2014",
+      "area_ha": 873.0,
+      "production_t": 2567.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 1413.0,
+      "production_t": 4069.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 1795.0,
+      "production_t": 5797.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 1887.0,
+      "production_t": 4420.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1963.0,
+      "production_t": 6276.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 2063.0,
+      "production_t": 6520.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 1807.0,
+      "production_t": 5710.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 2040.0,
+      "production_t": 7046.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 2039.0,
+      "production_t": 6864.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 1843.0,
+      "production_t": 6278.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 1814.0,
+      "production_t": 5847.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 1882.0,
+      "production_t": 7234.0
+     }
+    ],
+    "maize": [
+     {
+      "year": "2014",
+      "area_ha": 943.0,
+      "production_t": 4759.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 619.0,
+      "production_t": 1826.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 873.0,
+      "production_t": 3702.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 936.0,
+      "production_t": 2375.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 1099.0,
+      "production_t": 5010.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 1143.0,
+      "production_t": 4839.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 995.0,
+      "production_t": 4569.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 1080.0,
+      "production_t": 4244.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 926.0,
+      "production_t": 4196.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 938.0,
+      "production_t": 3753.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 1030.0,
+      "production_t": 4343.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 888.0,
+      "production_t": 4536.0
+     }
+    ],
+    "sunflower": [
+     {
+      "year": "2014",
+      "area_ha": 96.0,
+      "production_t": 192.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 94.0,
+      "production_t": 136.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 128.0,
+      "production_t": 233.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 106.0,
+      "production_t": 152.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 126.0,
+      "production_t": 224.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 158.0,
+      "production_t": 275.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 127.0,
+      "production_t": 227.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 137.0,
+      "production_t": 206.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 190.0,
+      "production_t": 254.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 287.0,
+      "production_t": 286.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 191.0,
+      "production_t": 249.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 107.0,
+      "production_t": 184.0
+     }
+    ],
+    "tobacco": [
+     {
+      "year": "2014",
+      "area_ha": 358.0,
+      "production_t": 495.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 351.0,
+      "production_t": 419.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 364.0,
+      "production_t": 537.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 358.0,
+      "production_t": 383.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 360.0,
+      "production_t": 439.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 360.0,
+      "production_t": 479.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 361.0,
+      "production_t": 486.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 361.0,
+      "production_t": 452.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 361.0,
+      "production_t": 479.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 361.0,
+      "production_t": 417.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 361.0,
+      "production_t": 447.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 361.0,
+      "production_t": 444.0
+     }
+    ],
+    "bean": [
+     {
+      "year": "2014",
+      "area_ha": 371.0,
+      "production_t": 665.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 342.0,
+      "production_t": 331.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 407.0,
+      "production_t": 509.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 388.0,
+      "production_t": 315.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 361.0,
+      "production_t": 429.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 330.0,
+      "production_t": 402.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 325.0,
+      "production_t": 363.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 300.0,
+      "production_t": 313.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 300.0,
+      "production_t": 363.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 225.0,
+      "production_t": 217.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 205.0,
+      "production_t": 209.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 151.0,
+      "production_t": 160.0
+     }
+    ],
+    "tomato": [
+     {
+      "year": "2014",
+      "area_ha": 284.0,
+      "production_t": 4110.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 246.0,
+      "production_t": 3578.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 285.0,
+      "production_t": 6141.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 301.0,
+      "production_t": 4077.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 324.0,
+      "production_t": 6617.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 329.0,
+      "production_t": 6901.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 336.0,
+      "production_t": 7288.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 340.0,
+      "production_t": 6516.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 338.0,
+      "production_t": 6390.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 348.0,
+      "production_t": 6078.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 337.0,
+      "production_t": 6131.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 339.0,
+      "production_t": 6321.0
+     }
+    ],
+    "pepper": [
+     {
+      "year": "2014",
+      "area_ha": 249.0,
+      "production_t": 2576.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 251.0,
+      "production_t": 2932.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 290.0,
+      "production_t": 4156.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 305.0,
+      "production_t": 3398.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 318.0,
+      "production_t": 6557.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 321.0,
+      "production_t": 6663.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 327.0,
+      "production_t": 7113.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 332.0,
+      "production_t": 6097.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 335.0,
+      "production_t": 6179.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 333.0,
+      "production_t": 5445.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 328.0,
+      "production_t": 5642.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 332.0,
+      "production_t": 5832.0
+     }
+    ],
+    "alfalfa": [
+     {
+      "year": "2014",
+      "area_ha": 370.0,
+      "production_t": 1258.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 382.0,
+      "production_t": 1237.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 416.0,
+      "production_t": 1837.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 378.0,
+      "production_t": 1291.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 334.0,
+      "production_t": 2222.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 406.0,
+      "production_t": 1826.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 335.0,
+      "production_t": 2351.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 328.0,
+      "production_t": 1612.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 328.0,
+      "production_t": 1888.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 328.0,
+      "production_t": 1389.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 329.0,
+      "production_t": 1816.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 349.0,
+      "production_t": 2021.0
+     }
+    ],
+    "vetch_oat": [
+     {
+      "year": "2014",
+      "area_ha": 61.0,
+      "production_t": 271.0
+     },
+     {
+      "year": "2015",
+      "area_ha": 84.0,
+      "production_t": 314.0
+     },
+     {
+      "year": "2016",
+      "area_ha": 108.0,
+      "production_t": 583.0
+     },
+     {
+      "year": "2017",
+      "area_ha": 113.0,
+      "production_t": 364.0
+     },
+     {
+      "year": "2018",
+      "area_ha": 113.0,
+      "production_t": 731.0
+     },
+     {
+      "year": "2019",
+      "area_ha": 104.0,
+      "production_t": 215.0
+     },
+     {
+      "year": "2020",
+      "area_ha": 106.0,
+      "production_t": 248.0
+     },
+     {
+      "year": "2021",
+      "area_ha": 111.0,
+      "production_t": 254.0
+     },
+     {
+      "year": "2022",
+      "area_ha": 109.0,
+      "production_t": 240.0
+     },
+     {
+      "year": "2023",
+      "area_ha": 113.0,
+      "production_t": 242.0
+     },
+     {
+      "year": "2024",
+      "area_ha": 111.0,
+      "production_t": 245.0
+     },
+     {
+      "year": "2025",
+      "area_ha": 111.0,
+      "production_t": 254.0
+     }
+    ]
+   }
+  }
+ }
+}

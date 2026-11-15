@@ -1,0 +1,773 @@
+{
+ "location": {
+  "id": "ovche-pole",
+  "name": "Ovče Pole",
+  "name_mk": "Овче Поле",
+  "lat": 41.865,
+  "lon": 21.94
+ },
+ "periods": {
+  "baseline": "1991-2020",
+  "recent": "2016-2025"
+ },
+ "thresholds": {
+  "heat_day_tmax_c": 35.0,
+  "heavy_rain_mm": 20.0,
+  "frost_tmin_c": 0.0
+ },
+ "baseline": {
+  "heat_days": 7.4,
+  "heavy_rain_days": 2.3,
+  "rain_mm": 598.7,
+  "et0_mm": 1057.1,
+  "t_mean": 11.2,
+  "last_spring_frost": "04-16",
+  "first_autumn_frost": "10-26",
+  "frost_free_days": 195.0,
+  "gdd_base0": 4243.7,
+  "gdd_base10": 1777.2
+ },
+ "recent": {
+  "heat_days": 13.5,
+  "heavy_rain_days": 3.4,
+  "rain_mm": 650.4,
+  "et0_mm": 1098.9,
+  "t_mean": 12.3,
+  "last_spring_frost": "04-14",
+  "first_autumn_frost": "11-18",
+  "frost_free_days": 217.0,
+  "gdd_base0": 4586.1,
+  "gdd_base10": 1957.3
+ },
+ "trend": {
+  "t_mean_change_c": 1.1,
+  "rain_change_pct": 8.6,
+  "heat_days_change": 6.1,
+  "frost_free_days_change": 22.0
+ },
+ "monthly": {
+  "baseline": [
+   {
+    "month": 1,
+    "rain_mm": 41.1,
+    "et0_mm": 20.5,
+    "balance_mm": 20.6,
+    "t_max": 3.7,
+    "t_min": -4.4,
+    "heavy_rain_days": 0.13,
+    "frost_days": 25.5
+   },
+   {
+    "month": 2,
+    "rain_mm": 38.6,
+    "et0_mm": 31.0,
+    "balance_mm": 7.6,
+    "t_max": 6.1,
+    "t_min": -3.3,
+    "heavy_rain_days": 0.17,
+    "frost_days": 21.9
+   },
+   {
+    "month": 3,
+    "rain_mm": 46.8,
+    "et0_mm": 60.5,
+    "balance_mm": -13.7,
+    "t_max": 10.6,
+    "t_min": -0.4,
+    "heavy_rain_days": 0.2,
+    "frost_days": 16.7
+   },
+   {
+    "month": 4,
+    "rain_mm": 55.3,
+    "et0_mm": 90.1,
+    "balance_mm": -34.8,
+    "t_max": 15.4,
+    "t_min": 3.9,
+    "heavy_rain_days": 0.13,
+    "frost_days": 4.1
+   },
+   {
+    "month": 5,
+    "rain_mm": 62.2,
+    "et0_mm": 127.9,
+    "balance_mm": -65.7,
+    "t_max": 20.7,
+    "t_min": 9.1,
+    "heavy_rain_days": 0.1,
+    "frost_days": 0.1
+   },
+   {
+    "month": 6,
+    "rain_mm": 58.8,
+    "et0_mm": 157.3,
+    "balance_mm": -98.5,
+    "t_max": 26.2,
+    "t_min": 13.3,
+    "heavy_rain_days": 0.13,
+    "frost_days": 0.0
+   },
+   {
+    "month": 7,
+    "rain_mm": 43.9,
+    "et0_mm": 180.5,
+    "balance_mm": -136.6,
+    "t_max": 30.0,
+    "t_min": 15.6,
+    "heavy_rain_days": 0.13,
+    "frost_days": 0.0
+   },
+   {
+    "month": 8,
+    "rain_mm": 42.0,
+    "et0_mm": 162.9,
+    "balance_mm": -120.9,
+    "t_max": 30.3,
+    "t_min": 15.9,
+    "heavy_rain_days": 0.2,
+    "frost_days": 0.0
+   },
+   {
+    "month": 9,
+    "rain_mm": 47.2,
+    "et0_mm": 107.8,
+    "balance_mm": -60.5,
+    "t_max": 24.5,
+    "t_min": 11.4,
+    "heavy_rain_days": 0.17,
+    "frost_days": 0.0
+   },
+   {
+    "month": 10,
+    "rain_mm": 57.1,
+    "et0_mm": 66.5,
+    "balance_mm": -9.4,
+    "t_max": 18.2,
+    "t_min": 6.4,
+    "heavy_rain_days": 0.53,
+    "frost_days": 2.6
+   },
+   {
+    "month": 11,
+    "rain_mm": 53.6,
+    "et0_mm": 33.0,
+    "balance_mm": 20.6,
+    "t_max": 11.1,
+    "t_min": 1.7,
+    "heavy_rain_days": 0.2,
+    "frost_days": 10.1
+   },
+   {
+    "month": 12,
+    "rain_mm": 52.0,
+    "et0_mm": 19.2,
+    "balance_mm": 32.8,
+    "t_max": 4.9,
+    "t_min": -2.8,
+    "heavy_rain_days": 0.17,
+    "frost_days": 22.2
+   }
+  ],
+  "recent": [
+   {
+    "month": 1,
+    "rain_mm": 75.2,
+    "et0_mm": 20.9,
+    "balance_mm": 54.3,
+    "t_max": 4.1,
+    "t_min": -4.1,
+    "heavy_rain_days": 0.7,
+    "frost_days": 24.3
+   },
+   {
+    "month": 2,
+    "rain_mm": 35.9,
+    "et0_mm": 35.0,
+    "balance_mm": 1.0,
+    "t_max": 8.3,
+    "t_min": -1.4,
+    "heavy_rain_days": 0.1,
+    "frost_days": 18.5
+   },
+   {
+    "month": 3,
+    "rain_mm": 58.9,
+    "et0_mm": 63.9,
+    "balance_mm": -5.0,
+    "t_max": 11.9,
+    "t_min": 0.7,
+    "heavy_rain_days": 0.4,
+    "frost_days": 12.8
+   },
+   {
+    "month": 4,
+    "rain_mm": 54.6,
+    "et0_mm": 95.1,
+    "balance_mm": -40.5,
+    "t_max": 16.5,
+    "t_min": 4.5,
+    "heavy_rain_days": 0.2,
+    "frost_days": 3.7
+   },
+   {
+    "month": 5,
+    "rain_mm": 68.4,
+    "et0_mm": 128.6,
+    "balance_mm": -60.2,
+    "t_max": 20.8,
+    "t_min": 9.1,
+    "heavy_rain_days": 0.3,
+    "frost_days": 0.1
+   },
+   {
+    "month": 6,
+    "rain_mm": 65.1,
+    "et0_mm": 160.7,
+    "balance_mm": -95.6,
+    "t_max": 27.2,
+    "t_min": 14.6,
+    "heavy_rain_days": 0.2,
+    "frost_days": 0.0
+   },
+   {
+    "month": 7,
+    "rain_mm": 32.3,
+    "et0_mm": 188.6,
+    "balance_mm": -156.3,
+    "t_max": 31.6,
+    "t_min": 17.0,
+    "heavy_rain_days": 0.0,
+    "frost_days": 0.0
+   },
+   {
+    "month": 8,
+    "rain_mm": 43.4,
+    "et0_mm": 167.9,
+    "balance_mm": -124.5,
+    "t_max": 31.5,
+    "t_min": 16.9,
+    "heavy_rain_days": 0.2,
+    "frost_days": 0.0
+   },
+   {
+    "month": 9,
+    "rain_mm": 40.5,
+    "et0_mm": 112.3,
+    "balance_mm": -71.8,
+    "t_max": 25.9,
+    "t_min": 12.6,
+    "heavy_rain_days": 0.1,
+    "frost_days": 0.0
+   },
+   {
+    "month": 10,
+    "rain_mm": 49.6,
+    "et0_mm": 69.8,
+    "balance_mm": -20.2,
+    "t_max": 19.3,
+    "t_min": 7.0,
+    "heavy_rain_days": 0.3,
+    "frost_days": 0.5
+   },
+   {
+    "month": 11,
+    "rain_mm": 70.7,
+    "et0_mm": 35.1,
+    "balance_mm": 35.6,
+    "t_max": 12.4,
+    "t_min": 2.9,
+    "heavy_rain_days": 0.5,
+    "frost_days": 6.7
+   },
+   {
+    "month": 12,
+    "rain_mm": 55.5,
+    "et0_mm": 21.0,
+    "balance_mm": 34.5,
+    "t_max": 6.4,
+    "t_min": -1.5,
+    "heavy_rain_days": 0.4,
+    "frost_days": 18.7
+   }
+  ]
+ },
+ "what_if_warming": {
+  "0": {
+   "heat_days": 13.5
+  },
+  "1": {
+   "heat_days": 20.3
+  },
+  "2": {
+   "heat_days": 26.5
+  },
+  "3": {
+   "heat_days": 33.4
+  }
+ },
+ "yearly": [
+  {
+   "year": 1991,
+   "heat_days": 0,
+   "heavy_rain_days": 3,
+   "rain_mm": 551,
+   "t_mean": 9.79,
+   "last_spring_frost_doy": 112,
+   "first_autumn_frost_doy": 297
+  },
+  {
+   "year": 1992,
+   "heat_days": 2,
+   "heavy_rain_days": 2,
+   "rain_mm": 500,
+   "t_mean": 10.79,
+   "last_spring_frost_doy": 113,
+   "first_autumn_frost_doy": 314
+  },
+  {
+   "year": 1993,
+   "heat_days": 14,
+   "heavy_rain_days": 1,
+   "rain_mm": 365,
+   "t_mean": 10.94,
+   "last_spring_frost_doy": 108,
+   "first_autumn_frost_doy": 303
+  },
+  {
+   "year": 1994,
+   "heat_days": 4,
+   "heavy_rain_days": 1,
+   "rain_mm": 465,
+   "t_mean": 12.1,
+   "last_spring_frost_doy": 89,
+   "first_autumn_frost_doy": 318
+  },
+  {
+   "year": 1995,
+   "heat_days": 0,
+   "heavy_rain_days": 1,
+   "rain_mm": 660,
+   "t_mean": 10.09,
+   "last_spring_frost_doy": 108,
+   "first_autumn_frost_doy": 273
+  },
+  {
+   "year": 1996,
+   "heat_days": 3,
+   "heavy_rain_days": 2,
+   "rain_mm": 552,
+   "t_mean": 9.97,
+   "last_spring_frost_doy": 109,
+   "first_autumn_frost_doy": 298
+  },
+  {
+   "year": 1997,
+   "heat_days": 4,
+   "heavy_rain_days": 1,
+   "rain_mm": 464,
+   "t_mean": 10.21,
+   "last_spring_frost_doy": 115,
+   "first_autumn_frost_doy": 288
+  },
+  {
+   "year": 1998,
+   "heat_days": 11,
+   "heavy_rain_days": 4,
+   "rain_mm": 636,
+   "t_mean": 10.8,
+   "last_spring_frost_doy": 111,
+   "first_autumn_frost_doy": 312
+  },
+  {
+   "year": 1999,
+   "heat_days": 7,
+   "heavy_rain_days": 2,
+   "rain_mm": 658,
+   "t_mean": 11.17,
+   "last_spring_frost_doy": 94,
+   "first_autumn_frost_doy": 290
+  },
+  {
+   "year": 2000,
+   "heat_days": 15,
+   "heavy_rain_days": 1,
+   "rain_mm": 417,
+   "t_mean": 11.33,
+   "last_spring_frost_doy": 101,
+   "first_autumn_frost_doy": 296
+  },
+  {
+   "year": 2001,
+   "heat_days": 9,
+   "heavy_rain_days": 1,
+   "rain_mm": 538,
+   "t_mean": 11.09,
+   "last_spring_frost_doy": 106,
+   "first_autumn_frost_doy": 299
+  },
+  {
+   "year": 2002,
+   "heat_days": 3,
+   "heavy_rain_days": 2,
+   "rain_mm": 788,
+   "t_mean": 10.75,
+   "last_spring_frost_doy": 98,
+   "first_autumn_frost_doy": 302
+  },
+  {
+   "year": 2003,
+   "heat_days": 8,
+   "heavy_rain_days": 0,
+   "rain_mm": 588,
+   "t_mean": 10.83,
+   "last_spring_frost_doy": 110,
+   "first_autumn_frost_doy": 299
+  },
+  {
+   "year": 2004,
+   "heat_days": 2,
+   "heavy_rain_days": 4,
+   "rain_mm": 712,
+   "t_mean": 10.66,
+   "last_spring_frost_doy": 146,
+   "first_autumn_frost_doy": 321
+  },
+  {
+   "year": 2005,
+   "heat_days": 7,
+   "heavy_rain_days": 2,
+   "rain_mm": 671,
+   "t_mean": 10.23,
+   "last_spring_frost_doy": 113,
+   "first_autumn_frost_doy": 290
+  },
+  {
+   "year": 2006,
+   "heat_days": 4,
+   "heavy_rain_days": 3,
+   "rain_mm": 619,
+   "t_mean": 10.67,
+   "last_spring_frost_doy": 104,
+   "first_autumn_frost_doy": 291
+  },
+  {
+   "year": 2007,
+   "heat_days": 22,
+   "heavy_rain_days": 3,
+   "rain_mm": 635,
+   "t_mean": 12.09,
+   "last_spring_frost_doy": 96,
+   "first_autumn_frost_doy": 287
+  },
+  {
+   "year": 2008,
+   "heat_days": 6,
+   "heavy_rain_days": 3,
+   "rain_mm": 548,
+   "t_mean": 11.77,
+   "last_spring_frost_doy": 98,
+   "first_autumn_frost_doy": 324
+  },
+  {
+   "year": 2009,
+   "heat_days": 3,
+   "heavy_rain_days": 3,
+   "rain_mm": 760,
+   "t_mean": 11.21,
+   "last_spring_frost_doy": 87,
+   "first_autumn_frost_doy": 287
+  },
+  {
+   "year": 2010,
+   "heat_days": 8,
+   "heavy_rain_days": 3,
+   "rain_mm": 792,
+   "t_mean": 11.33,
+   "last_spring_frost_doy": 77,
+   "first_autumn_frost_doy": 282
+  },
+  {
+   "year": 2011,
+   "heat_days": 7,
+   "heavy_rain_days": 1,
+   "rain_mm": 412,
+   "t_mean": 11.19,
+   "last_spring_frost_doy": 126,
+   "first_autumn_frost_doy": 289
+  },
+  {
+   "year": 2012,
+   "heat_days": 22,
+   "heavy_rain_days": 1,
+   "rain_mm": 559,
+   "t_mean": 11.81,
+   "last_spring_frost_doy": 102,
+   "first_autumn_frost_doy": 313
+  },
+  {
+   "year": 2013,
+   "heat_days": 8,
+   "heavy_rain_days": 3,
+   "rain_mm": 551,
+   "t_mean": 12.0,
+   "last_spring_frost_doy": 82,
+   "first_autumn_frost_doy": 276
+  },
+  {
+   "year": 2014,
+   "heat_days": 0,
+   "heavy_rain_days": 5,
+   "rain_mm": 877,
+   "t_mean": 11.64,
+   "last_spring_frost_doy": 107,
+   "first_autumn_frost_doy": 297
+  },
+  {
+   "year": 2015,
+   "heat_days": 12,
+   "heavy_rain_days": 5,
+   "rain_mm": 690,
+   "t_mean": 11.71,
+   "last_spring_frost_doy": 110,
+   "first_autumn_frost_doy": 305
+  },
+  {
+   "year": 2016,
+   "heat_days": 3,
+   "heavy_rain_days": 6,
+   "rain_mm": 662,
+   "t_mean": 11.68,
+   "last_spring_frost_doy": 88,
+   "first_autumn_frost_doy": 303
+  },
+  {
+   "year": 2017,
+   "heat_days": 24,
+   "heavy_rain_days": 2,
+   "rain_mm": 558,
+   "t_mean": 11.84,
+   "last_spring_frost_doy": 114,
+   "first_autumn_frost_doy": 303
+  },
+  {
+   "year": 2018,
+   "heat_days": 0,
+   "heavy_rain_days": 0,
+   "rain_mm": 608,
+   "t_mean": 12.31,
+   "last_spring_frost_doy": 87,
+   "first_autumn_frost_doy": 320
+  },
+  {
+   "year": 2019,
+   "heat_days": 10,
+   "heavy_rain_days": 0,
+   "rain_mm": 494,
+   "t_mean": 12.76,
+   "last_spring_frost_doy": 90,
+   "first_autumn_frost_doy": 334
+  },
+  {
+   "year": 2020,
+   "heat_days": 3,
+   "heavy_rain_days": 3,
+   "rain_mm": 632,
+   "t_mean": 12.06,
+   "last_spring_frost_doy": 128,
+   "first_autumn_frost_doy": 325
+  },
+  {
+   "year": 2021,
+   "heat_days": 25,
+   "heavy_rain_days": 5,
+   "rain_mm": 823,
+   "t_mean": 11.27,
+   "last_spring_frost_doy": 106,
+   "first_autumn_frost_doy": 301
+  },
+  {
+   "year": 2022,
+   "heat_days": 6,
+   "heavy_rain_days": 2,
+   "rain_mm": 610,
+   "t_mean": 12.35,
+   "last_spring_frost_doy": 109,
+   "first_autumn_frost_doy": 328
+  },
+  {
+   "year": 2023,
+   "heat_days": 10,
+   "heavy_rain_days": 6,
+   "rain_mm": 771,
+   "t_mean": 12.78,
+   "last_spring_frost_doy": 118,
+   "first_autumn_frost_doy": 323
+  },
+  {
+   "year": 2024,
+   "heat_days": 30,
+   "heavy_rain_days": 7,
+   "rain_mm": 780,
+   "t_mean": 13.2,
+   "last_spring_frost_doy": 86,
+   "first_autumn_frost_doy": 315
+  },
+  {
+   "year": 2025,
+   "heat_days": 24,
+   "heavy_rain_days": 3,
+   "rain_mm": 566,
+   "t_mean": 12.81,
+   "last_spring_frost_doy": 101,
+   "first_autumn_frost_doy": 333
+  }
+ ],
+ "slope_deg": 3.1,
+ "terrain": {
+  "elevation_m": 294,
+  "slope_deg": 3.1,
+  "slope_pct": 5.5,
+  "steepest_deg": 3.1,
+  "pixels": 1,
+  "from_outline": false,
+  "erosion_factor": 2.52,
+  "class": "gentle",
+  "source": {
+   "dataset": "NASA NASADEM_HGT v001 (SRTM reprocessed), 30 m, LP DAAC",
+   "dates": "acquired February 2000 (SRTM)"
+  }
+ },
+ "bare_months": null,
+ "soil_moisture_anomaly": null,
+ "smap": {
+  "latest": {
+   "day": "2026-11-12",
+   "sm": 17.5
+  },
+  "normal_for_date": null,
+  "anomaly": null,
+  "years_in_normal": "2026-2025",
+  "source": {
+   "dataset": "NASA SMAP Enhanced L3 radiometer soil moisture, 9 km, daily (SPL3SMP_E v6, NSIDC)",
+   "dates": "2026-11-01 to 2026-11-12"
+  }
+ },
+ "sources": [
+  {
+   "dataset": "NASA POWER daily",
+   "url": "https://power.larc.nasa.gov/",
+   "dates": "1991-01-01 to 2026-11-11",
+   "used_for": "temperature, rain, heat days, frost dates, heavy-rain days, water balance (ET0: FAO-56 Hargreaves)"
+  }
+ ],
+ "pending": [
+  {
+   "indicator": "bare_months",
+   "dataset": "MODIS NDVI MOD13Q1 250 m (ORNL DAAC)"
+  }
+ ],
+ "current": {
+  "year": 2026,
+  "start_date": "2026-01-01",
+  "end_date": "2026-11-11",
+  "partial": true,
+  "dates": {
+   "t_max": "2026-11-11",
+   "t_min": "2026-11-11",
+   "rain_mm": "2026-11-11",
+   "humidity": "2026-11-11",
+   "solar": "2026-11-09",
+   "wind": "2026-11-11",
+   "et0": "2026-11-09"
+  },
+  "temperature_days": 315,
+  "rain_days": 315,
+  "t_mean": 14.0,
+  "t_mean_change_c": 1.4,
+  "rain_mm": 453.8,
+  "rain_change_pct": -10.7,
+  "heat_days": 20,
+  "last_spring_frost_doy": 122,
+  "first_autumn_frost_doy": 311,
+  "latest": {
+   "date": "2026-11-11",
+   "t_max": 15.1,
+   "t_min": 4.1
+  },
+  "monthly": [
+   {
+    "month": 1,
+    "rain_mm": 83.8,
+    "et0_mm": 21.3,
+    "balance_mm": 62.6
+   },
+   {
+    "month": 2,
+    "rain_mm": 94.1,
+    "et0_mm": 33.3,
+    "balance_mm": 60.8
+   },
+   {
+    "month": 3,
+    "rain_mm": 19.5,
+    "et0_mm": 63.2,
+    "balance_mm": -43.7
+   },
+   {
+    "month": 4,
+    "rain_mm": 38.3,
+    "et0_mm": 93.3,
+    "balance_mm": -55.1
+   },
+   {
+    "month": 5,
+    "rain_mm": 27.1,
+    "et0_mm": 129.7,
+    "balance_mm": -102.6
+   },
+   {
+    "month": 6,
+    "rain_mm": 42.6,
+    "et0_mm": 177.8,
+    "balance_mm": -135.1
+   },
+   {
+    "month": 7,
+    "rain_mm": 27.6,
+    "et0_mm": 188.7,
+    "balance_mm": -161.1
+   },
+   {
+    "month": 8,
+    "rain_mm": 11.5,
+    "et0_mm": 186.2,
+    "balance_mm": -174.7
+   },
+   {
+    "month": 9,
+    "rain_mm": 23.6,
+    "et0_mm": 118.6,
+    "balance_mm": -95.0
+   },
+   {
+    "month": 10,
+    "rain_mm": 35.7,
+    "et0_mm": 63.5,
+    "balance_mm": -27.8
+   },
+   {
+    "month": 11,
+    "rain_mm": 50.0,
+    "et0_mm": 8.4,
+    "balance_mm": 41.6
+   },
+   {
+    "month": 12,
+    "rain_mm": null,
+    "et0_mm": null,
+    "balance_mm": null
+   }
+  ]
+ },
+ "updated_at": "2026-11-14T12:55:10+00:00"
+}
