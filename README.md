@@ -150,11 +150,11 @@ An **ESP32** board with **four sensors** wired to it measures the field itself. 
 
 <table>
   <tr>
-    <td width="38%"><img src="docs/images/sensor-hardware.jpg" alt="The ESP32 on a breadboard, with the capacitive soil moisture probe and the soil temperature probe next to a potted plant"></td>
-    <td width="62%"><img src="docs/images/app-soil-health.png" alt="The soil health card in the app, filled live from the ESP32"></td>
+    <td width="50%"><img src="docs/images/sensor-hardware.jpg" alt="The ESP32 on a breadboard with a BMP280 pressure sensor, a DHT22, a capacitive soil moisture sensor and a DS18B20 steel soil temperature probe"></td>
+    <td width="50%"><img src="docs/images/app-soil-health.png" alt="The soil health card in the app, filled live from the ESP32"></td>
   </tr>
   <tr>
-    <td align="center"><sub>Our ESP32 with the soil moisture and soil temperature probes</sub></td>
+    <td align="center"><sub>Our field sensor: the <b>ESP32</b> (centre), <b>BMP280</b> pressure (purple, top), <b>DHT22</b> air (white, top), <b>capacitive soil moisture</b> sensor (black, right) and <b>DS18B20</b> soil temperature probe (steel tip)</sub></td>
     <td align="center"><sub>The same readings, live in the app: a verdict, the five values and what to do now</sub></td>
   </tr>
 </table>
