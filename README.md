@@ -46,20 +46,22 @@ A farmer draws a field on the map. Niva then answers three questions:
 
 The app works in **English and Macedonian**, on a phone or a PC, and can be installed as an app.
 
+### Screenshots
+
 <p align="center">
-  <img src="docs/images/app-map.png" alt="Drawing a field on the satellite map" width="100%">
+  <img src="docs/images/app-map.jpg" alt="The demo farm in Murtino on the satellite map, with its fields outlined" width="100%"><br>
+  <sub><b>Draw your field</b> on the satellite map. The map covers North Macedonia only.</sub>
 </p>
 
-<table>
-  <tr>
-    <td width="50%"><img src="docs/images/app-card-option2.png" alt="A rotation option with water, soil, dry-year and income scores"></td>
-    <td width="50%"><img src="docs/images/app-soil-health.png" alt="The soil health card from the ESP32 sensor"></td>
-  </tr>
-  <tr>
-    <td align="center"><sub>One rotation option, compared with the current crops</sub></td>
-    <td align="center"><sub>Soil health from the sensor in the field</sub></td>
-  </tr>
-</table>
+<p align="center">
+  <img src="docs/images/app-rotations.png" alt="Two rotations compared with what the farmer grows now: water, soil cover, dry-year harvest and income" width="100%"><br>
+  <sub><b>Rotations compared with what you grow now</b>, after 25 years of NASA weather on this field. A big drop in income is said plainly.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/images/app-plant-next.png" alt="What to plant next on this field, season by season" width="100%"><br>
+  <sub><b>What to plant next</b>, season by season, with sowing months.</sub>
+</p>
 
 ## How it works
 
@@ -136,16 +138,31 @@ We show these limits in the app as "information gaps":
 
 ## The field sensor
 
-An ESP32 with five sensors posts one reading every 5 seconds in the demo (every 10 minutes in a real field).
+An **ESP32** board with **four sensors** wired to it measures the field itself. It sends one reading over Wi-Fi
+(HTTPS) every 5 seconds in the demo, every 10 minutes in a real field.
 
-| Value | Sensor | Pin |
+| What it measures | Sensor connected to the ESP32 | ESP32 pin |
 |---|---|---|
-| Soil moisture | Capacitive probe v1.2 | 34 |
-| Soil temperature | DS18B20 waterproof probe | 14 |
-| Air temperature, humidity | DHT22 | 4 |
-| Air pressure | BMP280 / BME280 | 21 (SDA), 22 (SCL) |
+| **Soil moisture** | Capacitive soil moisture sensor v1.2, pushed into the soil | 34 |
+| **Soil temperature** | DS18B20 waterproof temperature probe, in the soil | 14 |
+| **Air temperature and humidity** | DHT22 | 4 |
+| **Air pressure** | BMP280 / BME280 | 21 (SDA), 22 (SCL) |
 
-A sensor that is missing or fails sends `null`, never a wrong number. All pins and timings are in
+<table>
+  <tr>
+    <td width="38%"><img src="docs/images/sensor-hardware.jpg" alt="The ESP32 on a breadboard, with the capacitive soil moisture probe and the soil temperature probe next to a potted plant"></td>
+    <td width="62%"><img src="docs/images/app-soil-health.png" alt="The soil health card in the app, filled live from the ESP32"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Our ESP32 with the soil moisture and soil temperature probes</sub></td>
+    <td align="center"><sub>The same readings, live in the app: a verdict, the five values and what to do now</sub></td>
+  </tr>
+</table>
+
+The app turns the readings into a soil-health verdict: is there water for the roots, is the soil too wet for air,
+is the soil temperature normal for the date (against NASA's 25-year record), and how fast the soil dries. It also
+sends live alerts for frost, heat, storms (falling pressure) and disease weather. A sensor that is missing or fails
+sends `null`, never a wrong number. All pins and timings are in
 [`firmware/niva_sensor/config.h`](firmware/niva_sensor/config.h).
 
 ## Run it yourself
