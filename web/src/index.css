@@ -118,7 +118,10 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .map-top { position: absolute; z-index: 1000; top: 0; left: 0; right: 0; display: flex; gap: 8px; align-items: flex-start; padding: 12px;
   background: linear-gradient(rgb(0 0 0 / 0.45), transparent); pointer-events: none; }
 .map-top > * { pointer-events: auto; }
-.map-actions { display: flex; gap: 8px; flex: none; }
+.map-actions { display: flex; gap: 8px; flex: none; margin-left: auto; }
+.btn-icon { width: 40px; padding: 0; }
+.map-card:fullscreen { height: 100vh; max-height: none; border-radius: 0; border: 0; }
+@media (max-width: 900px), (hover: none) { .btn-full { display: none; } }
 .btn-map { background: rgb(18 18 18 / 0.78); color: #fff; border-color: rgb(255 255 255 / 0.14); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .btn-map:hover { background: rgb(18 18 18 / 0.92); border-color: rgb(255 255 255 / 0.3); }
 .btn-map.btn-danger:hover { color: #ff8a80; }
@@ -146,9 +149,15 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .season-pick select { flex: 1 1 100px; }
 
 /* ---------- rotations ---------- */
-/* each card is as tall as its own content: opening one never stretches the card beside it */
-.rot-grid { display: grid; gap: var(--gap); grid-template-columns: minmax(0, 1fr); align-items: start; margin-top: 16px; }
-@media (min-width: 760px) { .rot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* one option at a time, picked from tabs: every card is full width and nothing scrolls sideways */
+.rot-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 4px; margin: 16px 0 10px; padding: 4px; border: 1px solid var(--line); border-radius: 14px; background: var(--mist); }
+.rot-tab { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 12px; border: 0; border-radius: 10px; background: transparent; color: var(--slate); cursor: pointer; text-align: left; font: inherit; transition: background-color 0.15s ease, color 0.15s ease; }
+.rot-tab b { font-size: 0.88rem; font-weight: 650; }
+.rot-tab small { width: 100%; font-size: 0.72rem; color: var(--smoke); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rot-tab:hover { color: var(--ink); }
+.rot-tab.is-on { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.25); }
+.rot-tab:focus-visible { outline: 2px solid var(--volt); outline-offset: 1px; }
+@media (prefers-reduced-motion: reduce) { .rot-tab { transition: none; } }
 .rot-card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .rot-card.is-current { background: var(--mist); }
 .rot-footer { min-width: 0; }
@@ -287,10 +296,9 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
   .section-head { margin-top: 4px; }
   .section-head h2 { font-size: 1.3rem; }
   .section-head p.muted { font-size: 0.88rem; }
-  /* options swipe sideways instead of stacking into one very tall page */
-  .rot-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin: 16px -12px 0; padding: 0 12px 6px; scroll-padding: 0 12px; scrollbar-width: none; align-items: flex-start; }
-  .rot-grid::-webkit-scrollbar { display: none; }
-  .rot-card { flex: 0 0 86%; scroll-snap-align: start; padding: 14px; gap: 10px; border-radius: 14px; }
+  .rot-card { padding: 14px; gap: 10px; border-radius: 14px; }
+  .rot-tab { padding: 8px 6px; align-items: center; text-align: center; }
+  .rot-tab small { display: none; }
   .rot-card h3 { font-size: 1.05rem; }
   .plant-next h2 { font-size: 1.35rem; margin-bottom: 8px; }
   .plan-steps li { padding: 8px 0; }

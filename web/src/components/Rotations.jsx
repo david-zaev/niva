@@ -102,10 +102,13 @@ function PlantNext({ r }) {
 
 export default function Rotations({ data }) {
   const { t } = useI18n()
+  const [tab, setTab] = useState(null)
   if (!data) return <section className="card"><p className="muted">{t('app.rot.loading')}</p></section>
   const [now, ...options] = data.rotations
   const cards = [now, ...options.map((r, i) => ({ ...r, option: i + 1 }))]
   const best = options[0]
+  const shown = cards.find((r) => r.id === tab) ?? cards[best ? 1 : 0]
+  const tabName = (r) => r.kind === 'current' ? t('app.rot.tabNow') : r.option === 1 ? t('app.rot.tabBest') : t('app.rot.option', { n: r.option })
   const kind = { vegetable: 'farm_vegetable', tobacco: 'farm_tobacco', 'field crop': 'farm_field crop' }[data.farm_type]
   const water = data.irrigation === 'none' || !data.irrigation
     ? t('app.rot.noIrr')
@@ -121,8 +124,17 @@ export default function Rotations({ data }) {
             {t('app.rot.intro', { years: data.climate_years, farm: kind ? t(`app.rot.${kind}`) : data.farm_type, water })}
           </p>
         </div>
-        <div className="rot-grid">
-          {cards.map((r) => <Card key={r.id} r={r} now={now} />)}
+        <div className="rot-tabs" role="tablist" aria-label={t('app.rot.tabsLabel')}>
+          {cards.map((r) => (
+            <button key={r.id} type="button" role="tab" aria-selected={r.id === shown.id}
+              className={`rot-tab ${r.id === shown.id ? 'is-on' : ''}`} onClick={() => setTab(r.id)}>
+              <b>{tabName(r)}</b>
+              <small>{r.name.replace(/ \((now|сега)\)$/, '')}</small>
+            </button>
+          ))}
+        </div>
+        <div role="tabpanel">
+          <Card key={shown.id} r={shown} now={now} />
         </div>
         {(data.others?.length > 0 || data.not_offered?.length > 0) && (
           <div className="rot-also muted small">

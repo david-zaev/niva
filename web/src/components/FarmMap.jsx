@@ -119,6 +119,19 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
   const [drawing, setDrawing] = useState(false)
   const [draft, setDraft] = useState(null)
   const [deleting, setDeleting] = useState(false)
+  const card = useRef(null)
+  const [full, setFull] = useState(false)
+  const canFull = typeof document !== 'undefined' && !!document.fullscreenEnabled
+  useEffect(() => {
+    // Leaflet must re-measure when the card grows to the whole screen and back
+    const onChange = () => {
+      setFull(document.fullscreenElement === card.current)
+      requestAnimationFrame(() => map.current?.invalidateSize())
+    }
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
+  const toggleFull = () => (document.fullscreenElement ? document.exitFullscreen() : card.current.requestFullscreen()).catch(() => {})
   const selected = fields.find((f) => String(f.id) === String(selectedId))
   const removeSelected = async () => {
     if (!selected || !window.confirm(t('app.map.confirmDelete', { name: selected.name }))) return
@@ -203,7 +216,7 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
 
   const hint = drawing ? t('app.map.drawHint') : !fields.length && !draft ? t('app.map.noFields') : null
   return (
-    <section className="map-card" aria-label={t('app.map.eyebrow')}>
+    <section ref={card} className="map-card" aria-label={t('app.map.eyebrow')}>
       <div ref={box} className="farm-map" role="application" aria-label={t('app.map.mapLabel')} />
       <div className="map-top">
         <PlaceSearch onPick={(bounds, center) => {
@@ -221,6 +234,16 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDele
           {drawing
             ? <button className="btn btn-map" onClick={cancelDraw}>{t('app.map.cancelDraw')}</button>
             : <button className="btn btn-volt" onClick={startDraw}>{t('app.map.drawBtn')}</button>}
+          {canFull && (
+            <button type="button" className="btn btn-map btn-icon btn-full" onClick={toggleFull}
+              aria-label={full ? t('app.map.exitFullscreen') : t('app.map.fullscreen')} title={full ? t('app.map.exitFullscreen') : t('app.map.fullscreen')}>
+              <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                {full
+                  ? <path d="M8 3v5H3M12 3v5h5M8 17v-5H3M12 17v-5h5" />
+                  : <path d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5" />}
+              </svg>
+            </button>
+          )}
         </div>
       </div>
       {hint && <p className="map-hint">{hint}</p>}

@@ -135,7 +135,9 @@
       "none": "None (rain-fed)",
       "save": "Save field",
       "saving": "Saving…",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "fullscreen": "Full screen",
+      "exitFullscreen": "Exit full screen"
     },
     "rot": {
       "loading": "Testing crop rotations against 25 years of NASA data for this field…",
@@ -183,7 +185,10 @@
       "evidence": "Evidence",
       "gaps": "What we do not know yet",
       "others": "Also tested, ranked lower: {list}.",
-      "notOffered": "Not offered for this field: {list}."
+      "notOffered": "Not offered for this field: {list}.",
+      "tabNow": "Now",
+      "tabBest": "Best",
+      "tabsLabel": "Rotation options"
     }
   }
 }
