@@ -11,7 +11,9 @@
 //   Adafruit BME280 Library, Adafruit BMP280 Library, ArduinoJson (v7), WiFiManager (tzapu)
 //
 // WiFi: with no saved WiFi the board opens the "Niva-Setup" network; join it on a phone and pick
-// the WiFi (e.g. a phone hotspot). Hold BOOT for 5 s to forget the WiFi.
+// the WiFi (e.g. a phone hotspot). If the saved WiFi is gone for WIFI_LOST_MS (new place, router off), the
+// board opens "Niva-Setup" again while it keeps measuring and retrying the old WiFi; readings wait in the
+// queue and are sent once it is back online. Hold BOOT for 5 s to forget the WiFi right away.
 // LED: slow blink = setup network open, on = connected, fast blink = last send failed.
 //
 // A sensor that is missing or fails sends null instead of a wrong number.
@@ -93,12 +95,14 @@ void detectBaro() {
   }
 }
 
-// Average 16 samples; returns -1 if the pin looks unconnected (stuck at 0 or 4095)
+// Average 16 samples; returns -1 if the pin looks unconnected (stuck at 0). 4095 is a valid reading:
+// some capacitive sensors sit at the ADC's top in dry air, which means 0 %.
 int readSoilRaw() {
+  if (!SOIL_ENABLED) return -1;
   long sum = 0;
   for (int i = 0; i < 16; i++) { sum += analogRead(PIN_SOIL); delay(2); }
   int raw = sum / 16;
-  return (raw <= 5 || raw >= 4090) ? -1 : raw;
+  return raw <= 5 ? -1 : raw;
 }
 
 // Lower raw = wetter on capacitive sensors
@@ -210,6 +214,26 @@ void updateLed() {
   digitalWrite(PIN_LED, on ? HIGH : LOW);
 }
 
+// Lost WiFi for a while: open the setup network again (the old WiFi is still retried in the background).
+// Once any WiFi is back, close it.
+void watchWifi() {
+  static unsigned long lostSince = 0;
+  if (WiFi.status() == WL_CONNECTED) {
+    lostSince = 0;
+    if (wm.getConfigPortalActive()) {
+      wm.stopConfigPortal();
+      Serial.printf("{\"event\":\"wifi\",\"ssid\":\"%s\",\"ip\":\"%s\"}\n",
+                    WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());
+    }
+    return;
+  }
+  if (lostSince == 0) lostSince = millis();
+  if (!wm.getConfigPortalActive() && millis() - lostSince > WIFI_LOST_MS) {
+    Serial.println("{\"event\":\"wifi_lost\",\"setup_network\":\"Niva-Setup\"}");
+    wm.startConfigPortal("Niva-Setup");   // non-blocking: wm.process() serves it from loop()
+  }
+}
+
 // Hold BOOT for 5 seconds: forget WiFi and restart into the setup network
 void checkBootButton() {
   static unsigned long pressedSince = 0;
@@ -232,7 +256,7 @@ void setup() {
   pinMode(PIN_LED, OUTPUT);
   pinMode(PIN_BOOT, INPUT_PULLUP);
   // power the sensors from spare pins (see config.h), then give them time to start
-  for (int pin : {PIN_PWR_DHT, PIN_PWR_SOIL, PIN_PWR_DS18, PIN_BARO_CSB}) { pinMode(pin, OUTPUT); digitalWrite(pin, HIGH); }
+  for (int pin : {PIN_PWR_DHT, PIN_PWR_SOIL, PIN_PWR_DS18, PIN_BARO_CSB}) { if (pin >= 0) { pinMode(pin, OUTPUT); digitalWrite(pin, HIGH); } }
   for (int pin : {PIN_BARO_SDO, PIN_GND_EXTRA}) { pinMode(pin, OUTPUT); digitalWrite(pin, LOW); }
   delay(1500);  // the DHT22 needs about a second after power-up
   analogReadResolution(12);
@@ -249,6 +273,7 @@ void setup() {
   info["event"] = "boot";
   info["device_id"] = deviceId;
   info["ds18b20_count"] = ds18b20.getDeviceCount();
+  info["soil_sensor"] = SOIL_ENABLED ? "on" : "off";
   info["baro"] = baro == BARO_BME280 ? "BME280" : baro == BARO_BMP280 ? "BMP280" : "none";
   if (baro != BARO_NONE) info["baro_addr"] = baroAddr == 0x76 ? "0x76" : "0x77";
 #ifdef DEVICE_KEY
@@ -261,6 +286,7 @@ void setup() {
 
   tls.setCACert(ROOT_CA);
   WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
   wm.setConfigPortalBlocking(false);   // keep reading sensors and printing over USB while in setup
   wm.setConnectTimeout(20);
   if (wm.autoConnect("Niva-Setup")) {
@@ -274,6 +300,7 @@ void setup() {
 void loop() {
   wm.process();
   checkBootButton();
+  watchWifi();
   updateLed();
 
   if (lastSend != 0 && millis() - lastSend < SEND_INTERVAL_MS) return;
