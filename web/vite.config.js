@@ -46,8 +46,14 @@ export default defineConfig({
         navigateFallback: `${base}index.html`,
         runtimeCaching: [
           {
+            // A saved live response must never masquerade as a connected sensor.
+            // Workbox serializes callbacks into the worker, so they cannot capture apiOrigin.
+            urlPattern: ({ url }) => url.origin === 'https://niva-api.92-5-133-111.sslip.io' && (/^\/fields\/\d+\/live$/.test(url.pathname) || url.pathname === '/demo'),
+            handler: 'NetworkOnly',
+          },
+          {
             // API answers: network first, fall back to the last saved answer
-            urlPattern: ({ url }) => url.origin === apiOrigin,
+            urlPattern: ({ url }) => url.origin === 'https://niva-api.92-5-133-111.sslip.io',
             handler: 'NetworkFirst',
             options: {
               cacheName: 'niva-api',

@@ -27,7 +27,7 @@ export const api = {
   deleteField: (id) => call(`/fields/${id}`, { method: 'DELETE' }),
   rotations: (id, lang = 'en') => call(`/fields/${id}/rotations?lang=${lang}`),
   profile: (id) => call(`/fields/${id}/profile`),
-  live: (id, minutes = 120, lang = 'en') => call(`/fields/${id}/live?minutes=${minutes}&lang=${lang}`),
+  live: (id, minutes = 120, lang = 'en', signal) => call(`/fields/${id}/live?minutes=${minutes}&lang=${lang}`, { signal, cache: 'no-store' }),
 }
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

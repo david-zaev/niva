@@ -75,7 +75,12 @@
     "emptyText": "Mark your field on the map below. The ESP32 in it then shows how healthy the soil is, and NASA data gives the crop rotation advice.",
     "health": {
       "eyebrow": "Soil health · {field} · ESP32 sensor",
-      "unreachable": "Sensor unreachable",
+      "unreachable": "Connection unavailable",
+      "serverDown": "Cannot reach the Niva server. Live sensor status is unavailable; any values below are saved readings.",
+      "offline": "Sensor offline",
+      "offlineSummary": "No fresh readings for 30 seconds. Check the ESP32's power and Wi-Fi. Values below are the last saved readings.",
+      "lastUnknown": "Last saved reading · time unavailable",
+      "historical": "These checks describe the last saved readings, not current conditions.",
       "loading": "Loading…",
       "simulated": "Simulated readings",
       "live": "Live",

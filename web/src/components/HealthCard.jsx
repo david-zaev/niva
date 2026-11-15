@@ -3,18 +3,41 @@ import { api } from '../api.js'
 import { useI18n } from '../i18n/index.jsx'
 import { Lines } from './charts.jsx'
 import Toggle from './Toggle.jsx'
+import { sensorStatus } from '../sensorStatus.js'
 
 export default function HealthCard({ fieldId, fieldName }) {
   const { t, lang } = useI18n()
-  const [live, setLive] = useState(null)
+  const [snapshot, setSnapshot] = useState(null)
+  const [now, setNow] = useState(Date.now)
   const [open, setOpen] = useState(false)
-  const [err, setErr] = useState(null)
+  const [failure, setFailure] = useState(null)
+  const err = failure?.fieldId === fieldId && failure?.lang === lang ? failure.message : null
   useEffect(() => {
     let alive = true
-    const load = () => api.live(fieldId, 180, lang).then((d) => { if (alive) { setLive(d); setErr(null) } }).catch((e) => alive && setErr(e.message))
+    let poll
+    let controller
+    const load = async () => {
+      controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 10000)
+      try {
+        const data = await api.live(fieldId, 180, lang, controller.signal)
+        if (alive) {
+          const receivedAt = Date.now()
+          setSnapshot({ data, receivedAt, fieldId, lang })
+          setNow(receivedAt)
+          setFailure(null)
+        }
+      } catch (e) {
+        if (alive) setFailure({ fieldId, lang, message: e.message })
+      } finally {
+        clearTimeout(timeout)
+        if (alive) poll = setTimeout(load, 5000)
+      }
+    }
     load()
-    const id = setInterval(load, 5000)
-    return () => { alive = false; clearInterval(id) }
+    // Age must advance even when the server stops answering.
+    const clock = setInterval(() => setNow(Date.now()), 1000)
+    return () => { alive = false; clearTimeout(poll); clearInterval(clock); controller.abort() }
   }, [fieldId, lang])
   const ago = (s) => {
     if (s == null) return ''
@@ -23,22 +46,28 @@ export default function HealthCard({ fieldId, fieldName }) {
     if (s < 86400) return t('app.health.agoH', { n: Math.round(s / 3600) })
     return t('app.health.agoD', { n: Math.round(s / 86400) })
   }
+  const current = snapshot?.fieldId === fieldId && snapshot?.lang === lang ? snapshot : null
+  const live = current?.data
+  const { age, fresh } = sensorStatus(current, now, !!err)
   const h = live?.health
   const r = live?.reading
-  const status = h?.status ?? 'none'
-  const fresh = live?.age_s != null && live.age_s < 120 && !live?.reading?.simulated
-  const state = r ? (r.simulated ? t('app.health.simulated') : fresh ? t('app.health.live') : t('app.health.last', { ago: ago(live.age_s) })) : t('app.health.none')
+  const offline = r && !r.simulated && !fresh
+  const status = fresh ? h?.status ?? 'none' : 'none'
+  const state = err ? t('app.health.unreachable') : r ? (r.simulated ? t('app.health.simulated') : fresh ? t('app.health.live') : t('app.health.offline')) : t('app.health.none')
+  const label = err ? t('app.health.unreachable') : offline ? t('app.health.offline') : h?.label ?? t('app.health.loading')
+  const summary = err ? t('app.health.serverDown') : offline ? t('app.health.offlineSummary') : h?.summary
   return (
     <section className={`card health health-${status}`} aria-live="polite">
       <div className="health-head">
         <div>
           <p className="eyebrow">{t('app.health.eyebrow', { field: fieldName })}</p>
-          <h2 className="health-label">{h?.label ?? (err ? t('app.health.unreachable') : t('app.health.loading'))}</h2>
-          <p className="health-summary">{h?.summary ?? err}</p>
+          <h2 className="health-label">{label}</h2>
+          <p className="health-summary">{summary}</p>
         </div>
         <div className={`live-dot ${fresh ? 'is-live' : ''}`}><span className="dot" />{state}</div>
       </div>
 
+      {r && !fresh && <p className="muted small">{r.simulated ? t('app.health.simulated') : age == null ? t('app.health.lastUnknown') : t('app.health.last', { ago: ago(age) })}</p>}
       {r && (
         <div className="readings">
           <div><span>{t('app.health.soil')}</span><b>{r.soil_pct ?? '–'}<small>%</small></b></div>
@@ -49,7 +78,7 @@ export default function HealthCard({ fieldId, fieldName }) {
         </div>
       )}
 
-      {live?.alerts?.length > 0 && (
+      {fresh && live?.alerts?.length > 0 && (
         <ul className="alerts">
           {live.alerts.map((a) => (
             <li key={a.id} className={`alert alert-${a.level}`}><b>{a.title}</b> {a.text}</li>
@@ -61,6 +90,7 @@ export default function HealthCard({ fieldId, fieldName }) {
 
       {open && (
         <div className="health-more">
+          {r && !fresh && <p className="muted">{t('app.health.historical')}</p>}
           {h?.items?.length ? (
             <ul className="checks">
               {h.items.map((i) => (
