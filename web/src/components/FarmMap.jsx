@@ -59,13 +59,20 @@ function NewFieldForm({ draft, crops, onSave, onCancel }) {
   )
 }
 
-export default function FarmMap({ fields, selectedId, onSelect, onCreate, crops }) {
+export default function FarmMap({ fields, selectedId, onSelect, onCreate, onDelete, crops }) {
   const box = useRef(null)
   const map = useRef(null)
   const layer = useRef(null)
   const fitted = useRef(false) // id of the field the map last zoomed to
   const [drawing, setDrawing] = useState(false)
   const [draft, setDraft] = useState(null)
+  const [deleting, setDeleting] = useState(false)
+  const selected = fields.find((f) => String(f.id) === String(selectedId))
+  const removeSelected = async () => {
+    if (!selected || !window.confirm(`Delete "${selected.name}"? Its outline and rotation choice are removed; the sensor readings are kept.`)) return
+    setDeleting(true)
+    try { await onDelete(selected.id) } finally { setDeleting(false) }
+  }
 
   useEffect(() => {
     const m = L.map(box.current, { zoomControl: true, scrollWheelZoom: false, maxZoom: 19 })
@@ -130,12 +137,18 @@ export default function FarmMap({ fields, selectedId, onSelect, onCreate, crops 
       <div className="map-head">
         <div>
           <p className="eyebrow">Your farm</p>
-          <h2>Select a field</h2>
+          <h2>{fields.length ? 'Select a field' : 'Draw your field'}</h2>
         </div>
-        {drawing
-          ? <button className="btn btn-ghost" onClick={cancelDraw}>Cancel drawing</button>
-          : <button className="btn" onClick={startDraw}>Draw a field</button>}
+        <div className="row-actions">
+          {selected && !drawing && (
+            <button className="btn btn-ghost" disabled={deleting} onClick={removeSelected}>{deleting ? 'Deleting…' : 'Delete field'}</button>
+          )}
+          {drawing
+            ? <button className="btn btn-ghost" onClick={cancelDraw}>Cancel drawing</button>
+            : <button className="btn" onClick={startDraw}>Draw a field</button>}
+        </div>
       </div>
+      {!fields.length && !drawing && !draft && <p className="muted small">No fields yet. Press "Draw a field" and click the corners of your field on the photo.</p>}
       {drawing && <p className="muted small">Click each corner of the field on the photo; click the first corner again to finish.</p>}
       <div className="map-wrap">
         <div ref={box} className="farm-map" role="application" aria-label="Farm map" />

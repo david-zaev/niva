@@ -42,21 +42,11 @@ def health(df: pd.DataFrame, long: pd.DataFrame, soil: dict, crop: dict | None, 
         f"point) and {fc:.2f} m³/m³ (field capacity); {crop_name} is stressed below {round(100 * (1 - p))}% of that "
         f"range (FAO-56)."))
 
-    # 2. air in the soil: hours saturated in the last day
+    # last day of readings, for the drying rate below
     base = long if not long.empty else src
     l24 = base[base.index >= last_t - timedelta(hours=24)]
     s24 = l24["soil_pct"].dropna()
     span = (s24.index[-1] - s24.index[0]).total_seconds() / 3600 if len(s24) > 1 else 0
-    if len(s24) > 3 and span >= 1:
-        sat = np.array([(soilmod.theta(v) - wp) / (fc - wp) > 1.15 for v in s24])
-        hrs = float(sat.mean()) * min(24.0, span)
-        st = "good" if hrs < 3 else "watch" if hrs < 12 else "poor"
-        items.append(_item(
-            "air", "Air in the soil", st, f"{hrs:.0f} h saturated" + (" in 24 h" if span >= 20 else f" in {span:.0f} h"),
-            "Drains well: roots and soil life get air." if st == "good"
-            else "Saturated for hours: roots and soil life lack oxygen, nitrogen is lost.",
-            "Soil above field capacity is waterlogged. More than about 12 hours a day damages roots and points to "
-            "compaction or poor drainage."))
 
     # 3. soil temperature against the NASA normal for the date
     stc = src["soil_temp_c"].dropna() if "soil_temp_c" in src else pd.Series(dtype=float)
@@ -107,20 +97,6 @@ def health(df: pd.DataFrame, long: pd.DataFrame, soil: dict, crop: dict | None, 
                 else "Loses water fast: low organic matter or a bare surface.",
                 "The fall in soil moisture over the last day shows how fast water leaves the root zone. Soils rich "
                 "in organic matter, and covered soils, lose it more slowly."))
-
-    # 6. infiltration and drainage from the latest soil test
-    if test and test.get("ok"):
-        inf = test["soil"].get("infiltration")
-        st = {"fast": "good", "moderate": "good", "slow": "poor"}.get(inf, "watch")
-        items.append(_item(
-            "infiltration", "Rain soaks in", st,
-            f"{test['soak_in_s']} s to soak in" if test.get("soak_in_s") is not None else (inf or "-"),
-            {"fast": "Water soaks in fast: little runoff.", "moderate": "Water soaks in well.",
-             "slow": "Water soaks in slowly: rain runs off, the soil may be compacted."}.get(inf, "Not clear yet."),
-            ("From a simulated soil test (no sensor): " if test.get("simulated") else "From the soil test: ")
-            + f"moisture rose {test['rise_pct']} points after the water was poured"
-            + (f" and drained {test['drain_pct_per_h']}% per hour" if test.get("drain_pct_per_h") is not None else "")
-            + f"; the soil behaves like {test['soil']['name'].lower()}."))
 
     poor = sum(i["status"] == "poor" for i in items)
     watch = sum(i["status"] == "watch" for i in items)

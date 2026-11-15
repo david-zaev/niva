@@ -31,11 +31,9 @@ function useSensorLive() {
   const [live, setLive] = useState(false)
   useEffect(() => {
     let alive = true
-    // the demo farm's first field carries the ESP32
-    const field = api.demo().then(({ farm_id }) => api.farm(farm_id)).then((f) => f.fields[0]?.id)
-    const tick = () => field.then((id) => api.live(id, 5))
+    const tick = () => api.demo()
       .then((d) => {
-        const time = d?.reading?.time
+        const time = d?.last_reading
         if (alive) setLive(time != null && Date.now() - new Date(time).getTime() < 30000)
       })
       .catch(() => alive && setLive(false))

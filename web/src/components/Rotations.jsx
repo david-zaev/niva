@@ -1,56 +1,65 @@
 import { useState } from 'react'
 
-const SCORE_NAMES = { water: 'Water', soil: 'Soil health', resilience: 'Resilience', income: 'Income' }
+const eur = (n) => `€${Number(n).toLocaleString('en-US')}`
 
-function fmt(n) {
-  return n == null ? '–' : Number(n).toLocaleString('en-US')
+// How an option compares with what the farmer grows now, in words: "43% less than now"
+function change(value, now, moreIsBetter, unit = '%') {
+  if (now == null || value === now) return { text: 'same as now', tone: 'same' }
+  const better = moreIsBetter ? value > now : value < now
+  let text
+  if (unit === '%') text = `now ${now}%`
+  else if (!now) text = value > now ? 'now none' : 'same as now'
+  else text = `${Math.abs(Math.round((100 * (value - now)) / now))}% ${value > now ? 'more' : 'less'} than now`
+  return { text, tone: better ? 'better' : 'worse' }
 }
 
-function ScoreBars({ scores }) {
+function Row({ label, value, cmp, hint }) {
   return (
-    <div className="scorebars">
-      {Object.entries(SCORE_NAMES).map(([k, name]) => (
-        <div key={k} className="scorebar">
-          <span>{name}</span>
-          <div className="bar"><i style={{ width: `${scores[k]}%` }} /></div>
-          <b>{scores[k]}</b>
-        </div>
-      ))}
+    <div className="plain-row">
+      <dt>{label}<small>{hint}</small></dt>
+      <dd>
+        <b>{value}</b>
+        {cmp && <span className={`delta delta-${cmp.tone}`}>{cmp.text}</span>}
+      </dd>
     </div>
   )
 }
 
-function Card({ r, chosen, onChoose }) {
-  const [open, setOpen] = useState(r.kind !== 'current')
+function Card({ r, now, chosen, onChoose }) {
+  const [open, setOpen] = useState(false)
   const c = r.card
   const isCurrent = r.kind === 'current'
+  const m = r.metrics
+  const n = isCurrent ? null : now.metrics
+  const inShort = isCurrent ? r.idea : (c.why[0] ?? r.idea)
   return (
     <article className={`rot-card ${isCurrent ? 'is-current' : ''} ${chosen ? 'is-chosen' : ''}`}>
       <header>
-        <p className="eyebrow">{isCurrent ? 'What you grow now' : `Option · rank ${r.rank}`}</p>
-        <h3>{r.name}</h3>
+        <p className="eyebrow">{isCurrent ? 'What you grow now' : r.option === 1 ? 'Option 1 · best match' : `Option ${r.option}`}</p>
+        <h3>{r.name.replace(' (now)', '')}</h3>
         <ol className="seasons">
-          {r.season_names.map((s, i) => <li key={i}><small>Season {i + 1}</small>{s}</li>)}
+          {r.season_names.map((s, i) => <li key={i}><small>Year {i + 1}</small>{s}</li>)}
         </ol>
-        <div className="overall"><b>{r.score}</b><span>overall score</span></div>
       </header>
-      <ScoreBars scores={r.scores} />
-      <dl className="facts">
-        <div><dt>Irrigation</dt><dd>{r.metrics.irrigation_mm} mm/yr<small>dry year {r.metrics.irrigation_mm_dry_year}</small></dd></div>
-        <div><dt>Soil covered</dt><dd>{r.metrics.living_cover_pct}%<small>{r.metrics.bare_days} bare days</small></dd></div>
-        <div><dt>Nitrogen added</dt><dd>{r.metrics.n_credit_kg_ha} kg/ha</dd></div>
-        <div><dt>Dry-year yield</dt><dd>{r.metrics.dry_year_yield_pct}%</dd></div>
-        <div><dt>Gross income</dt><dd>€{fmt(r.metrics.gross_eur_ha)}/ha</dd></div>
+      {inShort && <p className="in-short">{inShort}</p>}
+      <dl className="plain-rows">
+        <Row label="Water" hint="irrigation a year" value={m.irrigation_mm ? `${m.irrigation_mm} mm` : 'none'}
+          cmp={n && change(m.irrigation_mm, n.irrigation_mm, false, 'mm')} />
+        <Row label="Soil covered" hint="by living plants" value={`${m.living_cover_pct}% of the year`}
+          cmp={n && change(m.living_cover_pct, n.living_cover_pct, true)} />
+        <Row label="Dry year" hint="harvest kept in the driest years" value={`${m.dry_year_yield_pct}%`}
+          cmp={n && change(m.dry_year_yield_pct, n.dry_year_yield_pct, true)} />
+        <Row label="Income" hint="gross, per hectare" value={eur(m.gross_eur_ha)}
+          cmp={n && change(m.gross_eur_ha, n.gross_eur_ha, true, 'eur')} />
       </dl>
-      <button className="read-more" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? 'Hide details' : 'Why, evidence, risks'}</button>
+      <button className="read-more" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? 'Show less' : 'Read more: why, risks, evidence'}</button>
       {open && (
         <div className="rot-details">
-          <h4>Why</h4><ul>{c.why.map((t, i) => <li key={i}>{t}</li>)}</ul>
-          <h4>Benefits</h4><ul>{c.benefits.map((t, i) => <li key={i}>{t}</li>)}</ul>
+          {c.why.length > 0 && <><h4>Why</h4><ul>{c.why.map((t, i) => <li key={i}>{t}</li>)}</ul></>}
+          {c.risks.length > 0 && <><h4>Check before you switch</h4><ul>{c.risks.map((t, i) => <li key={i}>{t}</li>)}</ul></>}
           <h4>Evidence</h4>
           <ul className="evidence">{c.evidence.map((e, i) => <li key={i}>{e.text}<small>{e.source}</small></li>)}</ul>
-          <h4>Risks for local review</h4><ul>{c.risks.map((t, i) => <li key={i}>{t}</li>)}</ul>
-          <h4>Information gaps</h4><ul className="muted">{c.gaps.map((t, i) => <li key={i}>{t}</li>)}</ul>
+          <h4>What we do not know yet</h4><ul className="muted">{c.gaps.map((t, i) => <li key={i}>{t}</li>)}</ul>
         </div>
       )}
       {!isCurrent && (
@@ -63,48 +72,30 @@ function Card({ r, chosen, onChoose }) {
 }
 
 export default function Rotations({ data, onChoose }) {
-  if (!data) return <section className="card"><p className="muted">Replaying 25 years of NASA data for this field…</p></section>
-  const cur = data.rotations[0]
+  if (!data) return <section className="card"><p className="muted">Testing crop rotations against 25 years of NASA data for this field…</p></section>
+  const [now, ...options] = data.rotations
+  const cards = [now, ...options.map((r, i) => ({ ...r, option: i + 1 }))]
   return (
     <section className="rotations">
       <div className="section-head">
-        <p className="eyebrow">Crop rotation plans · from location data only</p>
-        <h2>{data.rotations.length - 1} rotations compared with what you grow now</h2>
+        <p className="eyebrow">Crop rotation plans · from NASA data for this field</p>
+        <h2>{options.length ? `${options.length} rotations to consider for this field` : 'No other rotation fits this field'}</h2>
         <p className="muted">
-          Each rotation was replayed day by day through every season {data.climate_years} at this field: NASA POWER
-          weather, NASADEM slope ({data.terrain ? `${data.terrain.slope_deg}°` : 'n/a'}), and the soil map
-          ({data.soil.name.toLowerCase()}, {data.soil.clay_pct ?? '–'}% clay). Irrigation: {data.irrigation}.
-          {data.smap_check && ` The simulated soil water tracks NASA SMAP soil moisture here (r = ${data.smap_check.r}).`}
+          We played every rotation through each season of {data.climate_years} at this field, day by day, with the
+          real NASA weather, the field&apos;s slope and its soil. Only rotations for a {data.farm_type} farm
+          that still give a harvest in dry years with {data.irrigation === 'none' ? 'no irrigation' : `${data.irrigation} irrigation`} are shown.
         </p>
       </div>
-
-      <div className="table-wrap">
-        <table className="compare">
-          <thead>
-            <tr><th scope="col">Rotation</th><th>Score</th><th>Irrigation mm/yr</th><th>Soil covered</th><th>Erosion index</th><th>N kg/ha</th><th>Dry-year yield</th><th>Gross €/ha</th></tr>
-          </thead>
-          <tbody>
-            {data.rotations.map((r) => (
-              <tr key={r.id} className={r.kind === 'current' ? 'is-current' : ''}>
-                <th scope="row">{r.name}{r.kind === 'current' && <small> (now)</small>}</th>
-                <td>{r.score}</td>
-                <td className={r.metrics.irrigation_mm < cur.metrics.irrigation_mm ? 'better' : ''}>{r.metrics.irrigation_mm}</td>
-                <td className={r.metrics.living_cover_pct > cur.metrics.living_cover_pct ? 'better' : ''}>{r.metrics.living_cover_pct}%</td>
-                <td className={r.metrics.erosion_index < cur.metrics.erosion_index ? 'better' : ''}>{r.metrics.erosion_index}</td>
-                <td className={r.metrics.n_credit_kg_ha > cur.metrics.n_credit_kg_ha ? 'better' : ''}>{r.metrics.n_credit_kg_ha}</td>
-                <td className={r.metrics.dry_year_yield_pct > cur.metrics.dry_year_yield_pct ? 'better' : ''}>{r.metrics.dry_year_yield_pct}%</td>
-                <td className={r.metrics.gross_eur_ha > cur.metrics.gross_eur_ha ? 'better' : ''}>{fmt(r.metrics.gross_eur_ha)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
       <div className="rot-grid">
-        {data.rotations.map((r) => <Card key={r.id} r={r} chosen={data.chosen === r.id} onChoose={onChoose} />)}
+        {cards.map((r) => <Card key={r.id} r={r} now={now} chosen={data.chosen === r.id} onChoose={onChoose} />)}
       </div>
-      {data.others?.length > 0 && (
-        <p className="muted small">Also simulated: {data.others.map((o) => `${o.name} (${o.score})`).join(', ')}.</p>
+      {(data.others?.length > 0 || data.not_offered?.length > 0) && (
+        <div className="rot-also muted small">
+          {data.others?.length > 0 && <p>Also tested, ranked lower: {data.others.map((o) => o.name).join(', ')}.</p>}
+          {data.not_offered?.length > 0 && (
+            <p>Not offered for this field: {data.not_offered.map((o) => `${o.name} (${o.because})`).join('; ')}.</p>
+          )}
+        </div>
       )}
     </section>
   )

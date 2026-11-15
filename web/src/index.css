@@ -221,3 +221,22 @@ h4 { font-size: 0.95rem; font-weight: 650; margin: 14px 0 4px; }
 .auth-watch { width: 100%; justify-content: space-between; }
 .logout { white-space: nowrap; min-height: 44px; padding: 0 12px; border: 0; border-radius: 6px; background: transparent; color: var(--slate); font: 500 0.82rem var(--font-body); cursor: pointer; }
 .logout:hover { background: var(--mist); color: var(--ink); }
+.map-head .row-actions { margin: 0; }
+
+/* rotation cards: plain comparison with what the farmer grows now */
+.in-short { margin: 0; font-size: 0.95rem; line-height: 1.45; }
+.plain-rows { display: grid; gap: 0; margin: 0; border-top: 1px solid var(--line); }
+.plain-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.plain-row dt { font-weight: 600; font-size: 0.9rem; }
+.plain-row dt small { display: block; font-weight: 400; font-size: 0.74rem; color: var(--smoke); }
+.plain-row dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.plain-row dd b { display: block; font-weight: 650; }
+.delta { font-size: 0.78rem; font-weight: 600; }
+.delta-better { color: var(--live); }
+.delta-worse { color: var(--down); }
+.delta-same { color: var(--smoke); font-weight: 400; }
+.delta-better::before { content: '✓ '; }
+.delta-worse::before { content: '! '; }
+.rot-card header { padding-right: 0; }
+.rot-also { margin-top: 12px; }
+.rot-also p { margin: 4px 0; max-width: 90ch; }

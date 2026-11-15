@@ -301,6 +301,33 @@ def smap_check(run: simulate.Result, lat: float, lon: float) -> dict | None:
     return {"r": round(r, 2), "days": int(len(j) * 7), "period": f"{j.index[0].year}-{j.index[-1].year}"}
 
 
+VEGETABLES = {"pepper", "tomato"}
+MIN_DRY_YEAR_YIELD = 50  # % of normal yield: below this a rotation is not offered for the field's water
+
+
+def farm_type(seasons: list[list[str]]) -> str:
+    """'vegetable', 'tobacco' or 'field crop': options stay with the kind of farm, its machinery and its buyers."""
+    crops = {c for s in seasons for c in s}
+    return "vegetable" if crops & VEGETABLES else "tobacco" if "tobacco" in crops else "field crop"
+
+
+def with_cover(rot: dict) -> dict | None:
+    """The farmer's own rotation with a winter vetch + oat cover before every spring-sown crop."""
+    cs = simulate.crops()
+    seasons, added = [], False
+    for s in rot["seasons"]:
+        main = [c for c in s if not cs[c].get("cover_crop")]
+        if main and len(main) == len(s) and all(cs[c].get("kind") != "winter" for c in main):
+            seasons.append(["vetch_oat", *s]); added = True
+        else:
+            seasons.append(list(s))
+    if not added:
+        return None
+    name = rot["name"].replace(" (now)", "")
+    return {"id": f"{rot['id']}-cover", "name": f"{name}, with winter vetch", "kind": "suggested",
+            "seasons": seasons, "idea": "What you grow now, plus a vetch and oat cover crop over each winter."}
+
+
 def custom(seasons: list[list[str]], name: str | None = None) -> dict:
     cs = simulate.crops()
     seasons = [[c for c in s if c in cs] for s in seasons if s]

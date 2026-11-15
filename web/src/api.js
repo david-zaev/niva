@@ -28,11 +28,6 @@ export const api = {
   rotations: (id) => call(`/fields/${id}/rotations`),
   profile: (id) => call(`/fields/${id}/profile`),
   live: (id, minutes = 120) => call(`/fields/${id}/live?minutes=${minutes}`),
-  latestTest: (id) => call(`/fields/${id}/soil-test`),
-  startTest: (id, water_ml = 200) => call(`/fields/${id}/soil-test`, { method: 'POST', body: { water_ml } }),
-  stopTest: (testId) => call(`/soil-tests/${testId}/stop`, { method: 'POST' }),
-  applyTest: (testId) => call(`/soil-tests/${testId}/apply`, { method: 'POST' }),
-  simulateTest: (id, soil = 'fast') => call(`/fields/${id}/soil-test/simulate`, { method: 'POST', body: { soil } }),
 }
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

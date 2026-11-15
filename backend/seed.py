@@ -1,7 +1,10 @@
 """Create the Murtino demo farm and pre-download its NASA data so the demo works without waiting (or wifi).
 
-    python seed.py            # create the farm if missing, then cache POWER, slope, NDVI and rotations
-    python seed.py --reset    # delete the database first
+    python seed.py                    # create the empty farm if missing and cache NASA POWER for Murtino
+    python seed.py --example-fields   # also add three example fields and cache their slope, NDVI and rotations
+    python seed.py --reset            # delete the database first
+
+The demo farm starts with no fields: the field is drawn live on the map during the presentation.
 
 The outlines follow field edges visible on the Esri World Imagery photo of Murtino (traced by hand). The rotations
 and settings are examples for the demo, not a real farmer's records.
@@ -38,7 +41,10 @@ FIELDS = [
 ]
 
 
-def run(reset: bool = False) -> None:
+MURTINO = (41.4145, 22.7274)
+
+
+def run(reset: bool = False, examples: bool = False) -> None:
     if reset and DB_PATH.exists():
         DB_PATH.unlink()
     init_db()
@@ -49,7 +55,7 @@ def run(reset: bool = False) -> None:
             s.add(farm)
             s.commit()
             s.refresh(farm)
-        for d in FIELDS:
+        for d in FIELDS if examples else []:
             if s.exec(select(FieldRow).where(FieldRow.farm_id == farm.id, FieldRow.name == d["name"])).first():
                 continue
             lat, lon = main.centroid(d["polygon"])
@@ -57,7 +63,7 @@ def run(reset: bool = False) -> None:
         s.commit()
         fields = s.exec(select(FieldRow).where(FieldRow.farm_id == farm.id)).all()
         print(f"farm {farm.id}: {[(f.id, f.name, f.area_ha) for f in fields]}")
-        print("NASA POWER:", power.ensure(fields[0].lat, fields[0].lon))
+        print("NASA POWER:", power.ensure(*MURTINO))
         threads = []
         for f in fields:
             print(f"field {f.id}: slope", main.field_terrain(f))
@@ -72,4 +78,4 @@ def run(reset: bool = False) -> None:
 
 
 if __name__ == "__main__":
-    run("--reset" in sys.argv)
+    run("--reset" in sys.argv, "--example-fields" in sys.argv)

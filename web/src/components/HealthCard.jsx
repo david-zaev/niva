@@ -12,64 +12,6 @@ function ago(s) {
   return `${Math.round(s / 86400)} days ago`
 }
 
-function SoilTest({ fieldId, onApplied }) {
-  const [test, setTest] = useState(null)
-  const [busy, setBusy] = useState(false)
-  const [err, setErr] = useState(null)
-  const load = () => api.latestTest(fieldId).then((d) => setTest(d.test)).catch(() => {})
-  useEffect(() => { load() }, [fieldId]) // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (!test?.running) return undefined
-    const t = setInterval(load, 4000)
-    return () => clearInterval(t)
-  }, [test?.running, fieldId]) // eslint-disable-line react-hooks/exhaustive-deps
-  const act = async (fn) => {
-    setBusy(true); setErr(null)
-    try { await fn() } catch (e) { setErr(e.message) } finally { setBusy(false) }
-  }
-  const a = test?.analysis
-  return (
-    <div className="soil-test">
-      <h4>Soil test</h4>
-      <p className="muted small">
-        Press start, then pour about 200 ml of water next to the probe. The ESP32 measures how fast the water soaks in
-        and drains. Keep it running about 10 minutes.
-      </p>
-      <div className="row-actions">
-        {test?.running
-          ? <button className="btn" disabled={busy} onClick={() => act(async () => setTest(await api.stopTest(test.id)))}>Stop test</button>
-          : <button className="btn" disabled={busy} onClick={() => act(async () => setTest(await api.startTest(fieldId)))}>Start soil test</button>}
-        <button className="btn btn-ghost" disabled={busy} title="No sensor at hand: writes a simulated curve, labelled as simulated"
-          onClick={() => act(async () => setTest(await api.simulateTest(fieldId, 'fast')))}>Simulate a test</button>
-        {a?.ok && !test.running && (
-          <button className="btn btn-volt" disabled={busy}
-            onClick={() => act(async () => { await api.applyTest(test.id); onApplied?.() })}>Use for soil health</button>
-        )}
-      </div>
-      {err && <p className="error small">{err}</p>}
-      {test && (
-        <div className="test-result">
-          {test.simulated && <p className="tag tag-wait">Simulated test, not from the sensor</p>}
-          {!a?.ok && <p className="muted small">{a?.message}</p>}
-          {a?.curve?.length > 2 && (
-            <Lines label="Soil moisture during the test" height={180} yMax={100} yUnit="%"
-              xFormat={(v) => `${Math.round(v / 60)} min`}
-              lines={[{ name: 'Soil moisture', color: 'var(--series-1)', points: a.curve.map((p) => ({ x: p.t, y: p.v })) }]} />
-          )}
-          {a?.ok && (
-            <dl className="facts">
-              <div><dt>Soaks in</dt><dd>{a.soak_in_s != null ? `${a.soak_in_s} s` : '–'} <small>({a.soil.infiltration})</small></dd></div>
-              <div><dt>Drains</dt><dd>{a.drain_pct_per_h != null ? `${a.drain_pct_per_h}% / h` : 'keep running'}</dd></div>
-              <div><dt>Behaves like</dt><dd>{a.soil.name}</dd></div>
-            </dl>
-          )}
-          {a?.note && <p className="muted small">{a.note}</p>}
-        </div>
-      )}
-    </div>
-  )
-}
-
 export default function HealthCard({ fieldId, fieldName }) {
   const [live, setLive] = useState(null)
   const [open, setOpen] = useState(false)
@@ -150,7 +92,6 @@ export default function HealthCard({ fieldId, fieldName }) {
                   : []),
               ]} />
           )}
-          <SoilTest fieldId={fieldId} />
         </div>
       )}
     </section>

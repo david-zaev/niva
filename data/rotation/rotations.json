@@ -1,29 +1,225 @@
 {
   "note": "Rotation library for the Strumica valley. A rotation is a list of seasons (October to September). Each season lists the crops sown in it, in order: a winter cover crop sown in October comes before the summer crop it protects. The rotation repeats. 'common' = what many farms in the valley grow today.",
   "rotations": [
-    {"id": "pepper-pepper-tomato", "name": "Pepper → pepper → tomato", "kind": "common",
-     "seasons": [["pepper"], ["pepper"], ["tomato"]],
-     "idea": "The usual vegetable sequence in the valley: high income, but three nightshades in a row and bare winters."},
-    {"id": "cover-pepper-tomato", "name": "Pepper → pepper → tomato, with winter vetch", "kind": "suggested",
-     "seasons": [["vetch_oat", "pepper"], ["vetch_oat", "pepper"], ["vetch_oat", "tomato"]],
-     "idea": "Keeps the same cash crops but covers the soil every winter with vetch and oats."},
-    {"id": "pepper-wheat-bean", "name": "Pepper → wheat → bean, vetch before pepper", "kind": "suggested",
-     "seasons": [["vetch_oat", "pepper"], ["wheat"], ["bean"]],
-     "idea": "Breaks the nightshade cycle with a cereal and a legume; the vetch adds nitrogen before the pepper."},
-    {"id": "pepper-wheat-chickpea-tomato", "name": "Pepper → wheat → chickpea → tomato", "kind": "suggested",
-     "seasons": [["vetch_oat", "pepper"], ["wheat"], ["chickpea"], ["vetch_oat", "tomato"]],
-     "idea": "Two vegetable years out of four; chickpea needs little water and fixes nitrogen."},
-    {"id": "alfalfa-maize-pepper", "name": "Alfalfa (2 years) → maize → pepper", "kind": "suggested",
-     "seasons": [["alfalfa"], ["alfalfa"], ["maize"], ["vetch_oat", "pepper"]],
-     "idea": "Deep alfalfa roots rebuild soil structure and nitrogen; the field is covered almost all year."},
-    {"id": "tomato-wheat-sunflower", "name": "Tomato → wheat → sunflower", "kind": "suggested",
-     "seasons": [["vetch_oat", "tomato"], ["wheat"], ["sunflower"]],
-     "idea": "A lower-water rotation: sunflower and wheat are grown without irrigation."},
-    {"id": "tobacco-wheat-bean", "name": "Tobacco → wheat → bean", "kind": "common",
-     "seasons": [["tobacco"], ["wheat"], ["bean"]],
-     "idea": "Common on the drier fields at the valley edge."},
-    {"id": "maize-wheat-bean", "name": "Maize → wheat → bean", "kind": "suggested",
-     "seasons": [["maize"], ["wheat"], ["bean"]],
-     "idea": "A field-crop rotation without vegetables: less labour, lower income."}
+    {
+      "id": "pepper-pepper-tomato",
+      "name": "Pepper → pepper → tomato",
+      "kind": "common",
+      "seasons": [
+        [
+          "pepper"
+        ],
+        [
+          "pepper"
+        ],
+        [
+          "tomato"
+        ]
+      ],
+      "idea": "The usual vegetable sequence in the valley: high income, but three nightshades in a row and bare winters."
+    },
+    {
+      "id": "cover-pepper-tomato",
+      "name": "Pepper → pepper → tomato, with winter vetch",
+      "kind": "suggested",
+      "seasons": [
+        [
+          "vetch_oat",
+          "pepper"
+        ],
+        [
+          "vetch_oat",
+          "pepper"
+        ],
+        [
+          "vetch_oat",
+          "tomato"
+        ]
+      ],
+      "idea": "Keeps the same cash crops but covers the soil every winter with vetch and oats."
+    },
+    {
+      "id": "pepper-wheat-bean",
+      "name": "Pepper → wheat → bean, vetch before pepper",
+      "kind": "suggested",
+      "seasons": [
+        [
+          "vetch_oat",
+          "pepper"
+        ],
+        [
+          "wheat"
+        ],
+        [
+          "bean"
+        ]
+      ],
+      "idea": "Breaks the nightshade cycle with a cereal and a legume; the vetch adds nitrogen before the pepper."
+    },
+    {
+      "id": "pepper-wheat-chickpea-tomato",
+      "name": "Pepper → wheat → chickpea → tomato",
+      "kind": "suggested",
+      "seasons": [
+        [
+          "vetch_oat",
+          "pepper"
+        ],
+        [
+          "wheat"
+        ],
+        [
+          "chickpea"
+        ],
+        [
+          "vetch_oat",
+          "tomato"
+        ]
+      ],
+      "idea": "Two vegetable years out of four; chickpea needs little water and fixes nitrogen."
+    },
+    {
+      "id": "alfalfa-maize-pepper",
+      "name": "Alfalfa (2 years) → maize → pepper",
+      "kind": "suggested",
+      "seasons": [
+        [
+          "alfalfa"
+        ],
+        [
+          "alfalfa"
+        ],
+        [
+          "maize"
+        ],
+        [
+          "vetch_oat",
+          "pepper"
+        ]
+      ],
+      "idea": "Deep alfalfa roots rebuild soil structure and nitrogen; the field is covered almost all year."
+    },
+    {
+      "id": "tomato-wheat-sunflower",
+      "name": "Tomato → wheat → sunflower",
+      "kind": "suggested",
+      "seasons": [
+        [
+          "vetch_oat",
+          "tomato"
+        ],
+        [
+          "wheat"
+        ],
+        [
+          "sunflower"
+        ]
+      ],
+      "idea": "A lower-water rotation: sunflower and wheat are grown without irrigation."
+    },
+    {
+      "id": "tobacco-wheat-bean",
+      "name": "Tobacco → wheat → bean",
+      "kind": "common",
+      "seasons": [
+        [
+          "tobacco"
+        ],
+        [
+          "wheat"
+        ],
+        [
+          "bean"
+        ]
+      ],
+      "idea": "Common on the drier fields at the valley edge."
+    },
+    {
+      "id": "maize-wheat-bean",
+      "name": "Maize → wheat → bean",
+      "kind": "suggested",
+      "seasons": [
+        [
+          "maize"
+        ],
+        [
+          "wheat"
+        ],
+        [
+          "bean"
+        ]
+      ],
+      "idea": "A field-crop rotation without vegetables: less labour, lower income."
+    },
+    {
+      "id": "wheat-chickpea",
+      "name": "Wheat → chickpea",
+      "kind": "suggested",
+      "seasons": [
+        [
+          "wheat"
+        ],
+        [
+          "chickpea"
+        ]
+      ],
+      "idea": "Wheat with a chickpea break: a rain-fed legume that adds nitrogen and stops cereal diseases carrying over."
+    },
+    {
+      "id": "wheat-sunflower-chickpea",
+      "name": "Wheat → sunflower → chickpea, vetch before sunflower",
+      "kind": "suggested",
+      "seasons": [
+        [
+          "wheat"
+        ],
+        [
+          "vetch_oat",
+          "sunflower"
+        ],
+        [
+          "chickpea"
+        ]
+      ],
+      "idea": "Three field crops from three plant families, all workable without irrigation, with the soil covered over winter."
+    },
+    {
+      "id": "wheat-maize-bean",
+      "name": "Wheat → maize → bean, vetch before maize",
+      "kind": "suggested",
+      "seasons": [
+        [
+          "wheat"
+        ],
+        [
+          "vetch_oat",
+          "maize"
+        ],
+        [
+          "bean"
+        ]
+      ],
+      "idea": "Keeps wheat and maize, adds a bean year and a winter cover so the soil is not bare before maize."
+    },
+    {
+      "id": "alfalfa-wheat-sunflower",
+      "name": "Alfalfa (2 years) → wheat → sunflower",
+      "kind": "suggested",
+      "seasons": [
+        [
+          "alfalfa"
+        ],
+        [
+          "alfalfa"
+        ],
+        [
+          "wheat"
+        ],
+        [
+          "sunflower"
+        ]
+      ],
+      "idea": "A two-year alfalfa ley rebuilds soil structure and nitrogen, then feeds the cereals that follow."
+    }
   ]
 }

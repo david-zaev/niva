@@ -216,7 +216,11 @@ def ranking(f: FieldRow, priorities: dict | None = None) -> dict:
     match = next((r for r in lib if r["seasons"] == cur["seasons"]), None)
     if match:
         cur = {**match, "kind": "current"}
-    cands = [cur] + [r for r in lib if r["seasons"] != cur["seasons"]]
+    # options: the farmer's rotation with a winter cover, and library rotations for the same kind of farm
+    kind = rotations.farm_type(cur["seasons"])
+    cover = rotations.with_cover(cur)
+    cands = [cur] + ([cover] if cover and all(r["seasons"] != cover["seasons"] for r in lib) else [])
+    cands += [r for r in lib if r["seasons"] != cur["seasons"] and rotations.farm_type(r["seasons"]) == kind]
     irrigation = None if f.irrigation in (None, "none") else f.irrigation
     key = hashlib.sha1(json.dumps([f.lat, f.lon, soil, irrigation, slope_factor, t_off, cur["seasons"],
                                    str(w.index[-1])], sort_keys=True, default=str).encode()).hexdigest()
@@ -227,8 +231,14 @@ def ranking(f: FieldRow, priorities: dict | None = None) -> dict:
         with _lock:
             _evals[key] = evs
     evs = [{k: v for k, v in e.items()} for e in evs]
+    for e in evs[1:]:
+        dry = e["metrics"]["dry_year_yield_pct"]
+        e["offered"] = dry >= rotations.MIN_DRY_YEAR_YIELD
+        e["not_offered_because"] = None if e["offered"] else (
+            f"only {dry}% of normal yield in a dry year with "
+            + ("no irrigation" if irrigation is None else f"{irrigation} irrigation"))
     rotations.score(evs, priorities if priorities is not None else f.priorities)
-    return {"evals": evs, "current": evs[0], "soil": soil, "terrain": ter, "weather": w}
+    return {"evals": evs, "farm_type": kind, "current": evs[0], "soil": soil, "terrain": ter, "weather": w}
 
 
 def warm(f: FieldRow) -> None:
@@ -269,7 +279,8 @@ def demo(s: Session = Depends(db)):
     farm = s.exec(select(Farm).order_by(Farm.id)).first()
     if not farm:
         raise HTTPException(404, "no demo farm: run python seed.py")
-    return {"farm_id": farm.id}
+    last = s.exec(select(Reading).where(Reading.simulated == False).order_by(Reading.time.desc()).limit(1)).first()  # noqa: E712
+    return {"farm_id": farm.id, "last_reading": iso(last.time) if last else None}
 
 
 @app.post("/farms", status_code=201)
@@ -302,6 +313,16 @@ def create_field(farm_id: int, body: FieldIn, bg: BackgroundTasks, s: Session = 
                  area_ha=area_ha(body.polygon), current_rotation=[r for r in rot if r],
                  irrigation=body.irrigation, priorities=body.priorities, sensor=body.sensor)
     s.add(f)
+    s.commit()
+    s.refresh(f)
+    # the farm's ESP32 goes with the field just drawn: a sensor without a field joins it, together with the
+    # readings it sent while it had no field, so the soil health card fills straight away
+    for d in s.exec(select(Device).where(Device.field_id == None, ~Device.id.startswith("SIM-"))).all():  # noqa: E711
+        d.field_id = f.id
+        s.add(d)
+        for r in s.exec(select(Reading).where(Reading.device_id == d.id, Reading.field_id == None)).all():  # noqa: E711
+            r.field_id = f.id
+            s.add(r)
     s.commit()
     s.refresh(f)
     bg.add_task(warm, f)
@@ -376,7 +397,7 @@ def field_rotations(field_id: int, show: int = Query(3, ge=2, le=10), s: Session
     ctx = {"climate": cl, "t_offset": f.t_offset or 0.0, "terrain": r["terrain"], "soil": r["soil"],
            "ndvi": ndvi.analyse(nd, cl["rain_apr_aug_pct"]) if nd else None,
            "smap_check": rotations.smap_check(cur["_runs"][0], f.lat, f.lon)}
-    alts = sorted(evs[1:], key=lambda e: -e["score"])
+    alts = sorted([e for e in evs[1:] if e["offered"]], key=lambda e: -e["score"])
     picked = [cur] + alts[:show]
     out = []
     for e in picked:
@@ -385,8 +406,11 @@ def field_rotations(field_id: int, show: int = Query(3, ge=2, le=10), s: Session
         o["rank"] = 1 + sorted(evs, key=lambda x: -x["score"]).index(e)
         out.append(o)
     others = [{"id": e["id"], "name": e["name"], "score": e["score"], "scores": e["scores"]} for e in alts[show:]]
+    dropped = [{"id": e["id"], "name": e["name"], "because": e["not_offered_because"]}
+               for e in evs[1:] if not e["offered"]]
     return {"field_id": field_id, "soil": r["soil"], "terrain": r["terrain"], "irrigation": f.irrigation,
             "priorities": {**rotations.WEIGHTS, **(f.priorities or {})}, "rotations": out, "others": others,
+            "not_offered": dropped, "farm_type": r["farm_type"],
             "smap_check": ctx["smap_check"], "chosen": f.chosen_rotation,
             "climate_years": cl["years"]}
 

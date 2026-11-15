@@ -175,19 +175,6 @@ def alerts(df: pd.DataFrame, crop: dict | None, soil: dict) -> list[dict]:
                                 + ": the field can reach 0 °C before dawn. Protect young plants.",
                         "rule": "air ≤ 5 °C and falling > 1 °C in 3 h, or dew point ≤ 1 °C"})
 
-    # front coming: pressure falling fast (classic barometer rule, ~3 hPa in 3 hours)
-    pr = recent(3)["pressure_hpa"].dropna()
-    if len(pr) > 3 and (pr.index[-1] - pr.index[0]) >= timedelta(minutes=20):
-        hours = (pr.index[-1] - pr.index[0]).total_seconds() / 3600
-        rate = (pr.iloc[-1] - pr.iloc[0]) / hours * 3
-        if rate <= -3:
-            out.append({"id": "storm", "level": "act", "title": "Storm front coming",
-                        "text": f"Pressure falling {abs(rate):.1f} hPa per 3 hours: wind and heavy rain likely within "
-                                f"hours. Secure covers and delay spraying.", "rule": "pressure drop ≥ 3 hPa / 3 h"})
-        elif rate <= -1.5:
-            out.append({"id": "storm", "level": "watch", "title": "Weather turning",
-                        "text": f"Pressure falling {abs(rate):.1f} hPa per 3 hours.", "rule": "pressure drop ≥ 1.5 hPa / 3 h"})
-
     # heat stress: hot air on dry soil
     if at is not None and not math.isnan(at) and at >= 35:
         out.append({"id": "heat", "level": "act", "title": "Heat stress",
